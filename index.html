@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="tl">
 <head>
-  <link rel="manifest" href="manifest.json">
+<link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#ffffff">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,264 +10,404 @@
 <style>
 *{box-sizing:border-box}
 body{
-  margin:0;
-  font-family:Arial,sans-serif;
-  background:#f4f4f4;
-  color:#222;
+margin:0;
+font-family:Arial,sans-serif;
+background:#f4f4f4;
+color:#222;
 }
 header{
-  background:#d71920;
-  color:white;
-  padding:15px;
-  text-align:center;
+background:#d71920;
+color:white;
+padding:15px;
+text-align:center;
 }
 .container{
-  max-width:1100px;
-  margin:auto;
-  padding:15px;
+max-width:1100px;
+margin:auto;
+padding:15px;
 }
 .card{
-  background:white;
-  border-radius:12px;
-  padding:15px;
-  margin-bottom:15px;
-  box-shadow:0 2px 8px #0002;
+background:white;
+border-radius:12px;
+padding:15px;
+margin-bottom:15px;
+box-shadow:0 2px 8px #0002;
 }
 button{
-  border:0;
-  border-radius:8px;
-  padding:10px 14px;
-  cursor:pointer;
-  font-weight:bold;
+border:0;
+border-radius:8px;
+padding:10px 14px;
+cursor:pointer;
+font-weight:bold;
 }
 .primary{background:#d71920;color:white}
 .green{background:#168a45;color:white}
 .gray{background:#777;color:white}
 .danger{background:#b00020;color:white}
-input,select{
-  width:100%;
-  padding:11px;
-  border:1px solid #ccc;
-  border-radius:8px;
-  margin:5px 0 10px;
-}
 .hidden{display:none}
 
 .login{
-  max-width:400px;
-  margin:60px auto;
+max-width:400px;
+margin:60px auto;
 }
 .tabs{
-  display:flex;
-  gap:8px;
-  flex-wrap:wrap;
-  margin-bottom:15px;
+display:flex;
+gap:8px;
+flex-wrap:wrap;
+margin-bottom:15px;
 }
 .tabs button{flex:1}
 
 .menu{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
-  gap:10px;
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+gap:10px;
 }
 .product{
-  border:1px solid #ddd;
-  border-radius:10px;
-  padding:12px;
-  background:#fff;
+border:1px solid #ddd;
+border-radius:10px;
+padding:12px;
+background:#fff;
 }
 .product h3{margin:5px 0}
 .price{
-  font-size:20px;
-  font-weight:bold;
+font-size:20px;
+font-weight:bold;
 }
-.out{
-  opacity:.5;
-}
+.out{opacity:.5}
 
 .cart-row{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:8px;
-  border-bottom:1px solid #ddd;
-  padding:10px 0;
+display:flex;
+justify-content:space-between;
+align-items:center;
+gap:8px;
+border-bottom:1px solid #ddd;
+padding:10px 0;
 }
-.qty button{
-  padding:5px 9px;
-}
+.qty button{padding:5px 9px}
 .total{
-  font-size:25px;
-  font-weight:bold;
-  margin:15px 0;
+font-size:25px;
+font-weight:bold;
+margin:15px 0;
 }
 table{
-  width:100%;
-  border-collapse:collapse;
+width:100%;
+border-collapse:collapse;
 }
 th,td{
-  padding:8px;
-  border-bottom:1px solid #ddd;
-  text-align:left;
+padding:8px;
+border-bottom:1px solid #ddd;
+text-align:left;
 }
-.small{font-size:13px;color:#666}
+.small{
+font-size:13px;
+color:#666;
+}
+.active{
+color:green;
+font-weight:bold;
+}
+.disabled{
+color:#b00020;
+font-weight:bold;
+}
 </style>
 </head>
 
 <body>
 
 <header>
-  <h2>🍗 FOOD POS</h2>
-  <div id="userInfo"></div>
+<h2>🍗 FOOD POS</h2>
+<div id="userInfo"></div>
 </header>
+
+<!-- LOGIN -->
 
 <div id="loginPage" class="container login">
 
-  <div class="card">
-    <h2>Login</h2>
+<div class="card">
 
-    <label>User ID</label>
-    <input id="loginId" placeholder="Admin o Cashier ID">
+<h2>🔐 Login</h2>
 
-    <label>Password</label>
-    <input id="loginPassword" type="password" placeholder="Password">
+<label>User ID</label>
 
-    <button class="primary" style="width:100%" onclick="login()">
-      LOGIN
-    </button>
+<input
+id="loginId"
+placeholder="Admin o Cashier ID">
 
-    <p class="small">
-      Demo Admin: <b>admin</b> / <b>1234</b>
-    </p>
-  </div>
+<label>Password</label>
+
+<input
+id="loginPassword"
+type="password"
+placeholder="Password">
+
+<button
+class="primary"
+style="width:100%"
+onclick="login()">
+
+LOGIN
+
+</button>
+
+<p class="small">
+
+Admin:
+<b>admin</b> / <b>2026</b>
+<br>
+
+Cashier:
+<b>CASH001</b> / <b>2026</b>
+
+</p>
+
+</div>
 
 </div>
 
 
+<!-- APP -->
+
 <div id="app" class="container hidden">
 
-  <div class="tabs">
-    <button class="primary" onclick="showPage('posPage')">🛒 POS</button>
-    <button onclick="showPage('historyPage')">📋 History</button>
-    <button id="adminBtn" onclick="showPage('adminPage')">⚙️ Admin</button>
-    <button class="danger" onclick="logout()">Logout</button>
-  </div>
+<div class="tabs">
+
+<button
+class="primary"
+onclick="showPage('posPage')">
+
+🛒 POS
+
+</button>
+
+<button
+onclick="showPage('historyPage')">
+
+📋 History
+
+</button>
+
+<button
+id="adminBtn"
+onclick="showPage('adminPage')">
+
+⚙️ Admin
+
+</button>
+
+<button
+class="danger"
+onclick="logout()">
+
+Logout
+
+</button>
+
+</div>
 
 
-  <!-- POS -->
-  <div id="posPage">
+<!-- POS -->
 
-    <div class="card">
+<div id="posPage">
 
-      <h3>Order Type</h3>
+<div class="card">
 
-      <button id="dineBtn" class="primary" onclick="setOrderType('Dine In')">
-        🍽️ Dine In
-      </button>
+<h3>Order Type</h3>
 
-      <button id="takeBtn" onclick="setOrderType('Take Out')">
-        🥡 Take Out
-      </button>
+<button
+id="dineBtn"
+class="primary"
+onclick="setOrderType('Dine In')">
 
-      <p>
-        Order #: <b id="orderNumber"></b>
-      </p>
+🍽️ Dine In
 
-    </div>
+</button>
 
+<button
+id="takeBtn"
+onclick="setOrderType('Take Out')">
 
-    <div class="card">
+🥡 Take Out
 
-      <h3>Menu</h3>
+</button>
 
-      <div id="menuList" class="menu"></div>
+<p>
 
-    </div>
+Order #:
+<b id="orderNumber"></b>
 
+</p>
 
-    <div class="card">
-
-      <h3>Current Order</h3>
-
-      <div id="cart"></div>
-
-      <div class="total">
-        Total: ₱<span id="total">0.00</span>
-      </div>
-
-      <label>Cash Received</label>
-      <input
-        id="cash"
-        type="number"
-        placeholder="Ilagay ang bayad"
-        oninput="calculateChange()"
-      >
-
-      <h3>
-        Sukli: ₱<span id="change">0.00</span>
-      </h3>
-
-      <button class="green" style="width:100%" onclick="completeOrder()">
-        ✅ COMPLETE ORDER
-      </button>
-
-      <button class="gray" style="width:100%;margin-top:8px"
-              onclick="clearCart()">
-        CLEAR ORDER
-      </button>
-
-    </div>
-
-  </div>
+</div>
 
 
-  <!-- HISTORY -->
-  <div id="historyPage" class="hidden">
+<div class="card">
 
-    <div class="card">
-      <h2>📋 Sales History</h2>
+<h3>Menu</h3>
 
-      <button class="gray" onclick="clearHistory()">
-        Clear History
-      </button>
+<div id="menuList" class="menu"></div>
 
-      <div id="history"></div>
-    </div>
-
-  </div>
+</div>
 
 
-  <!-- ADMIN -->
-  <div id="adminPage" class="hidden">
+<div class="card">
 
-    <div class="card">
+<h3>Current Order</h3>
 
-      <h2>⚙️ Admin Menu Management</h2>
+<div id="cart"></div>
 
-      <h3>Add Menu</h3>
+<div class="total">
 
-      <input id="newName" placeholder="Product name">
+Total:
+₱<span id="total">0.00</span>
 
-      <input id="newPrice"
-             type="number"
-             placeholder="Price">
+</div>
 
-      <button class="green" onclick="addMenu()">
-        ➕ Add Menu
-      </button>
+<label>Cash Received</label>
 
-    </div>
+<input
+id="cash"
+type="number"
+placeholder="Ilagay ang bayad"
+oninput="calculateChange()">
+
+<h3>
+
+Sukli:
+₱<span id="change">0.00</span>
+
+</h3>
+
+<button
+class="green"
+style="width:100%"
+onclick="completeOrder()">
+
+✅ COMPLETE ORDER
+
+</button>
+
+<button
+class="gray"
+style="width:100%;margin-top:8px"
+onclick="clearCart()">
+
+CLEAR ORDER
+
+</button>
+
+</div>
+
+</div>
 
 
-    <div class="card">
+<!-- HISTORY -->
 
-      <h3>Existing Menu</h3>
+<div id="historyPage" class="hidden">
 
-      <div id="adminMenu"></div>
+<div class="card">
 
-    </div>
+<h2>📋 Sales History</h2>
 
-  </div>
+<button
+class="gray"
+onclick="clearHistory()">
+
+Clear History
+
+</button>
+
+<div id="history"></div>
+
+</div>
+
+</div>
+
+
+<!-- ADMIN -->
+
+<div id="adminPage" class="hidden">
+
+
+<!-- MENU MANAGEMENT -->
+
+<div class="card">
+
+<h2>🍔 Menu Management</h2>
+
+<h3>Add Menu</h3>
+
+<input
+id="newName"
+placeholder="Product name">
+
+<input
+id="newPrice"
+type="number"
+placeholder="Price">
+
+<button
+class="green"
+onclick="addMenu()">
+
+➕ Add Menu
+
+</button>
+
+</div>
+
+
+<div class="card">
+
+<h3>Existing Menu</h3>
+
+<div id="adminMenu"></div>
+
+</div>
+
+
+<!-- CASHIER MANAGEMENT -->
+
+<div class="card">
+
+<h2>👤 Cashier Management</h2>
+
+<h3>Add Cashier</h3>
+
+<input
+id="newCashierName"
+placeholder="Cashier name">
+
+<input
+id="newCashierId"
+placeholder="User ID">
+
+<input
+id="newCashierPassword"
+type="password"
+placeholder="Password">
+
+<button
+class="green"
+onclick="addCashier()">
+
+➕ Add Cashier
+
+</button>
+
+</div>
+
+
+<div class="card">
+
+<h3>Cashier Accounts</h3>
+
+<div id="cashierList"></div>
+
+</div>
+
+</div>
 
 </div>
 
@@ -280,91 +420,197 @@ let orderType = "Dine In";
 
 let cart = [];
 
-let menu = JSON.parse(localStorage.getItem("foodMenu")) || [
-  {
-    id:1,
-    name:"Sundae",
-    price:50,
-    available:true
-  },
-  {
-    id:2,
-    name:"Fries",
-    price:50,
-    available:true
-  },
-  {
-    id:3,
-    name:"Fried Chicken",
-    price:99,
-    available:true
-  },
-  {
-    id:4,
-    name:"Float",
-    price:60,
-    available:true
-  }
+
+/* MENU */
+
+let menu =
+JSON.parse(
+localStorage.getItem("foodMenu")
+) || [
+
+{
+id:1,
+name:"Sundae",
+price:50,
+available:true
+},
+
+{
+id:2,
+name:"Fries",
+price:50,
+available:true
+},
+
+{
+id:3,
+name:"Fried Chicken",
+price:99,
+available:true
+},
+
+{
+id:4,
+name:"Float",
+price:60,
+available:true
+}
+
 ];
 
-let sales = JSON.parse(localStorage.getItem("foodSales")) || [];
+
+/* CASHIER */
+
+let cashiers =
+JSON.parse(
+localStorage.getItem("foodCashiers")
+) || [
+
+{
+id:"CASH001",
+name:"Cashier 1",
+password:"2026",
+active:true
+}
+
+];
+
+
+/* SALES */
+
+let sales =
+JSON.parse(
+localStorage.getItem("foodSales")
+) || [];
+
+
+/* ORDER NUMBER */
 
 let orderNo =
-  Number(localStorage.getItem("orderNumber") || 1000) + 1;
+Number(
+localStorage.getItem("orderNumber") || 1000
+) + 1;
 
-document.getElementById("orderNumber").innerText = orderNo;
+document.getElementById("orderNumber")
+.innerText = orderNo;
 
 
 /* LOGIN */
 
 function login(){
 
-  let id =
-    document.getElementById("loginId").value.trim();
+let id =
+document.getElementById("loginId")
+.value.trim();
 
-  let password =
-    document.getElementById("loginPassword").value;
+let password =
+document.getElementById("loginPassword")
+.value;
 
-  if(id === "admin" && password === "1234"){
 
-    currentUser = {
-      id:"admin",
-      role:"admin"
-    };
+/* ADMIN */
 
-  }else if(id && password){
+if(
+id === "admin" &&
+password === "2026"
+){
 
-    currentUser = {
-      id:id,
-      role:"cashier"
-    };
+currentUser = {
 
-  }else{
+id:"admin",
 
-    alert("Ilagay ang ID at password.");
-    return;
+name:"Administrator",
 
-  }
+role:"admin"
 
-  document.getElementById("loginPage")
-    .classList.add("hidden");
+};
 
-  document.getElementById("app")
-    .classList.remove("hidden");
+}
 
-  document.getElementById("userInfo").innerText =
-    currentUser.role.toUpperCase() +
-    " • ID: " +
-    currentUser.id;
 
-  document.getElementById("adminBtn").style.display =
-    currentUser.role === "admin"
-    ? "block"
-    : "none";
+/* CASHIER */
 
-  renderMenu();
-  renderHistory();
-  renderAdminMenu();
+else{
+
+let cashier =
+cashiers.find(
+x =>
+x.id.toLowerCase()
+===
+id.toLowerCase()
+&&
+x.password === password
+);
+
+if(!cashier){
+
+alert(
+"Mali ang User ID o Password."
+);
+
+return;
+
+}
+
+if(!cashier.active){
+
+alert(
+"Disabled ang cashier account."
+);
+
+return;
+
+}
+
+currentUser = {
+
+id:cashier.id,
+
+name:cashier.name,
+
+role:"cashier"
+
+};
+
+}
+
+
+document.getElementById("loginPage")
+.classList.add("hidden");
+
+document.getElementById("app")
+.classList.remove("hidden");
+
+
+document.getElementById("userInfo")
+.innerText =
+currentUser.role.toUpperCase()
++
+" • "
++
+currentUser.name
++
+" • ID: "
++
+currentUser.id;
+
+
+document.getElementById("adminBtn")
+.style.display =
+currentUser.role === "admin"
+? "block"
+: "none";
+
+
+renderMenu();
+
+renderHistory();
+
+renderAdminMenu();
+
+renderCashiers();
+
+showPage("posPage");
 
 }
 
@@ -373,17 +619,21 @@ function login(){
 
 function logout(){
 
-  currentUser = null;
-  cart = [];
+currentUser = null;
 
-  document.getElementById("app")
-    .classList.add("hidden");
+cart = [];
 
-  document.getElementById("loginPage")
-    .classList.remove("hidden");
+document.getElementById("app")
+.classList.add("hidden");
 
-  document.getElementById("loginId").value = "";
-  document.getElementById("loginPassword").value = "";
+document.getElementById("loginPage")
+.classList.remove("hidden");
+
+document.getElementById("loginId")
+.value = "";
+
+document.getElementById("loginPassword")
+.value = "";
 
 }
 
@@ -392,17 +642,32 @@ function logout(){
 
 function showPage(page){
 
-  document.getElementById("posPage")
-    .classList.add("hidden");
+if(
+page === "adminPage" &&
+(!currentUser ||
+currentUser.role !== "admin")
+){
 
-  document.getElementById("historyPage")
-    .classList.add("hidden");
+alert(
+"Admin lang ang puwedeng pumasok dito."
+);
 
-  document.getElementById("adminPage")
-    .classList.add("hidden");
+return;
 
-  document.getElementById(page)
-    .classList.remove("hidden");
+}
+
+
+document.getElementById("posPage")
+.classList.add("hidden");
+
+document.getElementById("historyPage")
+.classList.add("hidden");
+
+document.getElementById("adminPage")
+.classList.add("hidden");
+
+document.getElementById(page)
+.classList.remove("hidden");
 
 }
 
@@ -411,19 +676,19 @@ function showPage(page){
 
 function setOrderType(type){
 
-  orderType = type;
+orderType = type;
 
-  document.getElementById("dineBtn")
-    .className =
-    type === "Dine In"
-    ? "primary"
-    : "";
+document.getElementById("dineBtn")
+.className =
+type === "Dine In"
+? "primary"
+: "";
 
-  document.getElementById("takeBtn")
-    .className =
-    type === "Take Out"
-    ? "primary"
-    : "";
+document.getElementById("takeBtn")
+.className =
+type === "Take Out"
+? "primary"
+: "";
 
 }
 
@@ -432,71 +697,95 @@ function setOrderType(type){
 
 function renderMenu(){
 
-  let html = "";
+let html = "";
 
-  menu.forEach(item => {
+menu.forEach(item => {
 
-    html += `
-      <div class="product ${!item.available ? "out" : ""}">
+html += `
 
-        <h3>${item.name}</h3>
+<div class="product ${
+!item.available ? "out" : ""
+}">
 
-        <div class="price">
-          ₱${Number(item.price).toFixed(2)}
-        </div>
+<h3>${item.name}</h3>
 
-        ${
-          item.available
-          ?
-          `<button class="primary"
-             style="width:100%;margin-top:8px"
-             onclick="addToCart(${item.id})">
-             ADD
-           </button>`
-          :
-          `<button disabled style="width:100%;margin-top:8px">
-             OUT OF STOCK
-           </button>`
-        }
+<div class="price">
 
-      </div>
-    `;
+₱${Number(item.price).toFixed(2)}
 
-  });
+</div>
 
-  document.getElementById("menuList").innerHTML = html;
+${
+item.available
+
+?
+
+`<button
+class="primary"
+style="width:100%;margin-top:8px"
+onclick="addToCart(${item.id})">
+
+ADD
+
+</button>`
+
+:
+
+`<button
+disabled
+style="width:100%;margin-top:8px">
+
+OUT OF STOCK
+
+</button>`
+}
+
+</div>
+
+`;
+
+});
+
+document.getElementById("menuList")
+.innerHTML = html;
 
 }
 
 
-/* ADD TO CART */
+/* ADD CART */
 
 function addToCart(id){
 
-  let item =
-    menu.find(x => x.id === id);
+let item =
+menu.find(x => x.id === id);
 
-  if(!item || !item.available) return;
+if(!item || !item.available)
+return;
 
-  let existing =
-    cart.find(x => x.id === id);
+let existing =
+cart.find(x => x.id === id);
 
-  if(existing){
+if(existing){
 
-    existing.qty++;
+existing.qty++;
 
-  }else{
+}else{
 
-    cart.push({
-      id:item.id,
-      name:item.name,
-      price:Number(item.price),
-      qty:1
-    });
+cart.push({
 
-  }
+id:item.id,
 
-  renderCart();
+name:item.name,
+
+price:Number(item.price),
+
+qty:1
+
+});
+
+}
+
+renderCart();
 
 }
 
@@ -505,73 +794,97 @@ function addToCart(id){
 
 function renderCart(){
 
-  let html = "";
+let html = "";
 
-  if(cart.length === 0){
+if(cart.length === 0){
 
-    html = "<p>Wala pang order.</p>";
+html =
+"<p>Wala pang order.</p>";
 
-  }
+}
 
-  cart.forEach(item => {
+cart.forEach(item => {
 
-    html += `
-      <div class="cart-row">
+html += `
 
-        <div>
-          <b>${item.name}</b><br>
-          ₱${item.price.toFixed(2)}
-        </div>
+<div class="cart-row">
 
-        <div class="qty">
+<div>
 
-          <button onclick="changeQty(${item.id},-1)">
-            -
-          </button>
+<b>${item.name}</b>
+<br>
 
-          <b>${item.qty}</b>
+₱${item.price.toFixed(2)}
 
-          <button onclick="changeQty(${item.id},1)">
-            +
-          </button>
+</div>
 
-        </div>
 
-        <b>
-          ₱${(item.price * item.qty).toFixed(2)}
-        </b>
+<div class="qty">
 
-      </div>
-    `;
+<button
+onclick="changeQty(${item.id},-1)">
 
-  });
+-
 
-  document.getElementById("cart").innerHTML = html;
+</button>
 
-  updateTotal();
+<b>${item.qty}</b>
+
+<button
+onclick="changeQty(${item.id},1)">
+
++
+
+</button>
+
+</div>
+
+
+<b>
+
+₱${(
+item.price *
+item.qty
+).toFixed(2)}
+
+</b>
+
+</div>
+
+`;
+
+});
+
+document.getElementById("cart")
+.innerHTML = html;
+
+updateTotal();
 
 }
 
 
 /* QUANTITY */
 
-function changeQty(id, amount){
+function changeQty(id,amount){
 
-  let item =
-    cart.find(x => x.id === id);
+let item =
+cart.find(x => x.id === id);
 
-  if(!item) return;
+if(!item)
+return;
 
-  item.qty += amount;
+item.qty += amount;
 
-  if(item.qty <= 0){
+if(item.qty <= 0){
 
-    cart =
-      cart.filter(x => x.id !== id);
+cart =
+cart.filter(
+x => x.id !== id
+);
 
-  }
+}
 
-  renderCart();
+renderCart();
 
 }
 
@@ -580,21 +893,23 @@ function changeQty(id, amount){
 
 function getTotal(){
 
-  return cart.reduce(
-    (sum,item) =>
-      sum + item.price * item.qty,
-    0
-  );
+return cart.reduce(
+(sum,item) =>
+sum +
+item.price *
+item.qty,
+0
+);
 
 }
 
 function updateTotal(){
 
-  document.getElementById("total")
-    .innerText =
-    getTotal().toFixed(2);
+document.getElementById("total")
+.innerText =
+getTotal().toFixed(2);
 
-  calculateChange();
+calculateChange();
 
 }
 
@@ -603,17 +918,25 @@ function updateTotal(){
 
 function calculateChange(){
 
-  let total = getTotal();
+let total =
+getTotal();
 
-  let cash =
-    Number(document.getElementById("cash").value || 0);
+let cash =
+Number(
+document.getElementById("cash")
+.value || 0
+);
 
-  let change =
-    cash - total;
+let change =
+cash - total;
 
-  document.getElementById("change")
-    .innerText =
-    (change > 0 ? change : 0).toFixed(2);
+document.getElementById("change")
+.innerText =
+(
+change > 0
+? change
+: 0
+).toFixed(2);
 
 }
 
@@ -622,95 +945,128 @@ function calculateChange(){
 
 function completeOrder(){
 
-  if(cart.length === 0){
+if(cart.length === 0){
 
-    alert("Wala pang order.");
-    return;
+alert("Wala pang order.");
 
-  }
+return;
 
-  let total = getTotal();
+}
 
-  let cash =
-    Number(document.getElementById("cash").value || 0);
+let total =
+getTotal();
 
-  if(cash < total){
+let cash =
+Number(
+document.getElementById("cash")
+.value || 0
+);
 
-    alert(
-      "Kulang ang bayad.\n" +
-      "Total: ₱" + total.toFixed(2)
-    );
+if(cash < total){
 
-    return;
+alert(
+"Kulang ang bayad.\n\n" +
+"Total: ₱" +
+total.toFixed(2)
+);
 
-  }
+return;
 
-  let change = cash - total;
+}
 
-  let sale = {
+let change =
+cash - total;
 
-    orderNo:orderNo,
 
-    date:new Date().toLocaleString(),
+let sale = {
 
-    cashier:currentUser.id,
+orderNo:orderNo,
 
-    type:orderType,
+date:
+new Date()
+.toLocaleString(),
 
-    items:[...cart],
+cashier:
+currentUser.id,
 
-    total:total,
+type:
+orderType,
 
-    cash:cash,
+items:
+[...cart],
 
-    change:change
+total:
+total,
 
-  };
+cash:
+cash,
 
-  sales.unshift(sale);
+change:
+change
 
-  localStorage.setItem(
-    "foodSales",
-    JSON.stringify(sales)
-  );
+};
 
-  localStorage.setItem(
-    "orderNumber",
-    orderNo
-  );
 
-  alert(
-    "ORDER COMPLETED!\n\n" +
-    "Order #: " + orderNo + "\n" +
-    "Total: ₱" + total.toFixed(2) + "\n" +
-    "Bayad: ₱" + cash.toFixed(2) + "\n" +
-    "Sukli: ₱" + change.toFixed(2)
-  );
+sales.unshift(sale);
 
-  orderNo++;
 
-  document.getElementById("orderNumber")
-    .innerText = orderNo;
+localStorage.setItem(
+"foodSales",
+JSON.stringify(sales)
+);
 
-  cart = [];
+localStorage.setItem(
+"orderNumber",
+orderNo
+);
 
-  document.getElementById("cash").value = "";
 
-  renderCart();
-  renderHistory();
+alert(
+
+"ORDER COMPLETED!\n\n" +
+
+"Order #: " +
+orderNo +
+
+"\nTotal: ₱" +
+total.toFixed(2) +
+
+"\nBayad: ₱" +
+cash.toFixed(2) +
+
+"\nSukli: ₱" +
+change.toFixed(2)
+
+);
+
+
+orderNo++;
+
+document.getElementById("orderNumber")
+.innerText = orderNo;
+
+cart = [];
+
+document.getElementById("cash")
+.value = "";
+
+renderCart();
+
+renderHistory();
 
 }
 
 
-/* CLEAR CART */
+/* CLEAR */
 
 function clearCart(){
 
-  cart = [];
+cart = [];
 
-  document.getElementById("cash").value = "";
+document.getElementById("cash")
+.value = "";
 
-  renderCart();
+renderCart();
 
 }
 
@@ -719,54 +1075,64 @@ function clearCart(){
 
 function renderHistory(){
 
-  let html = "";
+let html = "";
 
-  if(sales.length === 0){
+if(sales.length === 0){
 
-    html = "<p>Wala pang sales.</p>";
+html =
+"<p>Wala pang sales.</p>";
 
-  }else{
+}
 
-    html += `
-      <table>
+else{
 
-        <tr>
-          <th>Order</th>
-          <th>Date</th>
-          <th>Cashier</th>
-          <th>Type</th>
-          <th>Total</th>
-        </tr>
-    `;
+html = `
 
-    sales.forEach(sale => {
+<table>
 
-      html += `
-        <tr>
+<tr>
 
-          <td>#${sale.orderNo}</td>
+<th>Order</th>
+<th>Date</th>
+<th>Cashier</th>
+<th>Type</th>
+<th>Total</th>
 
-          <td>${sale.date}</td>
+</tr>
 
-          <td>${sale.cashier}</td>
+`;
 
-          <td>${sale.type}</td>
 
-          <td>
-            ₱${sale.total.toFixed(2)}
-          </td>
+sales.forEach(sale => {
 
-        </tr>
-      `;
+html += `
 
-    });
+<tr>
 
-    html += "</table>";
+<td>#${sale.orderNo}</td>
 
-  }
+<td>${sale.date}</td>
 
-  document.getElementById("history")
-    .innerHTML = html;
+<td>${sale.cashier}</td>
+
+<td>${sale.type}</td>
+
+<td>
+₱${Number(sale.total).toFixed(2)}
+</td>
+
+</tr>
+
+`;
+
+});
+
+html += "</table>";
+
+}
+
+document.getElementById("history")
+.innerHTML = html;
 
 }
 
@@ -775,21 +1141,31 @@ function renderHistory(){
 
 function clearHistory(){
 
-  if(currentUser.role !== "admin"){
+if(
+!currentUser ||
+currentUser.role !== "admin"
+){
 
-    alert("Admin lang ang puwedeng gumawa nito.");
-    return;
+alert(
+"Admin lang ang puwedeng gumawa nito."
+);
 
-  }
+return;
 
-  if(!confirm("Burahin lahat ng sales history?"))
-    return;
+}
 
-  sales = [];
+if(
+!confirm(
+"Burahin lahat ng sales history?"
+)
+)
+return;
 
-  localStorage.removeItem("foodSales");
+sales = [];
 
-  renderHistory();
+localStorage.removeItem("foodSales");
+
+renderHistory();
 
 }
 
@@ -798,54 +1174,73 @@ function clearHistory(){
 
 function renderAdminMenu(){
 
-  let html = "";
+let html = "";
 
-  menu.forEach(item => {
+menu.forEach(item => {
 
-    html += `
-      <div class="card">
+html += `
 
-        <b>${item.name}</b>
+<div class="card">
 
-        <p>
-          Presyo:
-          ₱${Number(item.price).toFixed(2)}
-        </p>
+<b>${item.name}</b>
 
-        <p>
-          Status:
-          ${item.available
-            ? "AVAILABLE"
-            : "OUT OF STOCK"}
-        </p>
+<p>
 
-        <button
-          class="primary"
-          onclick="editMenu(${item.id})">
-          ✏️ Edit
-        </button>
+Presyo:
+₱${Number(item.price).toFixed(2)}
 
-        <button
-          class="gray"
-          onclick="toggleStock(${item.id})">
-          ${item.available
-            ? "🚫 Out of Stock"
-            : "✅ Available"}
-        </button>
+</p>
 
-        <button
-          class="danger"
-          onclick="deleteMenu(${item.id})">
-          🗑️ Delete
-        </button>
+<p>
 
-      </div>
-    `;
+Status:
+${
+item.available
+? "AVAILABLE"
+: "OUT OF STOCK"
+}
 
-  });
+</p>
 
-  document.getElementById("adminMenu")
-    .innerHTML = html;
+
+<button
+class="primary"
+onclick="editMenu(${item.id})">
+
+✏️ Edit
+
+</button>
+
+
+<button
+class="gray"
+onclick="toggleStock(${item.id})">
+
+${
+item.available
+? "🚫 Out of Stock"
+: "✅ Available"
+}
+
+</button>
+
+
+<button
+class="danger"
+onclick="deleteMenu(${item.id})">
+
+🗑️ Delete
+
+</button>
+
+</div>
+
+`;
+
+});
+
+document.getElementById("adminMenu")
+.innerHTML = html;
 
 }
 
@@ -854,40 +1249,54 @@ function renderAdminMenu(){
 
 function addMenu(){
 
-  let name =
-    document.getElementById("newName").value.trim();
+let name =
+document.getElementById("newName")
+.value.trim();
 
-  let price =
-    Number(document.getElementById("newPrice").value);
+let price =
+Number(
+document.getElementById("newPrice")
+.value
+);
 
-  if(!name || price <= 0){
+if(!name || price <= 0){
 
-    alert("Ilagay ang pangalan at tamang presyo.");
-    return;
+alert(
+"Ilagay ang pangalan at tamang presyo."
+);
 
-  }
+return;
 
-  let id =
-    Date.now();
+}
 
-  menu.push({
 
-    id:id,
-    name:name,
-    price:price,
-    available:true
+menu.push({
 
-  });
+id:Date.now(),
 
-  saveMenu();
+name:name,
 
-  document.getElementById("newName").value = "";
-  document.getElementById("newPrice").value = "";
+price:price,
 
-  renderMenu();
-  renderAdminMenu();
+available:true
 
-  alert("Nadagdag na ang menu.");
+});
+
+
+saveMenu();
+
+
+document.getElementById("newName")
+.value = "";
+
+document.getElementById("newPrice")
+.value = "";
+
+renderMenu();
+
+renderAdminMenu();
+
+alert("Nadagdag na ang menu.");
 
 }
 
@@ -896,41 +1305,55 @@ function addMenu(){
 
 function editMenu(id){
 
-  let item =
-    menu.find(x => x.id === id);
+let item =
+menu.find(x => x.id === id);
 
-  if(!item) return;
+if(!item)
+return;
 
-  let newName =
-    prompt("Product name:",item.name);
+let newName =
+prompt(
+"Product name:",
+item.name
+);
 
-  if(newName === null) return;
+if(newName === null)
+return;
 
-  let newPrice =
-    prompt("Price:",item.price);
+let newPrice =
+prompt(
+"Price:",
+item.price
+);
 
-  if(newPrice === null) return;
+if(newPrice === null)
+return;
 
-  newPrice =
-    Number(newPrice);
+newPrice =
+Number(newPrice);
 
-  if(!newName.trim() || newPrice <= 0){
+if(
+!newName.trim() ||
+newPrice <= 0
+){
 
-    alert("Invalid.");
-    return;
+alert("Invalid.");
 
-  }
+return;
 
-  item.name =
-    newName.trim();
+}
 
-  item.price =
-    newPrice;
+item.name =
+newName.trim();
 
-  saveMenu();
+item.price =
+newPrice;
 
-  renderMenu();
-  renderAdminMenu();
+saveMenu();
+
+renderMenu();
+
+renderAdminMenu();
 
 }
 
@@ -939,24 +1362,31 @@ function editMenu(id){
 
 function deleteMenu(id){
 
-  let item =
-    menu.find(x => x.id === id);
+let item =
+menu.find(x => x.id === id);
 
-  if(!item) return;
+if(!item)
+return;
 
-  if(!confirm(
-    "Burahin ang " +
-    item.name +
-    "?"
-  )) return;
+if(
+!confirm(
+"Burahin ang " +
+item.name +
+"?"
+)
+)
+return;
 
-  menu =
-    menu.filter(x => x.id !== id);
+menu =
+menu.filter(
+x => x.id !== id
+);
 
-  saveMenu();
+saveMenu();
 
-  renderMenu();
-  renderAdminMenu();
+renderMenu();
+
+renderAdminMenu();
 
 }
 
@@ -965,18 +1395,20 @@ function deleteMenu(id){
 
 function toggleStock(id){
 
-  let item =
-    menu.find(x => x.id === id);
+let item =
+menu.find(x => x.id === id);
 
-  if(!item) return;
+if(!item)
+return;
 
-  item.available =
-    !item.available;
+item.available =
+!item.available;
 
-  saveMenu();
+saveMenu();
 
-  renderMenu();
-  renderAdminMenu();
+renderMenu();
+
+renderAdminMenu();
 
 }
 
@@ -985,16 +1417,360 @@ function toggleStock(id){
 
 function saveMenu(){
 
-  localStorage.setItem(
-    "foodMenu",
-    JSON.stringify(menu)
-  );
+localStorage.setItem(
+"foodMenu",
+JSON.stringify(menu)
+);
 
 }
-  
-if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("./service-worker.js");
+
+
+/* =========================
+   CASHIER MANAGEMENT
+========================= */
+
+function renderCashiers(){
+
+let html = "";
+
+if(cashiers.length === 0){
+
+html =
+"<p>Wala pang cashier account.</p>";
+
 }
-</script>  
+
+
+cashiers.forEach(cashier => {
+
+html += `
+
+<div class="card">
+
+<h3>
+👤 ${cashier.name}
+</h3>
+
+<p>
+User ID:
+<b>${cashier.id}</b>
+</p>
+
+<p class="${
+cashier.active
+? "active"
+: "disabled"
+}">
+
+${
+cashier.active
+? "🟢 ACTIVE"
+: "🔴 DISABLED"
+}
+
+</p>
+
+
+<button
+class="primary"
+onclick="editCashier('${cashier.id}')">
+
+✏️ Edit
+
+</button>
+
+
+<button
+class="gray"
+onclick="toggleCashier('${cashier.id}')">
+
+${
+cashier.active
+? "🚫 Disable"
+: "✅ Enable"
+}
+
+</button>
+
+
+<button
+class="danger"
+onclick="deleteCashier('${cashier.id}')">
+
+🗑️ Delete
+
+</button>
+
+</div>
+
+`;
+
+});
+
+
+document.getElementById("cashierList")
+.innerHTML = html;
+
+}
+
+
+/* ADD CASHIER */
+
+function addCashier(){
+
+let name =
+document.getElementById(
+"newCashierName"
+).value.trim();
+
+let id =
+document.getElementById(
+"newCashierId"
+).value.trim();
+
+let password =
+document.getElementById(
+"newCashierPassword"
+).value;
+
+
+if(!name || !id || !password){
+
+alert(
+"Ilagay ang Name, User ID at Password."
+);
+
+return;
+
+}
+
+
+if(id.toLowerCase() === "admin"){
+
+alert(
+"Hindi puwedeng gamitin ang ADMIN bilang cashier ID."
+);
+
+return;
+
+}
+
+
+let exists =
+cashiers.some(
+x =>
+x.id.toLowerCase()
+===
+id.toLowerCase()
+);
+
+
+if(exists){
+
+alert(
+"Ginagamit na ang User ID na ito."
+);
+
+return;
+
+}
+
+
+cashiers.push({
+
+id:id,
+
+name:name,
+
+password:password,
+
+active:true
+
+});
+
+
+saveCashiers();
+
+
+document.getElementById(
+"newCashierName"
+).value = "";
+
+document.getElementById(
+"newCashierId"
+).value = "";
+
+document.getElementById(
+"newCashierPassword"
+).value = "";
+
+
+renderCashiers();
+
+
+alert(
+"Nadagdag na ang cashier."
+);
+
+}
+
+
+/* EDIT CASHIER */
+
+function editCashier(id){
+
+let cashier =
+cashiers.find(
+x => x.id === id
+);
+
+if(!cashier)
+return;
+
+
+let newName =
+prompt(
+"Cashier name:",
+cashier.name
+);
+
+if(newName === null)
+return;
+
+
+let newPassword =
+prompt(
+"Bagong password:",
+cashier.password
+);
+
+if(newPassword === null)
+return;
+
+
+newName =
+newName.trim();
+
+newPassword =
+newPassword.trim();
+
+
+if(!newName || !newPassword){
+
+alert(
+"Invalid name o password."
+);
+
+return;
+
+}
+
+
+cashier.name =
+newName;
+
+cashier.password =
+newPassword;
+
+
+saveCashiers();
+
+renderCashiers();
+
+
+alert(
+"Na-update na ang cashier."
+);
+
+}
+
+
+/* ENABLE / DISABLE */
+
+function toggleCashier(id){
+
+let cashier =
+cashiers.find(
+x => x.id === id
+);
+
+if(!cashier)
+return;
+
+cashier.active =
+!cashier.active;
+
+saveCashiers();
+
+renderCashiers();
+
+}
+
+
+/* DELETE CASHIER */
+
+function deleteCashier(id){
+
+let cashier =
+cashiers.find(
+x => x.id === id
+);
+
+if(!cashier)
+return;
+
+
+if(
+!confirm(
+"Burahin ang cashier na " +
+cashier.name +
+"?"
+)
+)
+return;
+
+
+cashiers =
+cashiers.filter(
+x => x.id !== id
+);
+
+
+saveCashiers();
+
+renderCashiers();
+
+
+alert(
+"Nabura na ang cashier."
+);
+
+}
+
+
+/* SAVE CASHIERS */
+
+function saveCashiers(){
+
+localStorage.setItem(
+"foodCashiers",
+JSON.stringify(cashiers)
+);
+
+}
+
+
+/* SERVICE WORKER */
+
+if("serviceWorker" in navigator){
+
+navigator.serviceWorker.register(
+"./service-worker.js"
+);
+
+}
+
+</script>
+
 </body>
 </html>
