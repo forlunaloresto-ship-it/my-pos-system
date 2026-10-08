@@ -1057,7 +1057,7 @@ renderHistory();
 }
 
 
-/* CLEAR */
+/* CLEAR ORDER */
 
 function clearCart(){
 
@@ -1102,7 +1102,6 @@ html = `
 
 `;
 
-
 sales.forEach(sale => {
 
 html += `
@@ -1135,6 +1134,8 @@ document.getElementById("history")
 .innerHTML = html;
 
 }
+
+
 /* CLEAR HISTORY */
 
 function clearHistory(){
@@ -1163,8 +1164,6 @@ sales = [];
 
 localStorage.removeItem("foodSales");
 
-/* RESET ORDER NUMBER */
-
 localStorage.removeItem("orderNumber");
 
 orderNo = 1001;
@@ -1181,7 +1180,25 @@ alert(
 
 }
 
-{Number(item.price).toFixed(2)}
+
+/* ADMIN MENU */
+
+function renderAdminMenu(){
+
+let html = "";
+
+menu.forEach(item => {
+
+html += `
+
+<div class="card">
+
+<b>${item.name}</b>
+
+<p>
+
+Presyo:
+₱${Number(item.price).toFixed(2)}
 
 </p>
 
@@ -1439,332 +1456,4 @@ cashiers.forEach(cashier => {
 
 html += `
 
-<div class="card">
-
-<h3>
-👤 ${cashier.name}
-</h3>
-
-<p>
-User ID:
-<b>${cashier.id}</b>
-</p>
-
-<p class="${
-cashier.active
-? "active"
-: "disabled"
-}">
-
-${
-cashier.active
-? "🟢 ACTIVE"
-: "🔴 DISABLED"
-}
-
-</p>
-
-
-<button
-class="primary"
-onclick="editCashier('${cashier.id}')">
-
-✏️ Edit
-
-</button>
-
-
-<button
-class="gray"
-onclick="toggleCashier('${cashier.id}')">
-
-${
-cashier.active
-? "🚫 Disable"
-: "✅ Enable"
-}
-
-</button>
-
-
-<button
-class="danger"
-onclick="deleteCashier('${cashier.id}')">
-
-🗑️ Delete
-
-</button>
-
-</div>
-
-`;
-
-});
-
-
-document.getElementById("cashierList")
-.innerHTML = html;
-
-}
-
-
-/* ADD CASHIER */
-
-function addCashier(){
-
-let name =
-document.getElementById(
-"newCashierName"
-).value.trim();
-
-let id =
-document.getElementById(
-"newCashierId"
-).value.trim();
-
-let password =
-document.getElementById(
-"newCashierPassword"
-).value;
-
-
-if(!name || !id || !password){
-
-alert(
-"Ilagay ang Name, User ID at Password."
-);
-
-return;
-
-}
-
-
-if(id.toLowerCase() === "admin"){
-
-alert(
-"Hindi puwedeng gamitin ang ADMIN bilang cashier ID."
-);
-
-return;
-
-}
-
-
-let exists =
-cashiers.some(
-x =>
-x.id.toLowerCase()
-===
-id.toLowerCase()
-);
-
-
-if(exists){
-
-alert(
-"Ginagamit na ang User ID na ito."
-);
-
-return;
-
-}
-
-
-cashiers.push({
-
-id:id,
-
-name:name,
-
-password:password,
-
-active:true
-
-});
-
-
-saveCashiers();
-
-
-document.getElementById(
-"newCashierName"
-).value = "";
-
-document.getElementById(
-"newCashierId"
-).value = "";
-
-document.getElementById(
-"newCashierPassword"
-).value = "";
-
-
-renderCashiers();
-
-
-alert(
-"Nadagdag na ang cashier."
-);
-
-}
-
-
-/* EDIT CASHIER */
-
-function editCashier(id){
-
-let cashier =
-cashiers.find(
-x => x.id === id
-);
-
-if(!cashier)
-return;
-
-
-let newName =
-prompt(
-"Cashier name:",
-cashier.name
-);
-
-if(newName === null)
-return;
-
-
-let newPassword =
-prompt(
-"Bagong password:",
-cashier.password
-);
-
-if(newPassword === null)
-return;
-
-
-newName =
-newName.trim();
-
-newPassword =
-newPassword.trim();
-
-
-if(!newName || !newPassword){
-
-alert(
-"Invalid name o password."
-);
-
-return;
-
-}
-
-
-cashier.name =
-newName;
-
-cashier.password =
-newPassword;
-
-
-saveCashiers();
-
-renderCashiers();
-
-
-alert(
-"Na-update na ang cashier."
-);
-
-}
-
-
-/* ENABLE / DISABLE */
-
-function toggleCashier(id){
-
-let cashier =
-cashiers.find(
-x => x.id === id
-);
-
-if(!cashier)
-return;
-
-cashier.active =
-!cashier.active;
-
-saveCashiers();
-
-renderCashiers();
-
-}
-
-
-/* DELETE CASHIER */
-
-function deleteCashier(id){
-
-let cashier =
-cashiers.find(
-x => x.id === id
-);
-
-if(!cashier)
-return;
-
-
-if(
-!confirm(
-"Burahin ang cashier na " +
-cashier.name +
-"?"
-)
-)
-return;
-
-
-cashiers =
-cashiers.filter(
-x => x.id !== id
-);
-
-
-saveCashiers();
-
-renderCashiers();
-
-
-alert(
-"Nabura na ang cashier."
-);
-
-}
-
-
-/* SAVE CASHIERS */
-
-function saveCashiers(){
-
-localStorage.setItem(
-"foodCashiers",
-JSON.stringify(cashiers)
-);
-
-}
-
-
-/* SERVICE WORKER */
-
-if("serviceWorker" in navigator){
-
-navigator.serviceWorker.register(
-"./service-worker.js"
-);
-
-}
-
-</script>
-
-</body>
-</html>
+<div class="
