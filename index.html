@@ -51,6 +51,7 @@ font-weight:bold;
 
 button:disabled{
 cursor:not-allowed;
+opacity:.6;
 }
 
 input{
@@ -82,8 +83,13 @@ background:#b00020;
 color:white;
 }
 
+.blue{
+background:#1769aa;
+color:white;
+}
+
 .hidden{
-display:none;
+display:none!important;
 }
 
 .login{
@@ -199,6 +205,13 @@ font-family:monospace;
 font-size:13px;
 }
 
+.summary{
+background:#f7f7f7;
+border-radius:8px;
+padding:10px;
+margin-top:10px;
+}
+
 @media(max-width:500px){
 
 .container{
@@ -232,7 +245,9 @@ font-size:22px;
 </header>
 
 
-<!-- LOGIN -->
+<!-- =========================
+     LOGIN
+========================= -->
 
 <div id="loginPage" class="container login">
 
@@ -262,9 +277,7 @@ class="primary"
 style="width:100%"
 onclick="login()"
 >
-
 LOGIN
-
 </button>
 
 <p class="small">
@@ -284,7 +297,9 @@ Cashier:
 </div>
 
 
-<!-- APP -->
+<!-- =========================
+     APP
+========================= -->
 
 <div id="app" class="container hidden">
 
@@ -320,7 +335,9 @@ Logout
 </div>
 
 
-<!-- POS -->
+<!-- =========================
+     POS
+========================= -->
 
 <div id="posPage">
 
@@ -414,7 +431,9 @@ CLEAR ORDER
 </div>
 
 
-<!-- HISTORY -->
+<!-- =========================
+     HISTORY
+========================= -->
 
 <div
 id="historyPage"
@@ -439,7 +458,9 @@ Clear History
 </div>
 
 
-<!-- ADMIN -->
+<!-- =========================
+     ADMIN
+========================= -->
 
 <div
 id="adminPage"
@@ -536,24 +557,20 @@ onclick="addCashier()"
 <script>
 
 /* =========================
-   SAFE LOCAL STORAGE
+   STORAGE
 ========================= */
 
-function getStorageArray(key, fallback){
+function getStorageArray(key,fallback){
 
 try{
 
-let data =
-localStorage.getItem(key);
+let data=localStorage.getItem(key);
 
 if(!data){
-
 return fallback;
-
 }
 
-let parsed =
-JSON.parse(data);
+let parsed=JSON.parse(data);
 
 return Array.isArray(parsed)
 ? parsed
@@ -561,11 +578,7 @@ return Array.isArray(parsed)
 
 }catch(error){
 
-console.log(
-"Storage error:",
-key,
-error
-);
+console.log(error);
 
 return fallback;
 
@@ -575,22 +588,21 @@ return fallback;
 
 
 /* =========================
-   GLOBAL VARIABLES
+   GLOBAL
 ========================= */
 
-let currentUser = null;
+let currentUser=null;
 
-let orderType = "Dine In";
+let orderType="Dine In";
 
-let cart = [];
+let cart=[];
 
 
 /* =========================
    DEFAULT MENU
 ========================= */
 
-let menu =
-getStorageArray(
+let menu=getStorageArray(
 "foodMenu",
 [
 {
@@ -625,8 +637,7 @@ available:true
    DEFAULT CASHIERS
 ========================= */
 
-let cashiers =
-getStorageArray(
+let cashiers=getStorageArray(
 "foodCashiers",
 [
 {
@@ -643,8 +654,7 @@ active:true
    SALES
 ========================= */
 
-let sales =
-getStorageArray(
+let sales=getStorageArray(
 "foodSales",
 []
 );
@@ -654,26 +664,68 @@ getStorageArray(
    ORDER NUMBER
 ========================= */
 
-let savedOrderNumber =
-Number(
+let savedOrderNumber=Number(
 localStorage.getItem("orderNumber")
 );
 
 if(
 !Number.isFinite(savedOrderNumber) ||
-savedOrderNumber < 1000
+savedOrderNumber<1000
 ){
 
-savedOrderNumber = 1000;
+savedOrderNumber=1000;
 
 }
 
-let orderNo =
-savedOrderNumber + 1;
+let orderNo=savedOrderNumber+1;
 
 
 /* =========================
-   START APP
+   SAVE FUNCTIONS
+========================= */
+
+function saveMenu(){
+
+try{
+
+localStorage.setItem(
+"foodMenu",
+JSON.stringify(menu)
+);
+
+}catch(error){
+
+console.log(error);
+
+alert("Hindi ma-save ang menu.");
+
+}
+
+}
+
+
+function saveCashiers(){
+
+try{
+
+localStorage.setItem(
+"foodCashiers",
+JSON.stringify(cashiers)
+);
+
+}catch(error){
+
+console.log(error);
+
+alert("Hindi ma-save ang cashier.");
+
+}
+
+}
+
+
+/* =========================
+   START
 ========================= */
 
 document.addEventListener(
@@ -682,16 +734,12 @@ function(){
 
 document.getElementById(
 "orderNumber"
-).innerText = orderNo;
+).innerText=orderNo;
 
 renderMenu();
-
 renderCart();
-
 renderHistory();
-
 renderAdminMenu();
-
 renderCashiers();
 
 }
@@ -704,48 +752,44 @@ renderCashiers();
 
 function login(){
 
-let id =
-document.getElementById(
+let id=document.getElementById(
 "loginId"
+).value.trim().toLowerCase();
+
+let password=document.getElementById(
+"loginPassword"
 ).value.trim();
 
-let password =
-document.getElementById(
-"loginPassword"
-).value;
 
+/* ADMIN */
 
 if(
-id === "admin" &&
-password === "2026"
+id==="admin" &&
+password==="2026"
 ){
 
-currentUser = {
-
+currentUser={
 id:"admin",
-
 name:"Administrator",
-
 role:"admin"
-
 };
 
 }
 
+/* CASHIER */
+
 else{
 
-let cashier =
-cashiers.find(
+let cashier=cashiers.find(
 function(x){
 
-return (
-String(x.id).toLowerCase()
-===
-id.toLowerCase()
+return(
+String(x.id)
+.trim()
+.toLowerCase()===id
 &&
 String(x.password)
-===
-password
+.trim()===password
 );
 
 }
@@ -774,14 +818,10 @@ return;
 }
 
 
-currentUser = {
-
+currentUser={
 id:cashier.id,
-
 name:cashier.name,
-
 role:"cashier"
-
 };
 
 }
@@ -798,8 +838,7 @@ document.getElementById(
 
 document.getElementById(
 "userInfo"
-).innerText =
-
+).innerText=
 currentUser.role.toUpperCase()
 +
 " • "
@@ -813,19 +852,16 @@ currentUser.id;
 
 document.getElementById(
 "adminBtn"
-).style.display =
-
-currentUser.role === "admin"
+).style.display=
+currentUser.role==="admin"
 ? "block"
 : "none";
 
 
 renderMenu();
-
+renderCart();
 renderHistory();
-
 renderAdminMenu();
-
 renderCashiers();
 
 showPage("posPage");
@@ -839,9 +875,9 @@ showPage("posPage");
 
 function logout(){
 
-currentUser = null;
+currentUser=null;
 
-cart = [];
+cart=[];
 
 document.getElementById(
 "app"
@@ -853,11 +889,13 @@ document.getElementById(
 
 document.getElementById(
 "loginId"
-).value = "";
+).value="";
 
 document.getElementById(
 "loginPassword"
-).value = "";
+).value="";
+
+clearCart();
 
 }
 
@@ -869,12 +907,10 @@ document.getElementById(
 function showPage(page){
 
 if(
-page === "adminPage"
-&&
+page==="adminPage" &&
 (
-!currentUser
-||
-currentUser.role !== "admin"
+!currentUser ||
+currentUser.role!=="admin"
 )
 ){
 
@@ -900,14 +936,11 @@ document.getElementById(
 ).classList.add("hidden");
 
 
-let selectedPage =
-document.getElementById(page);
+let selected=document.getElementById(page);
 
-if(selectedPage){
+if(selected){
 
-selectedPage.classList.remove(
-"hidden"
-);
+selected.classList.remove("hidden");
 
 }
 
@@ -920,20 +953,19 @@ selectedPage.classList.remove(
 
 function setOrderType(type){
 
-orderType = type;
+orderType=type;
 
 document.getElementById(
 "dineBtn"
-).className =
-type === "Dine In"
+).className=
+type==="Dine In"
 ? "primary"
 : "";
 
-
 document.getElementById(
 "takeBtn"
-).className =
-type === "Take Out"
+).className=
+type==="Take Out"
 ? "primary"
 : "";
 
@@ -946,12 +978,14 @@ type === "Take Out"
 
 function renderMenu(){
 
-let html = "";
+let html="";
 
 menu.forEach(
 function(item){
 
-html += `
+let id=Number(item.id);
+
+html+=`
 
 <div class="product ${
 item.available ? "" : "out"
@@ -962,9 +996,7 @@ ${escapeHtml(item.name)}
 </h3>
 
 <div class="price">
-
 ₱${Number(item.price).toFixed(2)}
-
 </div>
 
 ${
@@ -975,7 +1007,7 @@ item.available
 `<button
 class="primary"
 style="width:100%;margin-top:8px"
-onclick="addToCart(${item.id})"
+onclick="addToCart(${id})"
 >
 ADD
 </button>`
@@ -1001,21 +1033,22 @@ OUT OF STOCK
 
 document.getElementById(
 "menuList"
-).innerHTML = html;
+).innerHTML=html;
 
 }
 
 
 /* =========================
-   ADD TO CART
+   ADD CART
 ========================= */
 
 function addToCart(id){
 
-let item =
-menu.find(
+let item=menu.find(
 function(x){
-return x.id === id;
+
+return Number(x.id)===Number(id);
+
 }
 );
 
@@ -1030,10 +1063,11 @@ return;
 }
 
 
-let existing =
-cart.find(
+let existing=cart.find(
 function(x){
-return x.id === id;
+
+return Number(x.id)===Number(id);
+
 }
 );
 
@@ -1042,13 +1076,11 @@ if(existing){
 
 existing.qty++;
 
-}
-
-else{
+}else{
 
 cart.push({
 
-id:item.id,
+id:Number(item.id),
 
 name:item.name,
 
@@ -1072,13 +1104,12 @@ renderCart();
 
 function renderCart(){
 
-let html = "";
+let html="";
 
 
-if(cart.length === 0){
+if(cart.length===0){
 
-html =
-"<p>Wala pang order.</p>";
+html="<p>Wala pang order.</p>";
 
 }
 
@@ -1086,7 +1117,7 @@ html =
 cart.forEach(
 function(item){
 
-html += `
+html+=`
 
 <div class="cart-row">
 
@@ -1111,9 +1142,7 @@ onclick="changeQty(${item.id},-1)"
 -
 </button>
 
-<b>
-${item.qty}
-</b>
+<b>${item.qty}</b>
 
 <button
 onclick="changeQty(${item.id},1)"
@@ -1128,8 +1157,7 @@ onclick="changeQty(${item.id},1)"
 
 ₱${
 (
-Number(item.price)
-*
+Number(item.price)*
 Number(item.qty)
 ).toFixed(2)
 }
@@ -1146,7 +1174,7 @@ Number(item.qty)
 
 document.getElementById(
 "cart"
-).innerHTML = html;
+).innerHTML=html;
 
 updateTotal();
 
@@ -1154,35 +1182,35 @@ updateTotal();
 
 
 /* =========================
-   CHANGE QUANTITY
+   QUANTITY
 ========================= */
 
 function changeQty(id,amount){
 
-let item =
-cart.find(
+let item=cart.find(
 function(x){
-return x.id === id;
+
+return Number(x.id)===Number(id);
+
 }
 );
 
 
 if(!item){
-
 return;
-
 }
 
 
-item.qty += amount;
+item.qty+=amount;
 
 
-if(item.qty <= 0){
+if(item.qty<=0){
 
-cart =
-cart.filter(
+cart=cart.filter(
 function(x){
-return x.id !== id;
+
+return Number(x.id)!==Number(id);
+
 }
 );
 
@@ -1203,10 +1231,9 @@ function getTotal(){
 return cart.reduce(
 function(sum,item){
 
-return (
-sum +
-Number(item.price)
-*
+return sum+
+(
+Number(item.price)*
 Number(item.qty)
 );
 
@@ -1221,7 +1248,7 @@ function updateTotal(){
 
 document.getElementById(
 "total"
-).innerText =
+).innerText=
 getTotal().toFixed(2);
 
 calculateChange();
@@ -1235,30 +1262,45 @@ calculateChange();
 
 function calculateChange(){
 
-let total =
-getTotal();
+let total=getTotal();
 
-let cash =
-Number(
+let cash=Number(
 document.getElementById(
 "cash"
-).value || 0
+).value||0
 );
 
-
-let change =
-cash - total;
-
+let change=cash-total;
 
 document.getElementById(
 "change"
-).innerText =
-
+).innerText=
 (
-change > 0
+change>0
 ? change
 : 0
 ).toFixed(2);
+
+}
+
+
+/* =========================
+   CLEAR CART
+========================= */
+
+function clearCart(){
+
+cart=[];
+
+document.getElementById(
+"cash"
+).value="";
+
+document.getElementById(
+"change"
+).innerText="0.00";
+
+renderCart();
 
 }
 
@@ -1269,39 +1311,39 @@ change > 0
 
 function completeOrder(){
 
-if(cart.length === 0){
+if(!currentUser){
 
-alert(
-"Wala pang order."
-);
+alert("Mag-login muna.");
 
 return;
 
 }
 
 
-let total =
-getTotal();
+if(cart.length===0){
+
+alert("Wala pang order.");
+
+return;
+
+}
 
 
-let cash =
-Number(
+let total=getTotal();
+
+let cash=Number(
 document.getElementById(
 "cash"
-).value || 0
+).value||0
 );
 
 
-if(cash < total){
+if(cash<total){
 
 alert(
-
-"Kulang ang bayad.\n\n"
-+
-"Total: ₱"
-+
+"Kulang ang bayad.\n\n"+
+"Total: ₱"+
 total.toFixed(2)
-
 );
 
 return;
@@ -1309,38 +1351,33 @@ return;
 }
 
 
-let change =
-cash - total;
+let change=cash-total;
 
 
-let sale = {
+let sale={
 
 orderNo:orderNo,
 
-date:
-new Date()
-.toLocaleString(),
+date:new Date().toLocaleString(),
 
-cashier:
-currentUser
-? currentUser.id
-: "",
+cashier:currentUser.id,
+
+cashierName:currentUser.name,
 
 type:orderType,
 
-items:
-cart.map(
+items:cart.map(
 function(item){
 
-return {
+return{
 
 id:item.id,
 
 name:item.name,
 
-price:item.price,
+price:Number(item.price),
 
-qty:item.qty
+qty:Number(item.qty)
 
 };
 
@@ -1373,11 +1410,11 @@ String(orderNo)
 
 }catch(error){
 
+console.log(error);
+
 alert(
 "May problema sa pag-save ng order."
 );
-
-console.log(error);
 
 return;
 
@@ -1385,25 +1422,11 @@ return;
 
 
 alert(
-
-"ORDER COMPLETED!\n\n"
-+
-"Order #: "
-+
-orderNo
-+
-"\nTotal: ₱"
-+
-total.toFixed(2)
-+
-"\nBayad: ₱"
-+
-cash.toFixed(2)
-+
-"\nSukli: ₱"
-+
-change.toFixed(2)
-
+"ORDER COMPLETED!\n\n"+
+"Order #: "+orderNo+
+"\nTotal: ₱"+total.toFixed(2)+
+"\nBayad: ₱"+cash.toFixed(2)+
+"\nSukli: ₱"+change.toFixed(2)
 );
 
 
@@ -1411,8 +1434,1026 @@ orderNo++;
 
 document.getElementById(
 "orderNumber"
-).innerText = order
-   
+).innerText=orderNo;
+
+clearCart();
+
+renderHistory();
+
+}
+
+
+/* =========================
+   HISTORY
+========================= */
+
+function renderHistory(){
+
+let container=document.getElementById(
+"history"
+);
+
+if(!container){
+return;
+}
+
+
+if(sales.length===0){
+
+container.innerHTML=
+"<p>Wala pang sales history.</p>";
+
+return;
+
+}
+
+
+let html="";
+
+
+sales.forEach(
+function(sale){
+
+html+=`
+
+<div class="admin-item">
+
+<b>
+Order #${sale.orderNo}
+</b>
+
+<br>
+
+<span class="small">
+${escapeHtml(sale.date||"")}
+</span>
+
+<div class="summary">
+
+<b>
+Cashier:
+</b>
+${escapeHtml(sale.cashierName||sale.cashier||"")}
+
+<br>
+
+<b>
+Type:
+</b>
+${escapeHtml(sale.type||"")}
+
+<br>
+
+<b>
+Total:
+</b>
+₱${Number(sale.total||0).toFixed(2)}
+
+<br>
+
+<b>
+Cash:
+</b>
+₱${Number(sale.cash||0).toFixed(2)}
+
+<br>
+
+<b>
+Change:
+</b>
+₱${Number(sale.change||0).toFixed(2)}
+
+</div>
+
+<div style="margin-top:8px">
+
+`;
+
+if(Array.isArray(sale.items)){
+
+sale.items.forEach(
+function(item){
+
+html+=`
+
+<div>
+${escapeHtml(item.name)}
+x${Number(item.qty)}
+=
+₱${(
+Number(item.price)*
+Number(item.qty)
+).toFixed(2)}
+</div>
+
+`;
+
+}
+);
+
+}
+
+html+=`
+
+</div>
+
+</div>
+
+`;
+
+}
+);
+
+
+container.innerHTML=html;
+
+}
+
+
+/* =========================
+   CLEAR HISTORY
+========================= */
+
+function clearHistory(){
+
+if(
+!currentUser ||
+currentUser.role!=="admin"
+){
+
+alert(
+"Admin lang ang puwedeng mag-clear ng history."
+);
+
+return;
+
+}
+
+
+if(!confirm(
+"Sigurado ka bang buburahin ang lahat ng sales history?"
+)){
+
+return;
+
+}
+
+
+sales=[];
+
+localStorage.removeItem(
+"foodSales"
+);
+
+localStorage.removeItem(
+"orderNumber"
+);
+
+orderNo=1001;
+
+document.getElementById(
+"orderNumber"
+).innerText=orderNo;
+
+renderHistory();
+
+alert(
+"Na-clear na ang history.\n\n"+
+"Ang susunod na Order Number ay #1001."
+);
+
+}
+
+
+/* =========================
+   ADMIN MENU
+========================= */
+
+function renderAdminMenu(){
+
+let container=document.getElementById(
+"adminMenu"
+);
+
+if(!container){
+return;
+}
+
+
+if(menu.length===0){
+
+container.innerHTML=
+"<p>Wala pang menu.</p>";
+
+return;
+
+}
+
+
+let html="";
+
+
+menu.forEach(
+function(item){
+
+html+=`
+
+<div class="admin-item">
+
+<h3>
+${escapeHtml(item.name)}
+</h3>
+
+<p>
+Price:
+<b>
+₱${Number(item.price).toFixed(2)}
+</b>
+</p>
+
+<p>
+
+Status:
+
+${
+item.available
+
+?
+`<span class="active">AVAILABLE</span>`
+
+:
+`<span class="disabled">OUT OF STOCK</span>`
+}
+
+</p>
+
+
+<button
+class="blue"
+onclick="editMenu(${Number(item.id)})"
+>
+✏️ Edit
+</button>
+
+
+<button
+class="gray"
+onclick="toggleStock(${Number(item.id)})"
+>
+${
+item.available
+? "🚫 Out of Stock"
+: "✅ Available"
+}
+</button>
+
+
+<button
+class="danger"
+onclick="deleteMenu(${Number(item.id)})"
+>
+🗑️ Delete
+</button>
+
+</div>
+
+`;
+
+}
+);
+
+
+container.innerHTML=html;
+
+}
+
+
+/* =========================
+   ADD MENU
+========================= */
+
+function addMenu(){
+
+if(
+!currentUser ||
+currentUser.role!=="admin"
+){
+
+alert("Admin lang ang puwedeng magdagdag ng menu.");
+
+return;
+
+}
+
+
+let name=document.getElementById(
+"newName"
+).value.trim();
+
+let price=Number(
+document.getElementById(
+"newPrice"
+).value
+);
+
+
+if(!name){
+
+alert("Ilagay ang pangalan ng menu.");
+
+return;
+
+}
+
+
+if(
+!Number.isFinite(price) ||
+price<=0
+){
+
+alert("Ilagay ang tamang presyo.");
+
+return;
+
+}
+
+
+let nextId=1;
+
+if(menu.length>0){
+
+nextId=
+Math.max(
+...menu.map(
+function(x){
+return Number(x.id)||0;
+}
+)
+)+1;
+
+}
+
+
+menu.push({
+
+id:nextId,
+
+name:name,
+
+price:price,
+
+available:true
+
+});
+
+
+saveMenu();
+
+renderMenu();
+
+renderAdminMenu();
+
+
+document.getElementById(
+"newName"
+).value="";
+
+document.getElementById(
+"newPrice"
+).value="";
+
+alert(
+"Naidagdag na ang menu."
+);
+
+}
+
+
+/* =========================
+   EDIT MENU
+========================= */
+
+function editMenu(id){
+
+let item=menu.find(
+function(x){
+
+return Number(x.id)===Number(id);
+
+}
+);
+
+
+if(!item){
+return;
+}
+
+
+let newName=prompt(
+"Product name:",
+item.name
+);
+
+
+if(newName===null){
+return;
+}
+
+
+newName=newName.trim();
+
+
+if(!newName){
+
+alert("Hindi puwedeng walang pangalan.");
+
+return;
+
+}
+
+
+let newPrice=prompt(
+"Price:",
+item.price
+);
+
+
+if(newPrice===null){
+return;
+}
+
+
+newPrice=Number(newPrice);
+
+
+if(
+!Number.isFinite(newPrice) ||
+newPrice<=0
+){
+
+alert("Hindi valid ang price.");
+
+return;
+
+}
+
+
+item.name=newName;
+
+item.price=newPrice;
+
+saveMenu();
+
+renderMenu();
+
+renderAdminMenu();
+
+alert(
+"Na-update na ang menu."
+);
+
+}
+
+
+/* =========================
+   DELETE MENU
+========================= */
+
+function deleteMenu(id){
+
+let item=menu.find(
+function(x){
+
+return Number(x.id)===Number(id);
+
+}
+);
+
+
+if(!item){
+return;
+}
+
+
+if(
+!confirm(
+"Burahin ang "+item.name+"?"
+)
+){
+
+return;
+
+}
+
+
+menu=menu.filter(
+function(x){
+
+return Number(x.id)!==Number(id);
+
+}
+);
+
+
+saveMenu();
+
+renderMenu();
+
+renderAdminMenu();
+
+}
+
+
+/* =========================
+   TOGGLE STOCK
+========================= */
+
+function toggleStock(id){
+
+let item=menu.find(
+function(x){
+
+return Number(x.id)===Number(id);
+
+}
+);
+
+
+if(!item){
+return;
+}
+
+
+item.available=!item.available;
+
+saveMenu();
+
+renderMenu();
+
+renderAdminMenu();
+
+}
+
+
+/* =========================
+   CASHIER LIST
+========================= */
+
+function renderCashiers(){
+
+let container=document.getElementById(
+"cashierList"
+);
+
+if(!container){
+return;
+}
+
+
+if(cashiers.length===0){
+
+container.innerHTML=
+"<p>Wala pang cashier account.</p>";
+
+return;
+
+}
+
+
+let html="";
+
+
+cashiers.forEach(
+function(cashier){
+
+html+=`
+
+<div class="admin-item">
+
+<h3>
+${escapeHtml(cashier.name)}
+</h3>
+
+<p>
+ID:
+<b>
+${escapeHtml(cashier.id)}
+</b>
+</p>
+
+<p>
+
+Status:
+
+${
+cashier.active
+
+?
+`<span class="active">ACTIVE</span>`
+
+:
+`<span class="disabled">DISABLED</span>`
+}
+
+</p>
+
+
+<button
+class="blue"
+onclick="editCashier('${safeJs(cashier.id)}')"
+>
+✏️ Edit
+</button>
+
+
+<button
+class="gray"
+onclick="toggleCashier('${safeJs(cashier.id)}')"
+>
+${
+cashier.active
+? "🚫 Disable"
+: "✅ Enable"
+}
+</button>
+
+
+<button
+class="danger"
+onclick="deleteCashier('${safeJs(cashier.id)}')"
+>
+🗑️ Delete
+</button>
+
+</div>
+
+`;
+
+}
+);
+
+
+container.innerHTML=html;
+
+}
+
+
+/* =========================
+   ADD CASHIER
+========================= */
+
+function addCashier(){
+
+if(
+!currentUser ||
+currentUser.role!=="admin"
+){
+
+alert(
+"Admin lang ang puwedeng magdagdag ng cashier."
+);
+
+return;
+
+}
+
+
+let name=document.getElementById(
+"newCashierName"
+).value.trim();
+
+let id=document.getElementById(
+"newCashierId"
+).value.trim();
+
+let password=document.getElementById(
+"newCashierPassword"
+).value.trim();
+
+
+if(!name){
+
+alert("Ilagay ang pangalan ng cashier.");
+
+return;
+
+}
+
+
+if(!id){
+
+alert("Ilagay ang User ID.");
+
+return;
+
+}
+
+
+if(!password){
+
+alert("Ilagay ang password.");
+
+return;
+
+}
+
+
+let exists=cashiers.some(
+function(x){
+
+return String(x.id)
+.trim()
+.toLowerCase()
+===
+id.toLowerCase();
+
+}
+);
+
+
+if(exists){
+
+alert(
+"May gumagamit na ng User ID na ito."
+);
+
+return;
+
+}
+
+
+cashiers.push({
+
+id:id,
+
+name:name,
+
+password:password,
+
+active:true
+
+});
+
+
+saveCashiers();
+
+renderCashiers();
+
+
+document.getElementById(
+"newCashierName"
+).value="";
+
+document.getElementById(
+"newCashierId"
+).value="";
+
+document.getElementById(
+"newCashierPassword"
+).value="";
+
+
+alert(
+"Naidagdag na ang cashier."
+);
+
+}
+
+
+/* =========================
+   EDIT CASHIER
+========================= */
+
+function editCashier(id){
+
+let cashier=cashiers.find(
+function(x){
+
+return String(x.id)===String(id);
+
+}
+);
+
+
+if(!cashier){
+return;
+}
+
+
+let newName=prompt(
+"Cashier name:",
+cashier.name
+);
+
+
+if(newName===null){
+return;
+}
+
+
+newName=newName.trim();
+
+
+if(!newName){
+
+alert("Hindi puwedeng walang pangalan.");
+
+return;
+
+}
+
+
+let newPassword=prompt(
+"Password:",
+cashier.password
+);
+
+
+if(newPassword===null){
+return;
+}
+
+
+newPassword=newPassword.trim();
+
+
+if(!newPassword){
+
+alert("Hindi puwedeng walang password.");
+
+return;
+
+}
+
+
+cashier.name=newName;
+
+cashier.password=newPassword;
+
+saveCashiers();
+
+renderCashiers();
+
+alert(
+"Na-update na ang cashier."
+);
+
+}
+
+
+/* =========================
+   TOGGLE CASHIER
+========================= */
+
+function toggleCashier(id){
+
+let cashier=cashiers.find(
+function(x){
+
+return String(x.id)===String(id);
+
+}
+);
+
+
+if(!cashier){
+return;
+}
+
+
+cashier.active=!cashier.active;
+
+saveCashiers();
+
+renderCashiers();
+
+}
+
+
+/* =========================
+   DELETE CASHIER
+========================= */
+
+function deleteCashier(id){
+
+let cashier=cashiers.find(
+function(x){
+
+return String(x.id)===String(id);
+
+}
+);
+
+
+if(!cashier){
+return;
+}
+
+
+if(
+String(cashier.id).toLowerCase()
+===
+"cash001"
+){
+
+if(
+!confirm(
+"Burahin din ang default CASH001?"
+)
+){
+
+return;
+
+}
+
+}
+
+
+if(
+!confirm(
+"Burahin ang cashier "+cashier.name+"?"
+)
+){
+
+return;
+
+}
+
+
+cashiers=cashiers.filter(
+function(x){
+
+return String(x.id)!==String(id);
+
+}
+);
+
+
+saveCashiers();
+
+renderCashiers();
+
+}
+
+
+/* =========================
+   ESCAPE HTML
+========================= */
+
+function escapeHtml(value){
+
+return String(value)
+.replace(/&/g,"&amp;")
+.replace(/</g,"&lt;")
+.replace(/>/g,"&gt;")
+.replace(/"/g,"&quot;")
+.replace(/'/g,"&#039;");
+
+}
+
+
+/* =========================
+   SAFE JAVASCRIPT VALUE
+========================= */
+
+function safeJs(value){
+
+return String(value)
+.replace(/\\/g,"\\\\")
+.replace(/'/g,"\\'")
+.replace(/"/g,"&quot;");
+
+}
+
+
+/* =========================
+   SERVICE WORKER
+========================= */
+
+if(
+"serviceWorker" in navigator
+){
+
+window.addEventListener(
+"load",
+function(){
+
+navigator.serviceWorker
+.register("./service-worker.js")
+.catch(
+function(error){
+
+console.log(
+"Service Worker error:",
+error
+);
+
+}
+);
+
+}
+);
+
 }
 
 </script>
