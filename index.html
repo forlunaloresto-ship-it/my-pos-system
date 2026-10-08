@@ -1,31 +1,38 @@
 <!DOCTYPE html>
 <html lang="tl">
 <head>
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#ffffff">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#ffffff">
+
 <title>Food POS</title>
 
 <style>
-*{box-sizing:border-box}
+*{
+box-sizing:border-box;
+}
+
 body{
 margin:0;
 font-family:Arial,sans-serif;
 background:#f4f4f4;
 color:#222;
 }
+
 header{
 background:#d71920;
 color:white;
 padding:15px;
 text-align:center;
 }
+
 .container{
 max-width:1100px;
 margin:auto;
 padding:15px;
 }
+
 .card{
 background:white;
 border-radius:12px;
@@ -33,6 +40,7 @@ padding:15px;
 margin-bottom:15px;
 box-shadow:0 2px 8px #0002;
 }
+
 button{
 border:0;
 border-radius:8px;
@@ -40,41 +48,86 @@ padding:10px 14px;
 cursor:pointer;
 font-weight:bold;
 }
-.primary{background:#d71920;color:white}
-.green{background:#168a45;color:white}
-.gray{background:#777;color:white}
-.danger{background:#b00020;color:white}
-.hidden{display:none}
+
+button:disabled{
+cursor:not-allowed;
+}
+
+input{
+width:100%;
+padding:11px;
+margin:6px 0 10px;
+border:1px solid #ccc;
+border-radius:8px;
+font-size:16px;
+}
+
+.primary{
+background:#d71920;
+color:white;
+}
+
+.green{
+background:#168a45;
+color:white;
+}
+
+.gray{
+background:#777;
+color:white;
+}
+
+.danger{
+background:#b00020;
+color:white;
+}
+
+.hidden{
+display:none;
+}
 
 .login{
 max-width:400px;
 margin:60px auto;
 }
+
 .tabs{
 display:flex;
 gap:8px;
 flex-wrap:wrap;
 margin-bottom:15px;
 }
-.tabs button{flex:1}
+
+.tabs button{
+flex:1;
+min-width:100px;
+}
 
 .menu{
 display:grid;
 grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
 gap:10px;
 }
+
 .product{
 border:1px solid #ddd;
 border-radius:10px;
 padding:12px;
 background:#fff;
 }
-.product h3{margin:5px 0}
+
+.product h3{
+margin:5px 0;
+}
+
 .price{
 font-size:20px;
 font-weight:bold;
 }
-.out{opacity:.5}
+
+.out{
+opacity:.5;
+}
 
 .cart-row{
 display:flex;
@@ -84,32 +137,86 @@ gap:8px;
 border-bottom:1px solid #ddd;
 padding:10px 0;
 }
-.qty button{padding:5px 9px}
+
+.qty{
+display:flex;
+align-items:center;
+gap:6px;
+}
+
+.qty button{
+padding:5px 9px;
+}
+
 .total{
 font-size:25px;
 font-weight:bold;
 margin:15px 0;
 }
+
 table{
 width:100%;
 border-collapse:collapse;
+display:block;
+overflow-x:auto;
 }
+
 th,td{
 padding:8px;
 border-bottom:1px solid #ddd;
 text-align:left;
+white-space:nowrap;
 }
+
 .small{
 font-size:13px;
 color:#666;
 }
+
 .active{
 color:green;
 font-weight:bold;
 }
+
 .disabled{
 color:#b00020;
 font-weight:bold;
+}
+
+.admin-item{
+border:1px solid #ddd;
+border-radius:10px;
+padding:12px;
+margin-bottom:10px;
+}
+
+.admin-item button{
+margin:3px;
+}
+
+.receipt{
+font-family:monospace;
+font-size:13px;
+}
+
+@media(max-width:500px){
+
+.container{
+padding:10px;
+}
+
+.card{
+padding:12px;
+}
+
+.cart-row{
+font-size:14px;
+}
+
+.total{
+font-size:22px;
+}
+
 }
 </style>
 </head>
@@ -117,9 +224,13 @@ font-weight:bold;
 <body>
 
 <header>
+
 <h2>🍗 FOOD POS</h2>
+
 <div id="userInfo"></div>
+
 </header>
+
 
 <!-- LOGIN -->
 
@@ -133,19 +244,24 @@ font-weight:bold;
 
 <input
 id="loginId"
-placeholder="Admin o Cashier ID">
+placeholder="Admin o Cashier ID"
+autocomplete="username"
+>
 
 <label>Password</label>
 
 <input
 id="loginPassword"
 type="password"
-placeholder="Password">
+placeholder="Password"
+autocomplete="current-password"
+>
 
 <button
 class="primary"
 style="width:100%"
-onclick="login()">
+onclick="login()"
+>
 
 LOGIN
 
@@ -155,6 +271,7 @@ LOGIN
 
 Admin:
 <b>admin</b> / <b>2026</b>
+
 <br>
 
 Cashier:
@@ -175,33 +292,29 @@ Cashier:
 
 <button
 class="primary"
-onclick="showPage('posPage')">
-
+onclick="showPage('posPage')"
+>
 🛒 POS
-
 </button>
 
 <button
-onclick="showPage('historyPage')">
-
+onclick="showPage('historyPage')"
+>
 📋 History
-
 </button>
 
 <button
 id="adminBtn"
-onclick="showPage('adminPage')">
-
+onclick="showPage('adminPage')"
+>
 ⚙️ Admin
-
 </button>
 
 <button
 class="danger"
-onclick="logout()">
-
+onclick="logout()"
+>
 Logout
-
 </button>
 
 </div>
@@ -218,25 +331,21 @@ Logout
 <button
 id="dineBtn"
 class="primary"
-onclick="setOrderType('Dine In')">
-
+onclick="setOrderType('Dine In')"
+>
 🍽️ Dine In
-
 </button>
 
 <button
 id="takeBtn"
-onclick="setOrderType('Take Out')">
-
+onclick="setOrderType('Take Out')"
+>
 🥡 Take Out
-
 </button>
 
 <p>
-
 Order #:
-<b id="orderNumber"></b>
-
+<b id="orderNumber">1001</b>
 </p>
 
 </div>
@@ -246,7 +355,10 @@ Order #:
 
 <h3>Menu</h3>
 
-<div id="menuList" class="menu"></div>
+<div
+id="menuList"
+class="menu"
+></div>
 
 </div>
 
@@ -269,8 +381,10 @@ Total:
 <input
 id="cash"
 type="number"
+inputmode="decimal"
 placeholder="Ilagay ang bayad"
-oninput="calculateChange()">
+oninput="calculateChange()"
+>
 
 <h3>
 
@@ -282,19 +396,17 @@ Sukli:
 <button
 class="green"
 style="width:100%"
-onclick="completeOrder()">
-
+onclick="completeOrder()"
+>
 ✅ COMPLETE ORDER
-
 </button>
 
 <button
 class="gray"
 style="width:100%;margin-top:8px"
-onclick="clearCart()">
-
+onclick="clearCart()"
+>
 CLEAR ORDER
-
 </button>
 
 </div>
@@ -304,7 +416,10 @@ CLEAR ORDER
 
 <!-- HISTORY -->
 
-<div id="historyPage" class="hidden">
+<div
+id="historyPage"
+class="hidden"
+>
 
 <div class="card">
 
@@ -312,10 +427,9 @@ CLEAR ORDER
 
 <button
 class="gray"
-onclick="clearHistory()">
-
+onclick="clearHistory()"
+>
 Clear History
-
 </button>
 
 <div id="history"></div>
@@ -327,7 +441,10 @@ Clear History
 
 <!-- ADMIN -->
 
-<div id="adminPage" class="hidden">
+<div
+id="adminPage"
+class="hidden"
+>
 
 
 <!-- MENU MANAGEMENT -->
@@ -340,19 +457,21 @@ Clear History
 
 <input
 id="newName"
-placeholder="Product name">
+placeholder="Product name"
+>
 
 <input
 id="newPrice"
 type="number"
-placeholder="Price">
+inputmode="decimal"
+placeholder="Price"
+>
 
 <button
 class="green"
-onclick="addMenu()">
-
+onclick="addMenu()"
+>
 ➕ Add Menu
-
 </button>
 
 </div>
@@ -377,23 +496,25 @@ onclick="addMenu()">
 
 <input
 id="newCashierName"
-placeholder="Cashier name">
+placeholder="Cashier name"
+>
 
 <input
 id="newCashierId"
-placeholder="User ID">
+placeholder="User ID"
+>
 
 <input
 id="newCashierPassword"
 type="password"
-placeholder="Password">
+placeholder="Password"
+>
 
 <button
 class="green"
-onclick="addCashier()">
-
+onclick="addCashier()"
+>
 ➕ Add Cashier
-
 </button>
 
 </div>
@@ -414,6 +535,49 @@ onclick="addCashier()">
 
 <script>
 
+/* =========================
+   SAFE LOCAL STORAGE
+========================= */
+
+function getStorageArray(key, fallback){
+
+try{
+
+let data =
+localStorage.getItem(key);
+
+if(!data){
+
+return fallback;
+
+}
+
+let parsed =
+JSON.parse(data);
+
+return Array.isArray(parsed)
+? parsed
+: fallback;
+
+}catch(error){
+
+console.log(
+"Storage error:",
+key,
+error
+);
+
+return fallback;
+
+}
+
+}
+
+
+/* =========================
+   GLOBAL VARIABLES
+========================= */
+
 let currentUser = null;
 
 let orderType = "Dine In";
@@ -421,94 +585,135 @@ let orderType = "Dine In";
 let cart = [];
 
 
-/* MENU */
+/* =========================
+   DEFAULT MENU
+========================= */
 
 let menu =
-JSON.parse(
-localStorage.getItem("foodMenu")
-) || [
-
+getStorageArray(
+"foodMenu",
+[
 {
 id:1,
 name:"Sundae",
 price:50,
 available:true
 },
-
 {
 id:2,
 name:"Fries",
 price:50,
 available:true
 },
-
 {
 id:3,
 name:"Fried Chicken",
 price:99,
 available:true
 },
-
 {
 id:4,
 name:"Float",
 price:60,
 available:true
 }
+]
+);
 
-];
 
-
-/* CASHIER */
+/* =========================
+   DEFAULT CASHIERS
+========================= */
 
 let cashiers =
-JSON.parse(
-localStorage.getItem("foodCashiers")
-) || [
-
+getStorageArray(
+"foodCashiers",
+[
 {
 id:"CASH001",
 name:"Cashier 1",
 password:"2026",
 active:true
 }
+]
+);
 
-];
 
-
-/* SALES */
+/* =========================
+   SALES
+========================= */
 
 let sales =
-JSON.parse(
-localStorage.getItem("foodSales")
-) || [];
+getStorageArray(
+"foodSales",
+[]
+);
 
 
-/* ORDER NUMBER */
+/* =========================
+   ORDER NUMBER
+========================= */
+
+let savedOrderNumber =
+Number(
+localStorage.getItem("orderNumber")
+);
+
+if(
+!Number.isFinite(savedOrderNumber) ||
+savedOrderNumber < 1000
+){
+
+savedOrderNumber = 1000;
+
+}
 
 let orderNo =
-Number(
-localStorage.getItem("orderNumber") || 1000
-) + 1;
-
-document.getElementById("orderNumber")
-.innerText = orderNo;
+savedOrderNumber + 1;
 
 
-/* LOGIN */
+/* =========================
+   START APP
+========================= */
+
+document.addEventListener(
+"DOMContentLoaded",
+function(){
+
+document.getElementById(
+"orderNumber"
+).innerText = orderNo;
+
+renderMenu();
+
+renderCart();
+
+renderHistory();
+
+renderAdminMenu();
+
+renderCashiers();
+
+}
+);
+
+
+/* =========================
+   LOGIN
+========================= */
 
 function login(){
 
 let id =
-document.getElementById("loginId")
-.value.trim();
+document.getElementById(
+"loginId"
+).value.trim();
 
 let password =
-document.getElementById("loginPassword")
-.value;
+document.getElementById(
+"loginPassword"
+).value;
 
-
-/* ADMIN */
 
 if(
 id === "admin" &&
@@ -527,20 +732,25 @@ role:"admin"
 
 }
 
-
-/* CASHIER */
-
 else{
 
 let cashier =
 cashiers.find(
-x =>
-x.id.toLowerCase()
+function(x){
+
+return (
+String(x.id).toLowerCase()
 ===
 id.toLowerCase()
 &&
-x.password === password
+String(x.password)
+===
+password
 );
+
+}
+);
+
 
 if(!cashier){
 
@@ -552,6 +762,7 @@ return;
 
 }
 
+
 if(!cashier.active){
 
 alert(
@@ -561,6 +772,7 @@ alert(
 return;
 
 }
+
 
 currentUser = {
 
@@ -575,15 +787,19 @@ role:"cashier"
 }
 
 
-document.getElementById("loginPage")
-.classList.add("hidden");
+document.getElementById(
+"loginPage"
+).classList.add("hidden");
 
-document.getElementById("app")
-.classList.remove("hidden");
+document.getElementById(
+"app"
+).classList.remove("hidden");
 
 
-document.getElementById("userInfo")
-.innerText =
+document.getElementById(
+"userInfo"
+).innerText =
+
 currentUser.role.toUpperCase()
 +
 " • "
@@ -595,8 +811,10 @@ currentUser.name
 currentUser.id;
 
 
-document.getElementById("adminBtn")
-.style.display =
+document.getElementById(
+"adminBtn"
+).style.display =
+
 currentUser.role === "admin"
 ? "block"
 : "none";
@@ -615,7 +833,9 @@ showPage("posPage");
 }
 
 
-/* LOGOUT */
+/* =========================
+   LOGOUT
+========================= */
 
 function logout(){
 
@@ -623,29 +843,39 @@ currentUser = null;
 
 cart = [];
 
-document.getElementById("app")
-.classList.add("hidden");
+document.getElementById(
+"app"
+).classList.add("hidden");
 
-document.getElementById("loginPage")
-.classList.remove("hidden");
+document.getElementById(
+"loginPage"
+).classList.remove("hidden");
 
-document.getElementById("loginId")
-.value = "";
+document.getElementById(
+"loginId"
+).value = "";
 
-document.getElementById("loginPassword")
-.value = "";
+document.getElementById(
+"loginPassword"
+).value = "";
 
 }
 
 
-/* PAGE */
+/* =========================
+   PAGE
+========================= */
 
 function showPage(page){
 
 if(
-page === "adminPage" &&
-(!currentUser ||
-currentUser.role !== "admin")
+page === "adminPage"
+&&
+(
+!currentUser
+||
+currentUser.role !== "admin"
+)
 ){
 
 alert(
@@ -657,35 +887,52 @@ return;
 }
 
 
-document.getElementById("posPage")
-.classList.add("hidden");
+document.getElementById(
+"posPage"
+).classList.add("hidden");
 
-document.getElementById("historyPage")
-.classList.add("hidden");
+document.getElementById(
+"historyPage"
+).classList.add("hidden");
 
-document.getElementById("adminPage")
-.classList.add("hidden");
+document.getElementById(
+"adminPage"
+).classList.add("hidden");
 
-document.getElementById(page)
-.classList.remove("hidden");
+
+let selectedPage =
+document.getElementById(page);
+
+if(selectedPage){
+
+selectedPage.classList.remove(
+"hidden"
+);
+
+}
 
 }
 
 
-/* ORDER TYPE */
+/* =========================
+   ORDER TYPE
+========================= */
 
 function setOrderType(type){
 
 orderType = type;
 
-document.getElementById("dineBtn")
-.className =
+document.getElementById(
+"dineBtn"
+).className =
 type === "Dine In"
 ? "primary"
 : "";
 
-document.getElementById("takeBtn")
-.className =
+
+document.getElementById(
+"takeBtn"
+).className =
 type === "Take Out"
 ? "primary"
 : "";
@@ -693,21 +940,26 @@ type === "Take Out"
 }
 
 
-/* MENU */
+/* =========================
+   RENDER MENU
+========================= */
 
 function renderMenu(){
 
 let html = "";
 
-menu.forEach(item => {
+menu.forEach(
+function(item){
 
 html += `
 
 <div class="product ${
-!item.available ? "out" : ""
+item.available ? "" : "out"
 }">
 
-<h3>${item.name}</h3>
+<h3>
+${escapeHtml(item.name)}
+</h3>
 
 <div class="price">
 
@@ -723,53 +975,76 @@ item.available
 `<button
 class="primary"
 style="width:100%;margin-top:8px"
-onclick="addToCart(${item.id})">
-
+onclick="addToCart(${item.id})"
+>
 ADD
-
 </button>`
 
 :
 
 `<button
 disabled
-style="width:100%;margin-top:8px">
-
+style="width:100%;margin-top:8px"
+>
 OUT OF STOCK
-
 </button>`
+
 }
 
 </div>
 
 `;
 
-});
+}
+);
 
-document.getElementById("menuList")
-.innerHTML = html;
+
+document.getElementById(
+"menuList"
+).innerHTML = html;
 
 }
 
 
-/* ADD CART */
+/* =========================
+   ADD TO CART
+========================= */
 
 function addToCart(id){
 
 let item =
-menu.find(x => x.id === id);
+menu.find(
+function(x){
+return x.id === id;
+}
+);
 
-if(!item || !item.available)
+
+if(
+!item ||
+!item.available
+){
+
 return;
 
+}
+
+
 let existing =
-cart.find(x => x.id === id);
+cart.find(
+function(x){
+return x.id === id;
+}
+);
+
 
 if(existing){
 
 existing.qty++;
 
-}else{
+}
+
+else{
 
 cart.push({
 
@@ -785,16 +1060,20 @@ qty:1
 
 }
 
+
 renderCart();
 
 }
 
 
-/* CART */
+/* =========================
+   RENDER CART
+========================= */
 
 function renderCart(){
 
 let html = "";
+
 
 if(cart.length === 0){
 
@@ -803,7 +1082,9 @@ html =
 
 }
 
-cart.forEach(item => {
+
+cart.forEach(
+function(item){
 
 html += `
 
@@ -811,10 +1092,13 @@ html += `
 
 <div>
 
-<b>${item.name}</b>
+<b>
+${escapeHtml(item.name)}
+</b>
+
 <br>
 
-₱${item.price.toFixed(2)}
+₱${Number(item.price).toFixed(2)}
 
 </div>
 
@@ -822,19 +1106,19 @@ html += `
 <div class="qty">
 
 <button
-onclick="changeQty(${item.id},-1)">
-
+onclick="changeQty(${item.id},-1)"
+>
 -
-
 </button>
 
-<b>${item.qty}</b>
+<b>
+${item.qty}
+</b>
 
 <button
-onclick="changeQty(${item.id},1)">
-
+onclick="changeQty(${item.id},1)"
+>
 +
-
 </button>
 
 </div>
@@ -842,10 +1126,13 @@ onclick="changeQty(${item.id},1)">
 
 <b>
 
-₱${(
-item.price *
-item.qty
-).toFixed(2)}
+₱${
+(
+Number(item.price)
+*
+Number(item.qty)
+).toFixed(2)
+}
 
 </b>
 
@@ -853,60 +1140,88 @@ item.qty
 
 `;
 
-});
+}
+);
 
-document.getElementById("cart")
-.innerHTML = html;
+
+document.getElementById(
+"cart"
+).innerHTML = html;
 
 updateTotal();
 
 }
 
 
-/* QUANTITY */
+/* =========================
+   CHANGE QUANTITY
+========================= */
 
 function changeQty(id,amount){
 
 let item =
-cart.find(x => x.id === id);
+cart.find(
+function(x){
+return x.id === id;
+}
+);
 
-if(!item)
+
+if(!item){
+
 return;
 
+}
+
+
 item.qty += amount;
+
 
 if(item.qty <= 0){
 
 cart =
 cart.filter(
-x => x.id !== id
+function(x){
+return x.id !== id;
+}
 );
 
 }
+
 
 renderCart();
 
 }
 
 
-/* TOTAL */
+/* =========================
+   TOTAL
+========================= */
 
 function getTotal(){
 
 return cart.reduce(
-(sum,item) =>
+function(sum,item){
+
+return (
 sum +
-item.price *
-item.qty,
+Number(item.price)
+*
+Number(item.qty)
+);
+
+},
 0
 );
 
 }
 
+
 function updateTotal(){
 
-document.getElementById("total")
-.innerText =
+document.getElementById(
+"total"
+).innerText =
 getTotal().toFixed(2);
 
 calculateChange();
@@ -914,7 +1229,9 @@ calculateChange();
 }
 
 
-/* CHANGE */
+/* =========================
+   CHANGE
+========================= */
 
 function calculateChange(){
 
@@ -923,15 +1240,20 @@ getTotal();
 
 let cash =
 Number(
-document.getElementById("cash")
-.value || 0
+document.getElementById(
+"cash"
+).value || 0
 );
+
 
 let change =
 cash - total;
 
-document.getElementById("change")
-.innerText =
+
+document.getElementById(
+"change"
+).innerText =
+
 (
 change > 0
 ? change
@@ -941,38 +1263,51 @@ change > 0
 }
 
 
-/* COMPLETE ORDER */
+/* =========================
+   COMPLETE ORDER
+========================= */
 
 function completeOrder(){
 
 if(cart.length === 0){
 
-alert("Wala pang order.");
+alert(
+"Wala pang order."
+);
 
 return;
 
 }
+
 
 let total =
 getTotal();
 
+
 let cash =
 Number(
-document.getElementById("cash")
-.value || 0
+document.getElementById(
+"cash"
+).value || 0
 );
+
 
 if(cash < total){
 
 alert(
-"Kulang ang bayad.\n\n" +
-"Total: ₱" +
+
+"Kulang ang bayad.\n\n"
++
+"Total: ₱"
++
 total.toFixed(2)
+
 );
 
 return;
 
 }
+
 
 let change =
 cash - total;
@@ -987,28 +1322,44 @@ new Date()
 .toLocaleString(),
 
 cashier:
-currentUser.id,
+currentUser
+? currentUser.id
+: "",
 
-type:
-orderType,
+type:orderType,
 
 items:
-[...cart],
+cart.map(
+function(item){
 
-total:
-total,
+return {
 
-cash:
-cash,
+id:item.id,
 
-change:
-change
+name:item.name,
+
+price:item.price,
+
+qty:item.qty
+
+};
+
+}
+),
+
+total:total,
+
+cash:cash,
+
+change:change
 
 };
 
 
 sales.unshift(sale);
 
+
+try{
 
 localStorage.setItem(
 "foodSales",
@@ -1017,24 +1368,40 @@ JSON.stringify(sales)
 
 localStorage.setItem(
 "orderNumber",
-orderNo
+String(orderNo)
 );
+
+}catch(error){
+
+alert(
+"May problema sa pag-save ng order."
+);
+
+console.log(error);
+
+return;
+
+}
 
 
 alert(
 
-"ORDER COMPLETED!\n\n" +
-
-"Order #: " +
-orderNo +
-
-"\nTotal: ₱" +
-total.toFixed(2) +
-
-"\nBayad: ₱" +
-cash.toFixed(2) +
-
-"\nSukli: ₱" +
+"ORDER COMPLETED!\n\n"
++
+"Order #: "
++
+orderNo
++
+"\nTotal: ₱"
++
+total.toFixed(2)
++
+"\nBayad: ₱"
++
+cash.toFixed(2)
++
+"\nSukli: ₱"
++
 change.toFixed(2)
 
 );
@@ -1042,418 +1409,6 @@ change.toFixed(2)
 
 orderNo++;
 
-document.getElementById("orderNumber")
-.innerText = orderNo;
-
-cart = [];
-
-document.getElementById("cash")
-.value = "";
-
-renderCart();
-
-renderHistory();
-
-}
-
-
-/* CLEAR ORDER */
-
-function clearCart(){
-
-cart = [];
-
-document.getElementById("cash")
-.value = "";
-
-renderCart();
-
-}
-
-
-/* HISTORY */
-
-function renderHistory(){
-
-let html = "";
-
-if(sales.length === 0){
-
-html =
-"<p>Wala pang sales.</p>";
-
-}
-
-else{
-
-html = `
-
-<table>
-
-<tr>
-
-<th>Order</th>
-<th>Date</th>
-<th>Cashier</th>
-<th>Type</th>
-<th>Total</th>
-
-</tr>
-
-`;
-
-sales.forEach(sale => {
-
-html += `
-
-<tr>
-
-<td>#${sale.orderNo}</td>
-
-<td>${sale.date}</td>
-
-<td>${sale.cashier}</td>
-
-<td>${sale.type}</td>
-
-<td>
-₱${Number(sale.total).toFixed(2)}
-</td>
-
-</tr>
-
-`;
-
-});
-
-html += "</table>";
-
-}
-
-document.getElementById("history")
-.innerHTML = html;
-
-}
-
-
-/* CLEAR HISTORY */
-
-function clearHistory(){
-
-if(
-!currentUser ||
-currentUser.role !== "admin"
-){
-
-alert(
-"Admin lang ang puwedeng gumawa nito."
-);
-
-return;
-
-}
-
-if(
-!confirm(
-"Burahin lahat ng sales history at i-reset ang Order Number sa 1001?"
-)
-)
-return;
-
-sales = [];
-
-localStorage.removeItem("foodSales");
-
-localStorage.removeItem("orderNumber");
-
-orderNo = 1001;
-
-document.getElementById("orderNumber")
-.innerText = orderNo;
-
-renderHistory();
-
-alert(
-"Na-clear na ang history.\n\n" +
-"Ang susunod na Order Number ay #1001."
-);
-
-}
-
-
-/* ADMIN MENU */
-
-function renderAdminMenu(){
-
-let html = "";
-
-menu.forEach(item => {
-
-html += `
-
-<div class="card">
-
-<b>${item.name}</b>
-
-<p>
-
-Presyo:
-₱${Number(item.price).toFixed(2)}
-
-</p>
-
-<p>
-
-Status:
-${
-item.available
-? "AVAILABLE"
-: "OUT OF STOCK"
-}
-
-</p>
-
-
-<button
-class="primary"
-onclick="editMenu(${item.id})">
-
-✏️ Edit
-
-</button>
-
-
-<button
-class="gray"
-onclick="toggleStock(${item.id})">
-
-${
-item.available
-? "🚫 Out of Stock"
-: "✅ Available"
-}
-
-</button>
-
-
-<button
-class="danger"
-onclick="deleteMenu(${item.id})">
-
-🗑️ Delete
-
-</button>
-
-</div>
-
-`;
-
-});
-
-document.getElementById("adminMenu")
-.innerHTML = html;
-
-}
-
-
-/* ADD MENU */
-
-function addMenu(){
-
-let name =
-document.getElementById("newName")
-.value.trim();
-
-let price =
-Number(
-document.getElementById("newPrice")
-.value
-);
-
-if(!name || price <= 0){
-
-alert(
-"Ilagay ang pangalan at tamang presyo."
-);
-
-return;
-
-}
-
-
-menu.push({
-
-id:Date.now(),
-
-name:name,
-
-price:price,
-
-available:true
-
-});
-
-
-saveMenu();
-
-
-document.getElementById("newName")
-.value = "";
-
-document.getElementById("newPrice")
-.value = "";
-
-renderMenu();
-
-renderAdminMenu();
-
-alert("Nadagdag na ang menu.");
-
-}
-
-
-/* EDIT MENU */
-
-function editMenu(id){
-
-let item =
-menu.find(x => x.id === id);
-
-if(!item)
-return;
-
-let newName =
-prompt(
-"Product name:",
-item.name
-);
-
-if(newName === null)
-return;
-
-let newPrice =
-prompt(
-"Price:",
-item.price
-);
-
-if(newPrice === null)
-return;
-
-newPrice =
-Number(newPrice);
-
-if(
-!newName.trim() ||
-newPrice <= 0
-){
-
-alert("Invalid.");
-
-return;
-
-}
-
-item.name =
-newName.trim();
-
-item.price =
-newPrice;
-
-saveMenu();
-
-renderMenu();
-
-renderAdminMenu();
-
-}
-
-
-/* DELETE MENU */
-
-function deleteMenu(id){
-
-let item =
-menu.find(x => x.id === id);
-
-if(!item)
-return;
-
-if(
-!confirm(
-"Burahin ang " +
-item.name +
-"?"
-)
-)
-return;
-
-menu =
-menu.filter(
-x => x.id !== id
-);
-
-saveMenu();
-
-renderMenu();
-
-renderAdminMenu();
-
-}
-
-
-/* STOCK */
-
-function toggleStock(id){
-
-let item =
-menu.find(x => x.id === id);
-
-if(!item)
-return;
-
-item.available =
-!item.available;
-
-saveMenu();
-
-renderMenu();
-
-renderAdminMenu();
-
-}
-
-
-/* SAVE MENU */
-
-function saveMenu(){
-
-localStorage.setItem(
-"foodMenu",
-JSON.stringify(menu)
-);
-
-}
-
-
-/* =========================
-   CASHIER MANAGEMENT
-========================= */
-
-function renderCashiers(){
-
-let html = "";
-
-if(cashiers.length === 0){
-
-html =
-"<p>Wala pang cashier account.</p>";
-
-}
-
-
-cashiers.forEach(cashier => {
-
-html += `
-
-<div class="
+document.getElementById(
+"orderNumber"
+).innerText = order
