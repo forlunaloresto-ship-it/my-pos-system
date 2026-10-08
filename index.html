@@ -1135,8 +1135,6 @@ document.getElementById("history")
 .innerHTML = html;
 
 }
-
-
 /* CLEAR HISTORY */
 
 function clearHistory(){
@@ -1156,7 +1154,7 @@ return;
 
 if(
 !confirm(
-"Burahin lahat ng sales history?"
+"Burahin lahat ng sales history at i-reset ang Order Number sa 1001?"
 )
 )
 return;
@@ -1165,29 +1163,25 @@ sales = [];
 
 localStorage.removeItem("foodSales");
 
+/* RESET ORDER NUMBER */
+
+localStorage.removeItem("orderNumber");
+
+orderNo = 1001;
+
+document.getElementById("orderNumber")
+.innerText = orderNo;
+
 renderHistory();
+
+alert(
+"Na-clear na ang history.\n\n" +
+"Ang susunod na Order Number ay #1001."
+);
 
 }
 
-
-/* ADMIN MENU */
-
-function renderAdminMenu(){
-
-let html = "";
-
-menu.forEach(item => {
-
-html += `
-
-<div class="card">
-
-<b>${item.name}</b>
-
-<p>
-
-Presyo:
-₱${Number(item.price).toFixed(2)}
+{Number(item.price).toFixed(2)}
 
 </p>
 
