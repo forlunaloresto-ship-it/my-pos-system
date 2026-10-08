@@ -1,14 +1,21 @@
 <!DOCTYPE html>
 <html lang="tl">
 <head>
+
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
 <link rel="manifest" href="manifest.json">
+
 <meta name="theme-color" content="#ffffff">
 
 <title>Food POS</title>
 
+
 <style>
+
 *{
 box-sizing:border-box;
 }
@@ -54,7 +61,8 @@ cursor:not-allowed;
 opacity:.6;
 }
 
-input{
+input,
+select{
 width:100%;
 padding:11px;
 margin:6px 0 10px;
@@ -88,6 +96,11 @@ background:#1769aa;
 color:white;
 }
 
+.orange{
+background:#f08a00;
+color:white;
+}
+
 .hidden{
 display:none!important;
 }
@@ -111,7 +124,8 @@ min-width:100px;
 
 .menu{
 display:grid;
-grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+grid-template-columns:
+repeat(auto-fit,minmax(150px,1fr));
 gap:10px;
 }
 
@@ -167,7 +181,8 @@ display:block;
 overflow-x:auto;
 }
 
-th,td{
+th,
+td{
 padding:8px;
 border-bottom:1px solid #ddd;
 text-align:left;
@@ -212,6 +227,47 @@ padding:10px;
 margin-top:10px;
 }
 
+.shift-open{
+background:#e8f8ee;
+border:1px solid #168a45;
+color:#126b35;
+}
+
+.shift-closed{
+background:#fff0f0;
+border:1px solid #d71920;
+color:#a00000;
+}
+
+.stat-grid{
+display:grid;
+grid-template-columns:
+repeat(auto-fit,minmax(160px,1fr));
+gap:10px;
+}
+
+.stat{
+background:#f7f7f7;
+border-radius:10px;
+padding:15px;
+border:1px solid #ddd;
+}
+
+.stat-number{
+font-size:24px;
+font-weight:bold;
+margin-top:5px;
+}
+
+.receipt-preview{
+background:white;
+border:1px dashed #aaa;
+padding:10px;
+font-family:monospace;
+max-width:320px;
+margin:10px auto;
+}
+
 @media(max-width:500px){
 
 .container{
@@ -231,10 +287,66 @@ font-size:22px;
 }
 
 }
+
+
+/* =========================
+   THERMAL RECEIPT PRINT
+========================= */
+
+@media print{
+
+body{
+background:white;
+margin:0;
+padding:0;
+}
+
+body *{
+visibility:hidden;
+}
+
+#printReceipt,
+#printReceipt *{
+visibility:visible;
+}
+
+#printReceipt{
+position:absolute;
+left:0;
+top:0;
+width:58mm;
+padding:2mm;
+font-family:monospace;
+font-size:11px;
+color:#000;
+background:#fff;
+}
+
+.no-print{
+display:none!important;
+}
+
+@page{
+size:58mm auto;
+margin:0;
+}
+
+}
+
+
+/* Receipt screen holder */
+
+#printReceipt{
+display:none;
+}
+
 </style>
+
 </head>
 
+
 <body>
+
 
 <header>
 
@@ -245,11 +357,13 @@ font-size:22px;
 </header>
 
 
+
 <!-- =========================
      LOGIN
 ========================= -->
 
-<div id="loginPage" class="container login">
+<div id="loginPage"
+class="container login">
 
 <div class="card">
 
@@ -297,11 +411,14 @@ Cashier:
 </div>
 
 
+
 <!-- =========================
      APP
 ========================= -->
 
-<div id="app" class="container hidden">
+<div id="app"
+class="container hidden">
+
 
 <div class="tabs">
 
@@ -335,6 +452,64 @@ Logout
 </div>
 
 
+
+<!-- =========================
+     SHIFT PANEL
+========================= -->
+
+<div id="shiftPanel"
+class="card">
+
+<h3>🕐 Cashier Shift</h3>
+
+<div id="shiftStatus">
+</div>
+
+<div id="shiftControls">
+
+<label>
+Shift Type
+</label>
+
+<select id="shiftType">
+
+<option value="Opening">
+Opening Shift
+</option>
+
+<option value="Closing">
+Closing Shift
+</option>
+
+</select>
+
+<button
+class="green"
+style="width:100%"
+onclick="startShift()"
+>
+▶️ START SHIFT
+</button>
+
+</div>
+
+<div id="closeShiftControls"
+class="hidden">
+
+<button
+class="danger"
+style="width:100%"
+onclick="closeShift()"
+>
+🔴 CLOSE SHIFT
+</button>
+
+</div>
+
+</div>
+
+
+
 <!-- =========================
      POS
 ========================= -->
@@ -361,11 +536,14 @@ onclick="setOrderType('Take Out')"
 </button>
 
 <p>
+
 Order #:
 <b id="orderNumber">1001</b>
+
 </p>
 
 </div>
+
 
 
 <div class="card">
@@ -378,6 +556,7 @@ class="menu"
 ></div>
 
 </div>
+
 
 
 <div class="card">
@@ -393,7 +572,9 @@ Total:
 
 </div>
 
-<label>Cash Received</label>
+<label>
+Cash Received
+</label>
 
 <input
 id="cash"
@@ -419,6 +600,14 @@ onclick="completeOrder()"
 </button>
 
 <button
+class="blue"
+style="width:100%;margin-top:8px"
+onclick="printLastReceipt()"
+>
+🧾 PRINT LAST RECEIPT
+</button>
+
+<button
 class="gray"
 style="width:100%;margin-top:8px"
 onclick="clearCart()"
@@ -431,14 +620,13 @@ CLEAR ORDER
 </div>
 
 
+
 <!-- =========================
      HISTORY
 ========================= -->
 
-<div
-id="historyPage"
-class="hidden"
->
+<div id="historyPage"
+class="hidden">
 
 <div class="card">
 
@@ -458,6 +646,7 @@ Clear History
 </div>
 
 
+
 <!-- =========================
      ADMIN
 ========================= -->
@@ -466,6 +655,18 @@ Clear History
 id="adminPage"
 class="hidden"
 >
+
+
+<!-- SALES SUMMARY -->
+
+<div class="card">
+
+<h2>📊 Sales & Shift Summary</h2>
+
+<div id="salesSummary"></div>
+
+</div>
+
 
 
 <!-- MENU MANAGEMENT -->
@@ -498,6 +699,7 @@ onclick="addMenu()"
 </div>
 
 
+
 <div class="card">
 
 <h3>Existing Menu</h3>
@@ -505,6 +707,7 @@ onclick="addMenu()"
 <div id="adminMenu"></div>
 
 </div>
+
 
 
 <!-- CASHIER MANAGEMENT -->
@@ -541,6 +744,7 @@ onclick="addCashier()"
 </div>
 
 
+
 <div class="card">
 
 <h3>Cashier Accounts</h3>
@@ -554,7 +758,17 @@ onclick="addCashier()"
 </div>
 
 
+
+<!-- =========================
+     PRINT RECEIPT
+========================= -->
+
+<div id="printReceipt"></div>
+
+
+
 <script>
+
 
 /* =========================
    STORAGE
@@ -587,6 +801,7 @@ return fallback;
 }
 
 
+
 /* =========================
    GLOBAL
 ========================= */
@@ -596,6 +811,9 @@ let currentUser=null;
 let orderType="Dine In";
 
 let cart=[];
+
+let lastSale=null;
+
 
 
 /* =========================
@@ -633,6 +851,7 @@ available:true
 );
 
 
+
 /* =========================
    DEFAULT CASHIERS
 ========================= */
@@ -650,6 +869,7 @@ active:true
 );
 
 
+
 /* =========================
    SALES
 ========================= */
@@ -658,6 +878,46 @@ let sales=getStorageArray(
 "foodSales",
 []
 );
+
+
+
+/* =========================
+   SHIFT HISTORY
+========================= */
+
+let shifts=getStorageArray(
+"foodShifts",
+[]
+);
+
+
+
+/* =========================
+   ACTIVE SHIFT
+========================= */
+
+let activeShift=null;
+
+try{
+
+let savedShift=
+localStorage.getItem(
+"activeShift"
+);
+
+if(savedShift){
+
+activeShift=
+JSON.parse(savedShift);
+
+}
+
+}catch(error){
+
+activeShift=null;
+
+}
+
 
 
 /* =========================
@@ -678,6 +938,7 @@ savedOrderNumber=1000;
 }
 
 let orderNo=savedOrderNumber+1;
+
 
 
 /* =========================
@@ -704,6 +965,7 @@ alert("Hindi ma-save ang menu.");
 }
 
 
+
 function saveCashiers(){
 
 try{
@@ -724,6 +986,74 @@ alert("Hindi ma-save ang cashier.");
 }
 
 
+
+function saveSales(){
+
+try{
+
+localStorage.setItem(
+"foodSales",
+JSON.stringify(sales)
+);
+
+}catch(error){
+
+console.log(error);
+
+}
+
+}
+
+
+
+function saveShifts(){
+
+try{
+
+localStorage.setItem(
+"foodShifts",
+JSON.stringify(shifts)
+);
+
+}catch(error){
+
+console.log(error);
+
+}
+
+}
+
+
+
+function saveActiveShift(){
+
+try{
+
+if(activeShift){
+
+localStorage.setItem(
+"activeShift",
+JSON.stringify(activeShift)
+);
+
+}else{
+
+localStorage.removeItem(
+"activeShift"
+);
+
+}
+
+}catch(error){
+
+console.log(error);
+
+}
+
+}
+
+
+
 /* =========================
    START
 ========================= */
@@ -737,13 +1067,22 @@ document.getElementById(
 ).innerText=orderNo;
 
 renderMenu();
+
 renderCart();
+
 renderHistory();
+
 renderAdminMenu();
+
 renderCashiers();
+
+renderSalesSummary();
+
+updateShiftUI();
 
 }
 );
+
 
 
 /* =========================
@@ -775,6 +1114,7 @@ role:"admin"
 };
 
 }
+
 
 /* CASHIER */
 
@@ -859,14 +1199,23 @@ currentUser.role==="admin"
 
 
 renderMenu();
+
 renderCart();
+
 renderHistory();
+
 renderAdminMenu();
+
 renderCashiers();
+
+renderSalesSummary();
+
+updateShiftUI();
 
 showPage("posPage");
 
 }
+
 
 
 /* =========================
@@ -898,6 +1247,7 @@ document.getElementById(
 clearCart();
 
 }
+
 
 
 /* =========================
@@ -947,6 +1297,7 @@ selected.classList.remove("hidden");
 }
 
 
+
 /* =========================
    ORDER TYPE
 ========================= */
@@ -972,6 +1323,446 @@ type==="Take Out"
 }
 
 
+
+/* =========================
+   SHIFT FUNCTIONS
+========================= */
+
+function startShift(){
+
+if(
+!currentUser ||
+currentUser.role!=="cashier"
+){
+
+alert(
+"Ang shift ay para sa cashier."
+);
+
+return;
+
+}
+
+
+if(activeShift){
+
+if(
+activeShift.cashier===currentUser.id
+){
+
+alert(
+"May active shift ka na."
+);
+
+}else{
+
+alert(
+"May active shift ang ibang cashier."
+);
+
+}
+
+return;
+
+}
+
+
+let type=document.getElementById(
+"shiftType"
+).value;
+
+
+activeShift={
+
+id:"SHIFT-"+Date.now(),
+
+cashier:currentUser.id,
+
+cashierName:currentUser.name,
+
+type:type,
+
+startTime:new Date().toLocaleString(),
+
+startTimestamp:Date.now(),
+
+endTime:"",
+
+endTimestamp:0,
+
+orders:0,
+
+sales:0
+
+};
+
+
+saveActiveShift();
+
+updateShiftUI();
+
+renderSalesSummary();
+
+
+alert(
+"Na-open na ang "+
+type+
+" Shift.\n\n"+
+"Cashier: "+
+currentUser.name+
+"\nShift: "+
+type+
+"\nStart: "+
+activeShift.startTime
+);
+
+}
+
+
+
+function closeShift(){
+
+if(
+!currentUser ||
+currentUser.role!=="cashier"
+){
+
+return;
+
+}
+
+
+if(!activeShift){
+
+alert(
+"Walang active shift."
+);
+
+return;
+
+}
+
+
+if(
+activeShift.cashier!==currentUser.id
+){
+
+alert(
+"Hindi ikaw ang may-ari ng active shift."
+);
+
+return;
+
+}
+
+
+let shiftSales=sales.filter(
+function(sale){
+
+return sale.shiftId===activeShift.id;
+
+}
+);
+
+
+let total=shiftSales.reduce(
+function(sum,sale){
+
+return sum+
+Number(sale.total||0);
+
+},
+0
+);
+
+
+let shiftOrders=shiftSales.length;
+
+
+if(
+!confirm(
+"Isara ang shift?\n\n"+
+"Cashier: "+activeShift.cashierName+
+"\nShift: "+activeShift.type+
+"\nOrders: "+shiftOrders+
+"\nTotal Sales: ₱"+total.toFixed(2)
+)
+){
+
+return;
+
+}
+
+
+let closedShift={
+
+...activeShift,
+
+endTime:new Date().toLocaleString(),
+
+endTimestamp:Date.now(),
+
+orders:shiftOrders,
+
+sales:total
+
+};
+
+
+shifts.unshift(
+closedShift
+);
+
+saveShifts();
+
+
+activeShift=null;
+
+saveActiveShift();
+
+updateShiftUI();
+
+renderSalesSummary();
+
+
+alert(
+"SHIFT CLOSED!\n\n"+
+"Cashier: "+closedShift.cashierName+
+"\nShift: "+closedShift.type+
+"\nOrders: "+closedShift.orders+
+"\nTotal Sales: ₱"+
+closedShift.sales.toFixed(2)+
+"\n\n"+
+"Start: "+closedShift.startTime+
+"\nEnd: "+closedShift.endTime
+);
+
+}
+
+
+
+function updateShiftUI(){
+
+let status=document.getElementById(
+"shiftStatus"
+);
+
+let controls=document.getElementById(
+"shiftControls"
+);
+
+let closeControls=document.getElementById(
+"closeShiftControls"
+);
+
+
+if(!status){
+
+return;
+
+}
+
+
+/* ADMIN */
+
+if(
+currentUser &&
+currentUser.role==="admin"
+){
+
+status.innerHTML=`
+
+<div class="summary">
+
+<b>👑 ADMIN MODE</b>
+
+<br>
+
+Hindi kailangan ng cashier shift.
+
+</div>
+
+`;
+
+controls.classList.add("hidden");
+
+closeControls.classList.add("hidden");
+
+return;
+
+}
+
+
+/* WALANG LOGIN */
+
+if(!currentUser){
+
+status.innerHTML=
+"<p>Mag-login muna.</p>";
+
+controls.classList.remove("hidden");
+
+closeControls.classList.add("hidden");
+
+return;
+
+}
+
+
+/* MAY ACTIVE SHIFT */
+
+if(activeShift){
+
+if(
+activeShift.cashier===
+currentUser.id
+){
+
+status.innerHTML=`
+
+<div class="summary shift-open">
+
+<b>🟢 SHIFT OPEN</b>
+
+<br>
+
+Cashier:
+${escapeHtml(activeShift.cashierName)}
+
+<br>
+
+Shift:
+<b>${escapeHtml(activeShift.type)}</b>
+
+<br>
+
+Start:
+${escapeHtml(activeShift.startTime)}
+
+<br>
+
+Current Sales:
+<b>
+₱${getActiveShiftSales().toFixed(2)}
+</b>
+
+<br>
+
+Orders:
+<b>
+${getActiveShiftOrders()}
+</b>
+
+</div>
+
+`;
+
+controls.classList.add("hidden");
+
+closeControls.classList.remove("hidden");
+
+}else{
+
+status.innerHTML=`
+
+<div class="summary shift-closed">
+
+<b>🔴 MAY ACTIVE SHIFT ANG IBANG CASHIER</b>
+
+<br>
+
+Cashier:
+${escapeHtml(activeShift.cashierName)}
+
+</div>
+
+`;
+
+controls.classList.add("hidden");
+
+closeControls.classList.add("hidden");
+
+}
+
+}else{
+
+status.innerHTML=`
+
+<div class="summary shift-closed">
+
+<b>🔴 NO ACTIVE SHIFT</b>
+
+<br>
+
+Pumili ng Opening o Closing Shift
+at pindutin ang START SHIFT.
+
+</div>
+
+`;
+
+controls.classList.remove("hidden");
+
+closeControls.classList.add("hidden");
+
+}
+
+}
+
+
+
+function getActiveShiftSales(){
+
+if(!activeShift){
+
+return 0;
+
+}
+
+return sales.reduce(
+function(sum,sale){
+
+if(
+sale.shiftId===
+activeShift.id
+){
+
+return sum+
+Number(sale.total||0);
+
+}
+
+return sum;
+
+},
+0
+);
+
+}
+
+
+
+function getActiveShiftOrders(){
+
+if(!activeShift){
+
+return 0;
+
+}
+
+return sales.filter(
+function(sale){
+
+return sale.shiftId===
+activeShift.id;
+
+}
+).length;
+
+}
+
+
+
 /* =========================
    RENDER MENU
 ========================= */
@@ -979,6 +1770,7 @@ type==="Take Out"
 function renderMenu(){
 
 let html="";
+
 
 menu.forEach(
 function(item){
@@ -1038,11 +1830,27 @@ document.getElementById(
 }
 
 
+
 /* =========================
    ADD CART
 ========================= */
 
 function addToCart(id){
+
+if(
+currentUser &&
+currentUser.role==="cashier" &&
+!activeShift
+){
+
+alert(
+"Mag-open muna ng shift bago mag-order."
+);
+
+return;
+
+}
+
 
 let item=menu.find(
 function(x){
@@ -1096,6 +1904,7 @@ qty:1
 renderCart();
 
 }
+
 
 
 /* =========================
@@ -1181,6 +1990,7 @@ updateTotal();
 }
 
 
+
 /* =========================
    QUANTITY
 ========================= */
@@ -1197,7 +2007,9 @@ return Number(x.id)===Number(id);
 
 
 if(!item){
+
 return;
+
 }
 
 
@@ -1222,6 +2034,7 @@ renderCart();
 }
 
 
+
 /* =========================
    TOTAL
 ========================= */
@@ -1244,6 +2057,7 @@ Number(item.qty)
 }
 
 
+
 function updateTotal(){
 
 document.getElementById(
@@ -1254,6 +2068,7 @@ getTotal().toFixed(2);
 calculateChange();
 
 }
+
 
 
 /* =========================
@@ -1284,6 +2099,7 @@ change>0
 }
 
 
+
 /* =========================
    CLEAR CART
 ========================= */
@@ -1305,6 +2121,7 @@ renderCart();
 }
 
 
+
 /* =========================
    COMPLETE ORDER
 ========================= */
@@ -1313,7 +2130,23 @@ function completeOrder(){
 
 if(!currentUser){
 
-alert("Mag-login muna.");
+alert(
+"Mag-login muna."
+);
+
+return;
+
+}
+
+
+if(
+currentUser.role==="cashier" &&
+!activeShift
+){
+
+alert(
+"Mag-open muna ng shift bago mag-complete ng order."
+);
 
 return;
 
@@ -1322,7 +2155,9 @@ return;
 
 if(cart.length===0){
 
-alert("Wala pang order.");
+alert(
+"Wala pang order."
+);
 
 return;
 
@@ -1360,11 +2195,23 @@ orderNo:orderNo,
 
 date:new Date().toLocaleString(),
 
+timestamp:Date.now(),
+
 cashier:currentUser.id,
 
 cashierName:currentUser.name,
 
 type:orderType,
+
+shiftId:
+activeShift
+? activeShift.id
+: "ADMIN",
+
+shiftType:
+activeShift
+? activeShift.type
+: "ADMIN",
 
 items:cart.map(
 function(item){
@@ -1395,6 +2242,8 @@ change:change
 
 sales.unshift(sale);
 
+lastSale=sale;
+
 
 try{
 
@@ -1421,6 +2270,31 @@ return;
 }
 
 
+if(activeShift){
+
+activeShift.orders=
+getActiveShiftOrders();
+
+activeShift.sales=
+getActiveShiftSales();
+
+saveActiveShift();
+
+}
+
+
+renderHistory();
+
+renderSalesSummary();
+
+updateShiftUI();
+
+
+/* PRINT RECEIPT */
+
+prepareReceipt(sale);
+
+
 alert(
 "ORDER COMPLETED!\n\n"+
 "Order #: "+orderNo+
@@ -1432,15 +2306,264 @@ alert(
 
 orderNo++;
 
+
 document.getElementById(
 "orderNumber"
 ).innerText=orderNo;
 
+
 clearCart();
 
-renderHistory();
+}
+
+
+
+/* =========================
+   RECEIPT
+========================= */
+
+function prepareReceipt(sale){
+
+if(!sale){
+
+return;
 
 }
+
+
+let html="";
+
+
+html+=`
+
+<div style="text-align:center">
+
+<b>FOOD POS</b>
+
+<br>
+
+------------------------------
+
+</div>
+
+`;
+
+
+html+=`
+
+<div>
+
+Order #: ${escapeHtml(sale.orderNo)}
+
+<br>
+
+Date:
+${escapeHtml(sale.date)}
+
+<br>
+
+Cashier:
+${escapeHtml(sale.cashierName||sale.cashier)}
+
+<br>
+
+ID:
+${escapeHtml(sale.cashier)}
+
+<br>
+
+Shift:
+${escapeHtml(sale.shiftType||"")}
+
+<br>
+
+Type:
+${escapeHtml(sale.type||"")}
+
+</div>
+
+<hr>
+
+`;
+
+
+if(Array.isArray(sale.items)){
+
+sale.items.forEach(
+function(item){
+
+let lineTotal=
+Number(item.price)*
+Number(item.qty);
+
+html+=`
+
+<div style="
+display:flex;
+justify-content:space-between;
+">
+
+<span>
+${escapeHtml(item.name)}
+x${Number(item.qty)}
+</span>
+
+<span>
+₱${lineTotal.toFixed(2)}
+</span>
+
+</div>
+
+`;
+
+}
+);
+
+}
+
+
+html+=`
+
+<hr>
+
+<div style="
+display:flex;
+justify-content:space-between;
+">
+
+<b>TOTAL</b>
+
+<b>
+₱${Number(sale.total).toFixed(2)}
+</b>
+
+</div>
+
+<div style="
+display:flex;
+justify-content:space-between;
+">
+
+<span>CASH</span>
+
+<span>
+₱${Number(sale.cash).toFixed(2)}
+</span>
+
+</div>
+
+<div style="
+display:flex;
+justify-content:space-between;
+">
+
+<span>CHANGE</span>
+
+<span>
+₱${Number(sale.change).toFixed(2)}
+</span>
+
+</div>
+
+<hr>
+
+<div style="text-align:center">
+
+Thank you!
+
+<br>
+
+Please come again.
+
+</div>
+
+`;
+
+
+let receipt=document.getElementById(
+"printReceipt"
+);
+
+receipt.innerHTML=html;
+
+}
+
+
+
+function printLastReceipt(){
+
+if(!lastSale){
+
+if(sales.length>0){
+
+lastSale=sales[0];
+
+}else{
+
+alert(
+"Wala pang receipt na puwedeng i-print."
+);
+
+return;
+
+}
+
+}
+
+
+prepareReceipt(lastSale);
+
+setTimeout(
+function(){
+
+window.print();
+
+},
+100
+);
+
+}
+
+
+
+function printReceiptByOrder(orderNumber){
+
+let sale=sales.find(
+function(x){
+
+return String(x.orderNo)===
+String(orderNumber);
+
+}
+);
+
+
+if(!sale){
+
+alert(
+"Receipt not found."
+);
+
+return;
+
+}
+
+
+lastSale=sale;
+
+prepareReceipt(sale);
+
+setTimeout(
+function(){
+
+window.print();
+
+},
+100
+);
+
+}
+
 
 
 /* =========================
@@ -1454,7 +2577,9 @@ let container=document.getElementById(
 );
 
 if(!container){
+
 return;
+
 }
 
 
@@ -1479,7 +2604,7 @@ html+=`
 <div class="admin-item">
 
 <b>
-Order #${sale.orderNo}
+Order #${escapeHtml(sale.orderNo)}
 </b>
 
 <br>
@@ -1490,40 +2615,57 @@ ${escapeHtml(sale.date||"")}
 
 <div class="summary">
 
-<b>
-Cashier:
-</b>
-${escapeHtml(sale.cashierName||sale.cashier||"")}
+<b>Cashier:</b>
+${escapeHtml(
+sale.cashierName||
+sale.cashier||
+""
+)}
 
 <br>
 
-<b>
-Type:
-</b>
-${escapeHtml(sale.type||"")}
+<b>ID:</b>
+${escapeHtml(
+sale.cashier||""
+)}
 
 <br>
 
-<b>
-Total:
-</b>
-₱${Number(sale.total||0).toFixed(2)}
+<b>Shift:</b>
+${escapeHtml(
+sale.shiftType||""
+)}
 
 <br>
 
-<b>
-Cash:
-</b>
-₱${Number(sale.cash||0).toFixed(2)}
+<b>Type:</b>
+${escapeHtml(
+sale.type||""
+)}
 
 <br>
 
-<b>
-Change:
-</b>
-₱${Number(sale.change||0).toFixed(2)}
+<b>Total:</b>
+₱${Number(
+sale.total||0
+).toFixed(2)}
+
+<br>
+
+<b>Cash:</b>
+₱${Number(
+sale.cash||0
+).toFixed(2)}
+
+<br>
+
+<b>Change:</b>
+₱${Number(
+sale.change||0
+).toFixed(2)}
 
 </div>
+
 
 <div style="margin-top:8px">
 
@@ -1537,13 +2679,18 @@ function(item){
 html+=`
 
 <div>
+
 ${escapeHtml(item.name)}
+
 x${Number(item.qty)}
+
 =
+
 ₱${(
 Number(item.price)*
 Number(item.qty)
 ).toFixed(2)}
+
 </div>
 
 `;
@@ -1553,9 +2700,18 @@ Number(item.qty)
 
 }
 
+
 html+=`
 
 </div>
+
+<button
+class="blue"
+style="margin-top:8px"
+onclick="printReceiptByOrder('${safeJs(sale.orderNo)}')"
+>
+🧾 PRINT RECEIPT
+</button>
 
 </div>
 
@@ -1568,6 +2724,277 @@ html+=`
 container.innerHTML=html;
 
 }
+
+
+
+/* =========================
+   SALES SUMMARY
+========================= */
+
+function renderSalesSummary(){
+
+let container=document.getElementById(
+"salesSummary"
+);
+
+if(!container){
+
+return;
+
+}
+
+
+let cashierTotals={};
+
+
+sales.forEach(
+function(sale){
+
+let id=
+sale.cashier||
+"UNKNOWN";
+
+let name=
+sale.cashierName||
+id;
+
+
+if(!cashierTotals[id]){
+
+cashierTotals[id]={
+
+id:id,
+
+name:name,
+
+orders:0,
+
+sales:0
+
+};
+
+}
+
+
+cashierTotals[id].orders++;
+
+cashierTotals[id].sales+=
+Number(sale.total||0);
+
+}
+);
+
+
+let grandTotal=sales.reduce(
+function(sum,sale){
+
+return sum+
+Number(sale.total||0);
+
+},
+0
+);
+
+
+let html=`
+
+
+<div class="stat-grid">
+
+<div class="stat">
+
+<div>
+💰 Total Sales
+</div>
+
+<div class="stat-number">
+₱${grandTotal.toFixed(2)}
+</div>
+
+</div>
+
+
+<div class="stat">
+
+<div>
+📦 Total Orders
+</div>
+
+<div class="stat-number">
+${sales.length}
+</div>
+
+</div>
+
+
+<div class="stat">
+
+<div>
+🕐 Closed Shifts
+</div>
+
+<div class="stat-number">
+${shifts.length}
+</div>
+
+</div>
+
+</div>
+
+<h3>
+Sales Per Cashier
+</h3>
+
+`;
+
+
+if(
+Object.keys(cashierTotals).length===0
+){
+
+html+=
+"<p>Wala pang sales.</p>";
+
+}else{
+
+Object.keys(cashierTotals)
+.forEach(
+function(id){
+
+let x=
+cashierTotals[id];
+
+
+html+=`
+
+<div class="admin-item">
+
+<b>
+${escapeHtml(x.name)}
+</b>
+
+<br>
+
+ID:
+${escapeHtml(x.id)}
+
+<br>
+
+Orders:
+<b>
+${x.orders}
+</b>
+
+<br>
+
+Total Sales:
+<b>
+₱${x.sales.toFixed(2)}
+</b>
+
+</div>
+
+`;
+
+}
+);
+
+}
+
+
+/* CLOSED SHIFTS */
+
+html+=`
+
+<h3>
+🕐 Shift History
+</h3>
+
+`;
+
+
+if(shifts.length===0){
+
+html+=
+"<p>Wala pang closed shift.</p>";
+
+}else{
+
+shifts.forEach(
+function(shift){
+
+html+=`
+
+<div class="admin-item">
+
+<b>
+${escapeHtml(
+shift.cashierName
+)}
+</b>
+
+<br>
+
+ID:
+${escapeHtml(
+shift.cashier
+)}
+
+<br>
+
+Shift:
+<b>
+${escapeHtml(
+shift.type
+)}
+</b>
+
+<br>
+
+Start:
+${escapeHtml(
+shift.startTime
+)}
+
+<br>
+
+End:
+${escapeHtml(
+shift.endTime
+)}
+
+<br>
+
+Orders:
+<b>
+${Number(
+shift.orders||0
+)}
+</b>
+
+<br>
+
+Total Sales:
+<b>
+₱${Number(
+shift.sales||0
+).toFixed(2)}
+</b>
+
+</div>
+
+`;
+
+}
+);
+
+}
+
+
+container.innerHTML=html;
+
+}
+
 
 
 /* =========================
@@ -1601,8 +3028,14 @@ return;
 
 sales=[];
 
+shifts=[];
+
 localStorage.removeItem(
 "foodSales"
+);
+
+localStorage.removeItem(
+"foodShifts"
 );
 
 localStorage.removeItem(
@@ -1611,11 +3044,20 @@ localStorage.removeItem(
 
 orderNo=1001;
 
+
 document.getElementById(
 "orderNumber"
 ).innerText=orderNo;
 
+
+lastSale=null;
+
 renderHistory();
+
+renderSalesSummary();
+
+updateShiftUI();
+
 
 alert(
 "Na-clear na ang history.\n\n"+
@@ -1623,6 +3065,7 @@ alert(
 );
 
 }
+
 
 
 /* =========================
@@ -1636,7 +3079,9 @@ let container=document.getElementById(
 );
 
 if(!container){
+
 return;
+
 }
 
 
@@ -1665,10 +3110,14 @@ ${escapeHtml(item.name)}
 </h3>
 
 <p>
+
 Price:
 <b>
-₱${Number(item.price).toFixed(2)}
+₱${Number(
+item.price
+).toFixed(2)}
 </b>
+
 </p>
 
 <p>
@@ -1679,10 +3128,14 @@ ${
 item.available
 
 ?
-`<span class="active">AVAILABLE</span>`
+`<span class="active">
+AVAILABLE
+</span>`
 
 :
-`<span class="disabled">OUT OF STOCK</span>`
+`<span class="disabled">
+OUT OF STOCK
+</span>`
 }
 
 </p>
@@ -1700,11 +3153,13 @@ onclick="editMenu(${Number(item.id)})"
 class="gray"
 onclick="toggleStock(${Number(item.id)})"
 >
+
 ${
 item.available
 ? "🚫 Out of Stock"
 : "✅ Available"
 }
+
 </button>
 
 
@@ -1728,6 +3183,7 @@ container.innerHTML=html;
 }
 
 
+
 /* =========================
    ADD MENU
 ========================= */
@@ -1739,7 +3195,9 @@ if(
 currentUser.role!=="admin"
 ){
 
-alert("Admin lang ang puwedeng magdagdag ng menu.");
+alert(
+"Admin lang ang puwedeng magdagdag ng menu."
+);
 
 return;
 
@@ -1759,7 +3217,9 @@ document.getElementById(
 
 if(!name){
 
-alert("Ilagay ang pangalan ng menu.");
+alert(
+"Ilagay ang pangalan ng menu."
+);
 
 return;
 
@@ -1771,7 +3231,9 @@ if(
 price<=0
 ){
 
-alert("Ilagay ang tamang presyo.");
+alert(
+"Ilagay ang tamang presyo."
+);
 
 return;
 
@@ -1780,13 +3242,16 @@ return;
 
 let nextId=1;
 
+
 if(menu.length>0){
 
 nextId=
 Math.max(
 ...menu.map(
 function(x){
+
 return Number(x.id)||0;
+
 }
 )
 )+1;
@@ -1822,11 +3287,13 @@ document.getElementById(
 "newPrice"
 ).value="";
 
+
 alert(
 "Naidagdag na ang menu."
 );
 
 }
+
 
 
 /* =========================
@@ -1838,14 +3305,17 @@ function editMenu(id){
 let item=menu.find(
 function(x){
 
-return Number(x.id)===Number(id);
+return Number(x.id)===
+Number(id);
 
 }
 );
 
 
 if(!item){
+
 return;
+
 }
 
 
@@ -1856,7 +3326,9 @@ item.name
 
 
 if(newName===null){
+
 return;
+
 }
 
 
@@ -1865,7 +3337,9 @@ newName=newName.trim();
 
 if(!newName){
 
-alert("Hindi puwedeng walang pangalan.");
+alert(
+"Hindi puwedeng walang pangalan."
+);
 
 return;
 
@@ -1879,7 +3353,9 @@ item.price
 
 
 if(newPrice===null){
+
 return;
+
 }
 
 
@@ -1891,7 +3367,9 @@ if(
 newPrice<=0
 ){
 
-alert("Hindi valid ang price.");
+alert(
+"Hindi valid ang price."
+);
 
 return;
 
@@ -1908,11 +3386,13 @@ renderMenu();
 
 renderAdminMenu();
 
+
 alert(
 "Na-update na ang menu."
 );
 
 }
+
 
 
 /* =========================
@@ -1924,14 +3404,17 @@ function deleteMenu(id){
 let item=menu.find(
 function(x){
 
-return Number(x.id)===Number(id);
+return Number(x.id)===
+Number(id);
 
 }
 );
 
 
 if(!item){
+
 return;
+
 }
 
 
@@ -1949,7 +3432,8 @@ return;
 menu=menu.filter(
 function(x){
 
-return Number(x.id)!==Number(id);
+return Number(x.id)!==
+Number(id);
 
 }
 );
@@ -1962,6 +3446,7 @@ renderMenu();
 renderAdminMenu();
 
 }
+
 
 
 /* =========================
@@ -1973,18 +3458,22 @@ function toggleStock(id){
 let item=menu.find(
 function(x){
 
-return Number(x.id)===Number(id);
+return Number(x.id)===
+Number(id);
 
 }
 );
 
 
 if(!item){
+
 return;
+
 }
 
 
-item.available=!item.available;
+item.available=
+!item.available;
 
 saveMenu();
 
@@ -1993,6 +3482,7 @@ renderMenu();
 renderAdminMenu();
 
 }
+
 
 
 /* =========================
@@ -2006,7 +3496,9 @@ let container=document.getElementById(
 );
 
 if(!container){
+
 return;
+
 }
 
 
@@ -2035,10 +3527,12 @@ ${escapeHtml(cashier.name)}
 </h3>
 
 <p>
+
 ID:
 <b>
 ${escapeHtml(cashier.id)}
 </b>
+
 </p>
 
 <p>
@@ -2049,10 +3543,14 @@ ${
 cashier.active
 
 ?
-`<span class="active">ACTIVE</span>`
+`<span class="active">
+ACTIVE
+</span>`
 
 :
-`<span class="disabled">DISABLED</span>`
+`<span class="disabled">
+DISABLED
+</span>`
 }
 
 </p>
@@ -2070,11 +3568,13 @@ onclick="editCashier('${safeJs(cashier.id)}')"
 class="gray"
 onclick="toggleCashier('${safeJs(cashier.id)}')"
 >
+
 ${
 cashier.active
 ? "🚫 Disable"
 : "✅ Enable"
 }
+
 </button>
 
 
@@ -2096,6 +3596,7 @@ onclick="deleteCashier('${safeJs(cashier.id)}')"
 container.innerHTML=html;
 
 }
+
 
 
 /* =========================
@@ -2133,7 +3634,9 @@ let password=document.getElementById(
 
 if(!name){
 
-alert("Ilagay ang pangalan ng cashier.");
+alert(
+"Ilagay ang pangalan ng cashier."
+);
 
 return;
 
@@ -2142,7 +3645,9 @@ return;
 
 if(!id){
 
-alert("Ilagay ang User ID.");
+alert(
+"Ilagay ang User ID."
+);
 
 return;
 
@@ -2151,7 +3656,9 @@ return;
 
 if(!password){
 
-alert("Ilagay ang password.");
+alert(
+"Ilagay ang password."
+);
 
 return;
 
@@ -2220,6 +3727,7 @@ alert(
 }
 
 
+
 /* =========================
    EDIT CASHIER
 ========================= */
@@ -2229,14 +3737,17 @@ function editCashier(id){
 let cashier=cashiers.find(
 function(x){
 
-return String(x.id)===String(id);
+return String(x.id)===
+String(id);
 
 }
 );
 
 
 if(!cashier){
+
 return;
+
 }
 
 
@@ -2247,7 +3758,9 @@ cashier.name
 
 
 if(newName===null){
+
 return;
+
 }
 
 
@@ -2256,7 +3769,9 @@ newName=newName.trim();
 
 if(!newName){
 
-alert("Hindi puwedeng walang pangalan.");
+alert(
+"Hindi puwedeng walang pangalan."
+);
 
 return;
 
@@ -2270,7 +3785,9 @@ cashier.password
 
 
 if(newPassword===null){
+
 return;
+
 }
 
 
@@ -2279,7 +3796,9 @@ newPassword=newPassword.trim();
 
 if(!newPassword){
 
-alert("Hindi puwedeng walang password.");
+alert(
+"Hindi puwedeng walang password."
+);
 
 return;
 
@@ -2294,11 +3813,13 @@ saveCashiers();
 
 renderCashiers();
 
+
 alert(
 "Na-update na ang cashier."
 );
 
 }
+
 
 
 /* =========================
@@ -2310,24 +3831,29 @@ function toggleCashier(id){
 let cashier=cashiers.find(
 function(x){
 
-return String(x.id)===String(id);
+return String(x.id)===
+String(id);
 
 }
 );
 
 
 if(!cashier){
+
 return;
+
 }
 
 
-cashier.active=!cashier.active;
+cashier.active=
+!cashier.active;
 
 saveCashiers();
 
 renderCashiers();
 
 }
+
 
 
 /* =========================
@@ -2339,21 +3865,23 @@ function deleteCashier(id){
 let cashier=cashiers.find(
 function(x){
 
-return String(x.id)===String(id);
+return String(x.id)===
+String(id);
 
 }
 );
 
 
 if(!cashier){
+
 return;
+
 }
 
 
 if(
-String(cashier.id).toLowerCase()
-===
-"cash001"
+String(cashier.id)
+.toLowerCase()==="cash001"
 ){
 
 if(
@@ -2371,7 +3899,9 @@ return;
 
 if(
 !confirm(
-"Burahin ang cashier "+cashier.name+"?"
+"Burahin ang cashier "+
+cashier.name+
+"?"
 )
 ){
 
@@ -2383,7 +3913,8 @@ return;
 cashiers=cashiers.filter(
 function(x){
 
-return String(x.id)!==String(id);
+return String(x.id)!==
+String(id);
 
 }
 );
@@ -2394,6 +3925,7 @@ saveCashiers();
 renderCashiers();
 
 }
+
 
 
 /* =========================
@@ -2412,6 +3944,7 @@ return String(value)
 }
 
 
+
 /* =========================
    SAFE JAVASCRIPT VALUE
 ========================= */
@@ -2424,6 +3957,7 @@ return String(value)
 .replace(/"/g,"&quot;");
 
 }
+
 
 
 /* =========================
@@ -2457,6 +3991,7 @@ error
 }
 
 </script>
+
 
 </body>
 </html>
