@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="tl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>QuickServe Business Suite • Signup TEST</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#f3f4f7;color:#1c2736}
+header{background:linear-gradient(115deg,#181b24,#30323b);color:#fff;text-align:center;padding:24px 12px}header h1{margin:0;font-size:27px}header em{color:#ff9c1a;font-style:normal}
+header p{font-size:12px;color:#ddd}main{max-width:720px;margin:auto;padding:16px}
+.card{background:white;border-radius:18px;padding:21px;margin-bottom:16px;box-shadow:0 3px 15px #18233712}
+h2{font-size:21px;margin:0 0 16px}h3{font-size:17px;margin:14px 0}
+label{display:block;font-size:13px;font-weight:700;margin:13px 0 6px}input,select{width:100%;border:1px solid #cdd3db;border-radius:10px;padding:13px;font-size:16px;background:white;color:#202633}
+button{border:0;border-radius:11px;padding:13px 15px;font-size:15px;font-weight:bold;cursor:pointer}
+.primary{background:linear-gradient(105deg,#e51d22,#ff8d09);color:white}.outline{background:#f2f3f6;color:#24334b}.danger{background:#ad1730;color:white}
+.full{width:100%;margin-top:16px}.hidden{display:none!important}.muted{color:#637083;font-size:13px;line-height:1.5}
+.notice{background:#fff1dc;border:1px solid #e5b369;border-radius:13px;padding:13px;font-size:13px;line-height:1.5;margin-bottom:16px}
+.choice{width:100%;text-align:left;display:flex;align-items:center;gap:14px;background:#fff;border:2px solid #e5e8ed;margin:9px 0;padding:16px}.choice.selected{border-color:#ff7914;background:#fff5e9}
+.choice .emoji{font-size:29px}.choice small{display:block;color:#677181;margin-top:4px}
+.row{display:flex;gap:8px;flex-wrap:wrap}.row>*{flex:1}
+.stat{background:#f4f5f8;padding:12px;border-radius:12px;flex:1;min-width:120px}.stat b{font-size:20px}
+.item{padding:12px 0;border-bottom:1px solid #eee;display:flex;justify-content:space-between;gap:10px;align-items:center}
+.item:last-child{border:0}.item button{padding:8px 11px}.pill{background:#eaf2ff;border-radius:20px;padding:5px 9px;font-size:12px}
+</style></head><body>
+<header><h1>⚡ QuickServe <em>Business Suite</em></h1><p>ONE PLATFORM • FIVE BUSINESS TYPES</p></header>
+<main>
+<div class="notice"><b>🧪 TEST VERSION:</b> Ang mga account at records dito ay naka-save lang sa browser ng cellphone na ito. Hindi pa ito secure cloud account system. Huwag gumamit ng tunay na password o real customer data, at huwag gamitin sa aktuwal na benta. Hindi nito binabago ang dati mong QuickServe POS.</div>
+<section id="welcome" class="card"><h2>Welcome to QuickServe!</h2><p class="muted">Gumawa ng test account o mag-sign in sa account na nagawa mo sa browser na ito.</p><button class="primary full" onclick="view('signup')">➕ Sign Up</button><button class="outline full" onclick="view('signin')">🔐 Sign In</button></section>
+<section id="signup" class="card hidden"><h2>📝 Create Test Account</h2>
+<label>Owner Name</label><input id="owner" autocomplete="name" placeholder="Pangalan ng owner">
+<label>User ID</label><input id="newId" autocomplete="off" placeholder="Hal. owner001">
+<label>Test Password (8 characters minimum)</label><input id="newPass" type="password" autocomplete="new-password" placeholder="Huwag gamitin ang totoong password mo">
+<button class="primary full" onclick="signup()">Continue → Choose Business</button><button class="outline full" onclick="view('welcome')">Back</button></section>
+<section id="signin" class="card hidden"><h2>🔐 Sign In</h2>
+<label>User ID</label><input id="id" autocomplete="username">
+<label>Test Password</label><input id="pass" type="password" autocomplete="current-password">
+<button class="primary full" onclick="signin()">Sign In</button><button class="outline full" onclick="view('welcome')">Back</button></section>
+<section id="choose" class="card hidden"><h2>🏬 Choose Your Business</h2><p class="muted">Pumili ng <b>isang business type</b> para sa bawat negosyo. May sariling records ang bawat business profile.</p>
+<label>Business Name</label><input id="businessName" placeholder="Hal. QuickServe Laundry">
+<div id="choices"></div><button class="primary full" onclick="createBusiness()">Create Business</button><button class="outline full" onclick="view('businessList')">Back</button></section>
+<section id="businessList" class="card hidden"><h2>🏪 My Businesses</h2><p id="ownerLabel" class="muted"></p><div id="businessItems"></div><button class="primary full" onclick="view('choose')">➕ Add Another Business</button><button class="outline full" onclick="signout()">Log Out</button></section>
+<section id="dashboard" class="hidden">
+<div class="card"><h2 id="businessTitle"></h2><p id="businessDesc" class="muted"></p><div class="row"><div class="stat">Orders<br><b id="orderCount">0</b></div><div class="stat">Total Sales<br><b id="salesTotal">₱0.00</b></div></div>
+<button class="outline full" onclick="view('businessList')">← Switch Business</button></div>
+<div class="card"><h2 id="productHeading">Products / Services</h2><p class="muted">Magdagdag ng produkto o serbisyo at presyo. Pang-test lamang.</p>
+<label id="productNameLabel">Product / Service Name</label><input id="productName" placeholder="Pangalan">
+<label>Price (₱)</label><input id="productPrice" type="number" min="0.01" step="0.01" inputmode="decimal">
+<button class="primary full" onclick="addProduct()">➕ Add Product / Service</button><div id="products"></div></div>
+<div class="card"><h2>🧾 New Sale / Order</h2><label id="orderDetailLabel">Order Details</label><input id="orderDetail" placeholder="Optional details">
+<div id="saleProducts"></div><p class="muted">Pindutin ang Sell para gumawa ng test sale. Bawat order ay hiwalay sa ibang negosyo.</p></div>
+<div class="card"><h2>📊 Sales History</h2><div id="history"></div></div>
+</section>
+</main><script>
+"use strict";
+const ROOT="qs-suite-onboarding-v1";
+const $=id=>document.getElementById(id);
+const types=[
+{id:"food",emoji:"🍗",name:"Food POS",desc:"Dine-in, take-out, menu at food orders",detail:"Dine-in / Take-out / Order note",label:"Food / Drink"},
+{id:"grocery",emoji:"🛒",name:"Grocery POS",desc:"Products, stock at retail sales (basic demo)",detail:"Customer / Receipt note",label:"Grocery Product"},
+{id:"sari",emoji:"🏪",name:"Sari-Sari Store POS",desc:"Tingi at paninda (basic demo)",detail:"Tingi / customer note",label:"Paninda"},
+{id:"laundry",emoji:"🧺",name:"Laundry POS",desc:"Laundry service orders (basic demo)",detail:"Customer / Kg / Pickup note",label:"Laundry Service"},
+{id:"water",emoji:"💧",name:"Water Refilling POS",desc:"Refill, container at delivery (basic demo)",detail:"Customer / Gallons / Delivery note",label:"Water Service"}
+];
+let account=null,business=null,selected=null;
+const read=(k,f)=>{try{let x=JSON.parse(localStorage.getItem(ROOT+":"+k));return x===null?f:x}catch{return f}};
+const save=(k,v)=>{try{localStorage.setItem(ROOT+":"+k,JSON.stringify(v));return true}catch{alert("Storage full o disabled.");return false}};
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const money=n=>"₱"+Number(n||0).toLocaleString("en-PH",{minimumFractionDigits:2,maximumFractionDigits:2});
+function view(id){["welcome","signup","signin","choose","businessList","dashboard"].forEach(x=>$(x).classList.toggle("hidden",x!==id));if(id==="choose"){selected=null;drawChoices()}if(id==="businessList")drawBusinesses();if(id==="dashboard")drawDashboard();window.scrollTo(0,0)}
+function drawChoices(){$("choices").innerHTML=types.map(t=>`<button class="choice ${selected===t.id?"selected":""}" onclick="chooseType('${t.id}')"><span class="emoji">${t.emoji}</span><span><b>${t.name}</b><small>${t.desc}</small></span></button>`).join("")}
+function chooseType(id){selected=id;drawChoices()}
+function randomId(){return Array.from(crypto.getRandomValues(new Uint8Array(16)),b=>b.toString(16).padStart(2,"0")).join("")}
+async function digest(s){let bytes=new TextEncoder().encode(s);let result=await crypto.subtle.digest("SHA-256",bytes);return Array.from(new Uint8Array(result),b=>b.toString(16).padStart(2,"0")).join("")}
+async function signup(){const name=$("owner").value.trim(),id=$("newId").value.trim().toLowerCase(),pw=$("newPass").value;if(!name||!/^[a-z0-9_-]{3,30}$/.test(id)||pw.length<8){alert("Ilagay ang pangalan, User ID (3–30 letters/numbers) at test password na hindi bababa sa 8 characters.");return}let accounts=read("accounts",[]);if(accounts.some(a=>a.id===id)){alert("Gamit na ang User ID.");return}if(!crypto?.subtle){alert("HTTPS browser ang kailangan para sa test sign up.");return}let salt=randomId();accounts.push({id,name,salt,hash:await digest(salt+":"+pw)});if(!save("accounts",accounts))return;account={id,name};$("newPass").value="";view("choose")}
+async function signin(){let id=$("id").value.trim().toLowerCase(),pw=$("pass").value,a=read("accounts",[]).find(a=>a.id===id);if(!a||!crypto?.subtle||await digest(a.salt+":"+pw)!==a.hash){alert("Mali ang User ID o test password.");return}account={id:a.id,name:a.name};$("pass").value="";view("businessList")}
+function signout(){account=null;business=null;view("welcome")}
+function createBusiness(){if(!account)return;let name=$("businessName").value.trim();if(!selected||!name){alert("Ilagay ang business name at pumili ng business type.");return}let businesses=read("businesses",[]);let b={id:randomId(),owner:account.id,name,type:selected};businesses.push(b);if(!save("businesses",businesses))return;$("businessName").value="";business=b;view("dashboard")}
+function drawBusinesses(){if(!account){view("welcome");return}$("ownerLabel").textContent="Signed in: "+account.name+" ("+account.id+")";let bs=read("businesses",[]).filter(b=>b.owner===account.id);$("businessItems").innerHTML=bs.length?bs.map(b=>{let t=types.find(t=>t.id===b.type);return `<div class="item"><div><b>${t.emoji} ${esc(b.name)}</b><br><span class="muted">${t.name}</span></div><button class="primary" onclick="openBusiness('${b.id}')">Open</button></div>`}).join(""):'<p class="muted">Wala ka pang business. Pindutin ang Add Another Business.</p>'}
+function openBusiness(id){let b=read("businesses",[]).find(b=>b.id===id&&b.owner===account?.id);if(!b)return alert("Business not found.");business=b;view("dashboard")}
+function storageKey(part){return "data:"+business.id+":"+part}
+function addProduct(){if(!business)return;let name=$("productName").value.trim(),price=Number($("productPrice").value);if(!name||!Number.isFinite(price)||price<=0)return alert("Ilagay ang pangalan at valid na presyo.");let products=read(storageKey("products"),[]);products.push({id:randomId(),name,price});if(!save(storageKey("products"),products))return;$("productName").value="";$("productPrice").value="";drawDashboard()}
+function removeProduct(id){if(!confirm("Tanggalin ang test product/service?"))return;save(storageKey("products"),read(storageKey("products"),[]).filter(x=>x.id!==id));drawDashboard()}
+function sell(id){let product=read(storageKey("products"),[]).find(x=>x.id===id);if(!product)return;let detail=$("orderDetail").value.trim();if(!confirm("Test sale: "+product.name+" — "+money(product.price)+"?"))return;let sales=read(storageKey("sales"),[]);sales.unshift({id:randomId(),date:new Date().toISOString(),name:product.name,price:product.price,detail});if(!save(storageKey("sales"),sales))return;$("orderDetail").value="";drawDashboard();alert("Test sale saved sa "+business.name)}
+function drawDashboard(){if(!business)return;let t=types.find(t=>t.id===business.type),products=read(storageKey("products"),[]),sales=read(storageKey("sales"),[]);$("businessTitle").textContent=t.emoji+" "+business.name;$("businessDesc").textContent=t.name+" • "+t.desc;$("productHeading").textContent=t.label+" Management";$("productNameLabel").textContent=t.label+" Name";$("orderDetailLabel").textContent=t.detail;$("orderCount").textContent=sales.length;$("salesTotal").textContent=money(sales.reduce((n,x)=>n+x.price,0));$("products").innerHTML=products.length?products.map(p=>`<div class="item"><span><b>${esc(p.name)}</b><br>${money(p.price)}</span><button class="outline" onclick="removeProduct('${p.id}')">Delete</button></div>`).join(""):'<p class="muted">Wala pang produkto o serbisyo.</p>';$("saleProducts").innerHTML=products.length?products.map(p=>`<div class="item"><span>${esc(p.name)}<br><b>${money(p.price)}</b></span><button class="primary" onclick="sell('${p.id}')">Sell</button></div>`).join(""):'<p class="muted">Magdagdag muna ng product/service sa taas.</p>';$("history").innerHTML=sales.length?sales.map(s=>`<div class="item"><div><b>${esc(s.name)}</b><br><span class="muted">${new Date(s.date).toLocaleString("en-PH")} ${s.detail?"• "+esc(s.detail):""}</span></div><b>${money(s.price)}</b></div>`).join(""):'<p class="muted">Wala pang test sales.</p>'}
+view("welcome");
+</script></body></html>
