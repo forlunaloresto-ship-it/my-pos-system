@@ -3,17 +3,17 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#b91c1c">
+<meta name="theme-color" content="#171717">
 <meta name="description" content="Offline-capable Food POS">
 <link rel="manifest" href="./manifest.json">
-<title>Food POS</title>
+<title>QuickServe POS</title>
 <style>
 *{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#f4f4f4;color:#222}
-header{background:#d71920;color:#fff;padding:14px;text-align:center}header h2{margin:0 0 5px}
+header{background:#171717;color:#fff;padding:14px;text-align:center}header h2{margin:0 0 5px}
 .container{max-width:1100px;margin:auto;padding:12px}.card{background:#fff;border-radius:12px;padding:14px;margin-bottom:14px;box-shadow:0 2px 8px #0002}
 button{border:0;border-radius:8px;padding:10px 13px;cursor:pointer;font-weight:bold;margin:2px}button:disabled{opacity:.5;cursor:not-allowed}
 input,select{width:100%;padding:11px;margin:6px 0 10px;border:1px solid #ccc;border-radius:8px;font-size:16px}
-.primary{background:#d71920;color:#fff}.green{background:#168a45;color:#fff}.gray{background:#777;color:#fff}.danger{background:#b00020;color:#fff}.blue{background:#1769aa;color:#fff}.orange{background:#f08a00;color:#fff}
+.primary{background:linear-gradient(135deg,#e50914,#ff9500);color:#fff}.green{background:#168a45;color:#fff}.gray{background:#777;color:#fff}.danger{background:#b00020;color:#fff}.blue{background:#1769aa;color:#fff}.orange{background:#f08a00;color:#fff}
 .hidden{display:none!important}.login{max-width:420px;margin:35px auto}.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}.tabs button{flex:1;min-width:90px}
 .category-tabs{display:flex;gap:7px;flex-wrap:wrap;margin:8px 0 14px}.category-tabs button{margin:0;white-space:nowrap;background:#eee;color:#222;border:1px solid #ddd}.category-tabs button.selected{background:#d71920;color:#fff;border-color:#d71920}
 .menu{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:9px}.product{border:1px solid #ddd;border-radius:10px;padding:12px;background:#fff}.product h3{margin:5px 0}.product-photo{width:100%;height:118px;object-fit:cover;border-radius:8px;background:#f1f1f1;display:block;margin-bottom:8px}.admin-photo{width:84px;height:72px;object-fit:cover;border-radius:8px;background:#eee;vertical-align:middle;margin-right:10px}.price{font-size:20px;font-weight:bold}.out{opacity:.55}
@@ -28,7 +28,7 @@ table{width:100%;border-collapse:collapse;display:block;overflow-x:auto}th,td{pa
 </style>
 </head>
 <body>
-<header><h2>🍗 FOOD POS</h2><div id="userInfo">Mag-login upang magsimula</div></header>
+<header><h2>⚡ QuickServe POS</h2><div id="userInfo">Mag-login upang magsimula</div></header>
 
 <div id="loginPage" class="container login">
   <div class="card">
@@ -37,8 +37,6 @@ table{width:100%;border-collapse:collapse;display:block;overflow-x:auto}th,td{pa
     <label>Password</label><input id="loginPassword" type="password" placeholder="Password" autocomplete="current-password">
     <button class="primary" style="width:100%" onclick="login()">LOGIN</button>
     <p class="small">Ilagay ang iyong User ID at password. Para sa unang setup, gamitin ang default admin credentials na kasama sa instructions at palitan agad ang password.</p>
-  </div>
-</div>
 
 <div id="app" class="container hidden">
   <div class="tabs">
