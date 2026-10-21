@@ -6,22 +6,56 @@
 <link rel="manifest" href="./manifest.json"><title>QuickServe POS</title>
 <style>
 *{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#f4f4f4;color:#222}header{background:#151515;color:white;padding:14px;text-align:center}header h2{margin:0 0 5px}.container{max-width:1100px;margin:auto;padding:12px}.card{background:white;border-radius:12px;padding:14px;margin-bottom:14px;box-shadow:0 2px 8px #0002}button{border:0;border-radius:8px;padding:11px 13px;cursor:pointer;font-weight:bold;margin:2px}button:disabled{opacity:.5;cursor:not-allowed}input,select{width:100%;padding:11px;margin:6px 0 10px;border:1px solid #ccc;border-radius:8px;font-size:16px}.primary{background:linear-gradient(135deg,#e50914,#ff9500);color:#fff}.green{background:#168a45;color:#fff}.gray{background:#777;color:#fff}.danger{background:#b00020;color:#fff}.blue{background:#1769aa;color:#fff}.orange{background:#f08a00;color:#fff}.hidden{display:none!important}.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}.tabs button{flex:1;min-width:85px}.category-tabs{display:flex;gap:7px;flex-wrap:wrap;margin:8px 0 14px}.category-tabs button{background:#eee;color:#222;border:1px solid #ddd}.category-tabs button.selected{background:#d71920;color:white}.menu{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:9px}.product{border:1px solid #ddd;border-radius:10px;padding:12px;background:white}.product h3{margin:5px 0}.product-photo{width:100%;height:118px;object-fit:cover;border-radius:8px;background:#f1f1f1;display:block;margin-bottom:8px}.admin-photo{width:84px;height:72px;object-fit:cover;border-radius:8px;background:#eee;margin-right:10px}.price{font-size:20px;font-weight:bold}.out{opacity:.55}.cart-row{display:flex;justify-content:space-between;align-items:center;gap:8px;border-bottom:1px solid #ddd;padding:10px 0}.qty{display:flex;align-items:center;gap:5px}.qty button{padding:5px 9px}.total{font-size:24px;font-weight:bold;margin:14px 0}.small{font-size:13px;color:#666}.active{color:green;font-weight:bold}.disabled{color:#b00020;font-weight:bold}.admin-item{border:1px solid #ddd;border-radius:10px;padding:12px;margin:8px 0}.summary{background:#f7f7f7;border-radius:8px;padding:10px;margin-top:8px}.shift-open{background:#e8f8ee;border:1px solid #168a45}.shift-closed{background:#fff0f0;border:1px solid #d71920}.stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:9px}.stat{background:#f7f7f7;border-radius:10px;padding:13px;border:1px solid #ddd}.stat-number{font-size:22px;font-weight:bold;margin-top:5px}.pay-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.pay-option{background:white;border:2px solid #ddd;border-radius:10px;padding:13px;text-align:center}.pay-option.selected{border-color:#d71920;background:#fff1f1}.pay-option strong{display:block;font-size:16px}#printReceipt{display:none}
-/* QuickServe login screen — presentation only; POS logic and storage keys retained */
-#loginPage{min-height:calc(100dvh - 77px);background:radial-gradient(circle at 90% 10%,#54200d 0%,transparent 43%),linear-gradient(155deg,#191919,#080808);display:flex;justify-content:center;align-items:center;padding:24px 14px}#loginPage .login-card{width:100%;max-width:410px;background:linear-gradient(155deg,#262626,#171717);border:1px solid #47403a;border-radius:22px;padding:28px 22px;color:#fff;box-shadow:0 20px 55px #0009}#loginPage .brand{text-align:center;margin-bottom:26px}#loginPage .brand-mark{font-size:46px;line-height:1}#loginPage .brand-name{font-size:31px;font-weight:900;letter-spacing:-1px;margin:9px 0 4px;background:linear-gradient(100deg,#ffb11b,#ff5b17,#e82029);background-clip:text;-webkit-background-clip:text;color:transparent}#loginPage .brand-sub{font-size:12px;letter-spacing:3px;color:#bbb}#loginPage h2{margin:0 0 7px;font-size:22px}#loginPage .intro{color:#bdbdbd;font-size:13px;margin:0 0 22px}#loginPage label{font-size:13px;color:#ddd;font-weight:bold}#loginPage input{background:#101010;border:1px solid #555;color:white;margin:8px 0 17px}#loginPage input:focus{outline:2px solid #ff7d18;border-color:transparent}#loginPage .pw-row{display:flex;gap:6px;align-items:center}#loginPage .pw-row input{min-width:0;flex:1}#loginPage .show-btn{background:#383838;color:white;margin:0 0 9px;white-space:nowrap}#loginPage .login-submit{width:100%;font-size:16px;padding:14px;margin:8px 0 16px}#loginPage .offline{text-align:center;color:#b5cbb8;font-size:12px}#loginPage .offline span{color:#47d36b}#loginPage .foot{text-align:center;font-size:11px;color:#888;margin:18px 0 0}
+/* QuickServe branded login — visual changes only; all POS data keys retained */
+body:has(#loginPage:not(.hidden))>header{display:none}
+#loginPage{min-height:100dvh;display:block;padding:0 0 38px;background:radial-gradient(circle at 96% 40%,#ff9911 0%,transparent 25%),linear-gradient(160deg,#e70816 0%,#ff5a13 60%,#c90818 100%);color:#162336;overflow:hidden}
+#loginPage .hero{position:relative;overflow:hidden;background:linear-gradient(145deg,#292b32,#11131a);color:white;text-align:center;padding:36px 16px 84px;border-radius:0 0 44% 12% / 0 0 17% 9%}
+#loginPage .hero:after{content:"";position:absolute;bottom:-75px;right:-35px;width:200px;height:150px;border-radius:50%;background:linear-gradient(135deg,#ffb300,#ff5316);transform:rotate(-20deg)}
+#loginPage .hero-logo{display:flex;justify-content:center;align-items:center;gap:12px;font-size:34px;font-weight:900;font-style:italic;line-height:1.02;letter-spacing:-1px}
+#loginPage .bag{font-size:70px;filter:drop-shadow(0 5px 5px #0005)}
+#loginPage .hero-logo em{font-style:italic;color:#ffad1d}
+#loginPage .tagline{font-size:13px;letter-spacing:.25px;margin:17px 0 0;color:#f2f2f2;font-style:italic}
+#loginPage .login-card{position:relative;z-index:1;width:calc(100% - 28px);max-width:530px;margin:-49px auto 0;background:linear-gradient(160deg,#fff,#fafafa);border-radius:34px;padding:30px 24px 26px;box-shadow:0 16px 34px #4d0a1840;color:#17243a}
+#loginPage .user-symbol{width:70px;height:70px;border-radius:50%;margin:-60px auto 10px;display:flex;align-items:center;justify-content:center;font-size:34px;background:#fff5f0;box-shadow:0 5px 15px #0002;border:5px solid white}
+#loginPage h2{text-align:center;font-size:29px;margin:12px 0 4px;color:#14223a}
+#loginPage .intro{text-align:center;color:#6b7382;margin:0 0 28px;font-size:15px}
+#loginPage label{display:block;color:#38465a;font-size:13px;margin:12px 0 5px;font-weight:700}
+#loginPage .field{display:flex;align-items:center;border:1px solid #d3d6df;border-radius:15px;overflow:hidden;background:#fff;margin:0 0 15px;min-height:55px}
+#loginPage .field-icon{display:flex;align-items:center;justify-content:center;background:#fff0e8;color:#1b293c;align-self:stretch;min-width:57px;font-size:25px}
+#loginPage input{border:0;outline:0;background:transparent;flex:1;min-width:0;width:100%;margin:0;padding:12px;font-size:16px;color:#152238}
+#loginPage input:focus{outline:0}
+#loginPage .field:focus-within{border-color:#ff8115;box-shadow:0 0 0 2px #ff891522}
+#loginPage .show-btn{background:transparent;color:#4c5868;padding:8px 10px;margin:0;font-size:13px}
+#loginPage .login-submit{display:block;width:100%;padding:17px 12px;border-radius:15px;font-size:19px;margin:24px 0 20px;box-shadow:0 8px 18px #e43b2440}
+#loginPage .motto{text-align:center;color:#556273;font-style:italic;font-size:14px;margin:0 0 20px}
+#loginPage .privacy{background:#fff1f1;color:#4c5361;border-radius:16px;padding:15px;font-size:12px;line-height:1.5}
+#loginPage .offline{text-align:center;color:#5e6672;font-size:11px;margin:12px 0 0}
+#loginPage .bottom-brand{text-align:center;color:#fff;letter-spacing:2px;margin:28px 0 0;font-size:15px;font-weight:bold}
+#loginPage .bottom-sub{text-align:center;color:#fff;margin:5px 0;font-size:11px;letter-spacing:3px}
+@media(min-width:650px){#loginPage .hero{padding-bottom:96px}#loginPage .hero-logo{font-size:44px}#loginPage .login-card{margin-top:-60px}}
 @media(max-width:500px){.container{padding:8px}.card{padding:11px}.cart-row{font-size:13px}.total{font-size:22px}.tabs button{font-size:12px;padding:9px 6px}}@media print{body{background:white;margin:0;padding:0}body *{visibility:hidden}#printReceipt,#printReceipt *{visibility:visible}#printReceipt{display:block!important;position:absolute;left:0;top:0;width:58mm;padding:2mm;font-family:monospace;font-size:11px;color:#000;background:white}@page{size:58mm auto;margin:0}}
 </style>
 </head>
 <body>
 <header><h2>⚡ QuickServe POS</h2><div id="userInfo">Mag-login upang magsimula</div></header>
 <section id="loginPage">
-  <div class="login-card">
-    <div class="brand"><div class="brand-mark" aria-hidden="true">⚡</div><div class="brand-name">QuickServe POS</div><div class="brand-sub">SMART • FAST • RELIABLE</div></div>
-    <h2>Welcome Back!</h2><p class="intro">Sign in to continue to your POS dashboard.</p>
-    <label for="loginId">USER ID</label><input id="loginId" placeholder="Enter your User ID" autocomplete="username">
-    <label for="loginPassword">PASSWORD</label><div class="pw-row"><input id="loginPassword" type="password" placeholder="Enter your password" autocomplete="current-password"><button class="show-btn" type="button" onclick="togglePassword()" id="showPasswordBtn">Show</button></div>
-    <button class="primary login-submit" onclick="login()">LOGIN →</button>
-    <div class="offline"><span>●</span> <span id="connectionStatus">Checking connection…</span></div><p class="foot">QuickServe POS • Secure staff access</p>
+  <div class="hero">
+    <div class="hero-logo"><span class="bag" aria-hidden="true">🛍️</span><span>QuickServe<br><em>POS</em></span></div>
+    <p class="tagline">Fast Orders &nbsp; • &nbsp; Smooth Operations &nbsp; • &nbsp; Better Business</p>
   </div>
+  <div class="login-card">
+    <div class="user-symbol" aria-hidden="true">👤</div>
+    <h2>Welcome!</h2><p class="intro">Mag-login upang magpatuloy</p>
+    <label for="loginId">USER ID</label>
+    <div class="field"><span class="field-icon" aria-hidden="true">👤</span><input id="loginId" placeholder="Admin o Cashier ID" autocomplete="username"></div>
+    <label for="loginPassword">PASSWORD</label>
+    <div class="field"><span class="field-icon" aria-hidden="true">🔒</span><input id="loginPassword" type="password" placeholder="Password" autocomplete="current-password"><button class="show-btn" type="button" onclick="togglePassword()" id="showPasswordBtn">Show</button></div>
+    <button class="primary login-submit" onclick="login()">➜ &nbsp; LOGIN</button>
+    <p class="motto">Let's serve success together!</p>
+    <div class="privacy">🛡️ &nbsp; Ang iyong User ID at password ay panatilihing pribado. Gamitin ang iyong kasalukuyang login credentials.</div>
+    <div class="offline" id="connectionStatus">Checking connection…</div>
+  </div>
+  <div class="bottom-brand">— QUICKSERVE POS —</div><div class="bottom-sub">FOOD • DRINKS • MORE</div>
 </section>
 <main id="app" class="container hidden">
   <nav class="tabs"><button class="primary" onclick="showPage('posPage')">🛒 POS</button><button onclick="showPage('historyPage')">📋 History</button><button id="adminBtn" onclick="showPage('adminPage')">⚙️ Admin</button><button class="danger" onclick="logout()">Logout</button></nav>
