@@ -1,440 +1,98 @@
 <!DOCTYPE html>
 <html lang="tl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#171717">
-<meta name="description" content="Offline-capable Food POS">
-<link rel="manifest" href="./manifest.json">
-<title>QuickServe POS</title>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#151515"><meta name="description" content="QuickServe POS - offline-capable point of sale">
+<link rel="manifest" href="./manifest.json"><title>QuickServe POS</title>
 <style>
-*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#f4f4f4;color:#222}
-header{background:#171717;color:#fff;padding:14px;text-align:center}header h2{margin:0 0 5px}
-.container{max-width:1100px;margin:auto;padding:12px}.card{background:#fff;border-radius:12px;padding:14px;margin-bottom:14px;box-shadow:0 2px 8px #0002}
-button{border:0;border-radius:8px;padding:10px 13px;cursor:pointer;font-weight:bold;margin:2px}button:disabled{opacity:.5;cursor:not-allowed}
-input,select{width:100%;padding:11px;margin:6px 0 10px;border:1px solid #ccc;border-radius:8px;font-size:16px}
-.primary{background:linear-gradient(135deg,#e50914,#ff9500);color:#fff}.green{background:#168a45;color:#fff}.gray{background:#777;color:#fff}.danger{background:#b00020;color:#fff}.blue{background:#1769aa;color:#fff}.orange{background:#f08a00;color:#fff}
-.hidden{display:none!important}.login{max-width:420px;margin:35px auto}.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}.tabs button{flex:1;min-width:90px}
-.category-tabs{display:flex;gap:7px;flex-wrap:wrap;margin:8px 0 14px}.category-tabs button{margin:0;white-space:nowrap;background:#eee;color:#222;border:1px solid #ddd}.category-tabs button.selected{background:#d71920;color:#fff;border-color:#d71920}
-.menu{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:9px}.product{border:1px solid #ddd;border-radius:10px;padding:12px;background:#fff}.product h3{margin:5px 0}.product-photo{width:100%;height:118px;object-fit:cover;border-radius:8px;background:#f1f1f1;display:block;margin-bottom:8px}.admin-photo{width:84px;height:72px;object-fit:cover;border-radius:8px;background:#eee;vertical-align:middle;margin-right:10px}.price{font-size:20px;font-weight:bold}.out{opacity:.55}
-.cart-row{display:flex;justify-content:space-between;align-items:center;gap:8px;border-bottom:1px solid #ddd;padding:10px 0}.qty{display:flex;align-items:center;gap:5px}.qty button{padding:5px 9px}.total{font-size:24px;font-weight:bold;margin:14px 0}
-table{width:100%;border-collapse:collapse;display:block;overflow-x:auto}th,td{padding:8px;border-bottom:1px solid #ddd;text-align:left;white-space:nowrap}.small{font-size:13px;color:#666}.active{color:green;font-weight:bold}.disabled{color:#b00020;font-weight:bold}
-.admin-item{border:1px solid #ddd;border-radius:10px;padding:12px;margin:8px 0}.summary{background:#f7f7f7;border-radius:8px;padding:10px;margin-top:8px}.shift-open{background:#e8f8ee;border:1px solid #168a45}.shift-closed{background:#fff0f0;border:1px solid #d71920}
-.stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:9px}.stat{background:#f7f7f7;border-radius:10px;padding:13px;border:1px solid #ddd}.stat-number{font-size:22px;font-weight:bold;margin-top:5px}
-.pay-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.pay-option{background:#fff;border:2px solid #ddd;border-radius:10px;padding:13px;text-align:center}.pay-option.selected{border-color:#d71920;background:#fff1f1}.pay-option strong{display:block;font-size:16px}.receipt-preview{background:#fff;border:1px dashed #aaa;padding:10px;font-family:monospace;max-width:320px;margin:10px auto}
-#printReceipt{display:none}
-@media(max-width:500px){.container{padding:8px}.card{padding:11px}.cart-row{font-size:13px}.total{font-size:22px}.tabs button{font-size:12px;padding:9px 6px}}
-@media print{body{background:#fff;margin:0;padding:0}body *{visibility:hidden}#printReceipt,#printReceipt *{visibility:visible}#printReceipt{display:block!important;position:absolute;left:0;top:0;width:58mm;padding:2mm;font-family:monospace;font-size:11px;color:#000;background:#fff}@page{size:58mm auto;margin:0}}
+*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#f4f4f4;color:#222}header{background:#151515;color:white;padding:14px;text-align:center}header h2{margin:0 0 5px}.container{max-width:1100px;margin:auto;padding:12px}.card{background:white;border-radius:12px;padding:14px;margin-bottom:14px;box-shadow:0 2px 8px #0002}button{border:0;border-radius:8px;padding:11px 13px;cursor:pointer;font-weight:bold;margin:2px}button:disabled{opacity:.5;cursor:not-allowed}input,select{width:100%;padding:11px;margin:6px 0 10px;border:1px solid #ccc;border-radius:8px;font-size:16px}.primary{background:linear-gradient(135deg,#e50914,#ff9500);color:#fff}.green{background:#168a45;color:#fff}.gray{background:#777;color:#fff}.danger{background:#b00020;color:#fff}.blue{background:#1769aa;color:#fff}.orange{background:#f08a00;color:#fff}.hidden{display:none!important}.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}.tabs button{flex:1;min-width:85px}.category-tabs{display:flex;gap:7px;flex-wrap:wrap;margin:8px 0 14px}.category-tabs button{background:#eee;color:#222;border:1px solid #ddd}.category-tabs button.selected{background:#d71920;color:white}.menu{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:9px}.product{border:1px solid #ddd;border-radius:10px;padding:12px;background:white}.product h3{margin:5px 0}.product-photo{width:100%;height:118px;object-fit:cover;border-radius:8px;background:#f1f1f1;display:block;margin-bottom:8px}.admin-photo{width:84px;height:72px;object-fit:cover;border-radius:8px;background:#eee;margin-right:10px}.price{font-size:20px;font-weight:bold}.out{opacity:.55}.cart-row{display:flex;justify-content:space-between;align-items:center;gap:8px;border-bottom:1px solid #ddd;padding:10px 0}.qty{display:flex;align-items:center;gap:5px}.qty button{padding:5px 9px}.total{font-size:24px;font-weight:bold;margin:14px 0}.small{font-size:13px;color:#666}.active{color:green;font-weight:bold}.disabled{color:#b00020;font-weight:bold}.admin-item{border:1px solid #ddd;border-radius:10px;padding:12px;margin:8px 0}.summary{background:#f7f7f7;border-radius:8px;padding:10px;margin-top:8px}.shift-open{background:#e8f8ee;border:1px solid #168a45}.shift-closed{background:#fff0f0;border:1px solid #d71920}.stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:9px}.stat{background:#f7f7f7;border-radius:10px;padding:13px;border:1px solid #ddd}.stat-number{font-size:22px;font-weight:bold;margin-top:5px}.pay-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.pay-option{background:white;border:2px solid #ddd;border-radius:10px;padding:13px;text-align:center}.pay-option.selected{border-color:#d71920;background:#fff1f1}.pay-option strong{display:block;font-size:16px}#printReceipt{display:none}
+/* QuickServe login screen — presentation only; POS logic and storage keys retained */
+#loginPage{min-height:calc(100dvh - 77px);background:radial-gradient(circle at 90% 10%,#54200d 0%,transparent 43%),linear-gradient(155deg,#191919,#080808);display:flex;justify-content:center;align-items:center;padding:24px 14px}#loginPage .login-card{width:100%;max-width:410px;background:linear-gradient(155deg,#262626,#171717);border:1px solid #47403a;border-radius:22px;padding:28px 22px;color:#fff;box-shadow:0 20px 55px #0009}#loginPage .brand{text-align:center;margin-bottom:26px}#loginPage .brand-mark{font-size:46px;line-height:1}#loginPage .brand-name{font-size:31px;font-weight:900;letter-spacing:-1px;margin:9px 0 4px;background:linear-gradient(100deg,#ffb11b,#ff5b17,#e82029);background-clip:text;-webkit-background-clip:text;color:transparent}#loginPage .brand-sub{font-size:12px;letter-spacing:3px;color:#bbb}#loginPage h2{margin:0 0 7px;font-size:22px}#loginPage .intro{color:#bdbdbd;font-size:13px;margin:0 0 22px}#loginPage label{font-size:13px;color:#ddd;font-weight:bold}#loginPage input{background:#101010;border:1px solid #555;color:white;margin:8px 0 17px}#loginPage input:focus{outline:2px solid #ff7d18;border-color:transparent}#loginPage .pw-row{display:flex;gap:6px;align-items:center}#loginPage .pw-row input{min-width:0;flex:1}#loginPage .show-btn{background:#383838;color:white;margin:0 0 9px;white-space:nowrap}#loginPage .login-submit{width:100%;font-size:16px;padding:14px;margin:8px 0 16px}#loginPage .offline{text-align:center;color:#b5cbb8;font-size:12px}#loginPage .offline span{color:#47d36b}#loginPage .foot{text-align:center;font-size:11px;color:#888;margin:18px 0 0}
+@media(max-width:500px){.container{padding:8px}.card{padding:11px}.cart-row{font-size:13px}.total{font-size:22px}.tabs button{font-size:12px;padding:9px 6px}}@media print{body{background:white;margin:0;padding:0}body *{visibility:hidden}#printReceipt,#printReceipt *{visibility:visible}#printReceipt{display:block!important;position:absolute;left:0;top:0;width:58mm;padding:2mm;font-family:monospace;font-size:11px;color:#000;background:white}@page{size:58mm auto;margin:0}}
 </style>
 </head>
 <body>
 <header><h2>⚡ QuickServe POS</h2><div id="userInfo">Mag-login upang magsimula</div></header>
-
-<div id="loginPage" class="container login">
-  <div class="card">
-    <h2>🔐 Login</h2>
-    <label>User ID</label><input id="loginId" placeholder="Admin o Cashier ID" autocomplete="username">
-    <label>Password</label><input id="loginPassword" type="password" placeholder="Password" autocomplete="current-password">
-    <button class="primary" style="width:100%" onclick="login()">LOGIN</button>
-    <p class="small">Ilagay ang iyong User ID at password. Para sa unang setup, gamitin ang default admin credentials na kasama sa instructions at palitan agad ang password.</p>
+<section id="loginPage">
+  <div class="login-card">
+    <div class="brand"><div class="brand-mark" aria-hidden="true">⚡</div><div class="brand-name">QuickServe POS</div><div class="brand-sub">SMART • FAST • RELIABLE</div></div>
+    <h2>Welcome Back!</h2><p class="intro">Sign in to continue to your POS dashboard.</p>
+    <label for="loginId">USER ID</label><input id="loginId" placeholder="Enter your User ID" autocomplete="username">
+    <label for="loginPassword">PASSWORD</label><div class="pw-row"><input id="loginPassword" type="password" placeholder="Enter your password" autocomplete="current-password"><button class="show-btn" type="button" onclick="togglePassword()" id="showPasswordBtn">Show</button></div>
+    <button class="primary login-submit" onclick="login()">LOGIN →</button>
+    <div class="offline"><span>●</span> <span id="connectionStatus">Checking connection…</span></div><p class="foot">QuickServe POS • Secure staff access</p>
   </div>
-</div>
-<div id="app" class="container hidden">
-  <div class="tabs">
-    <button class="primary" onclick="showPage('posPage')">🛒 POS</button>
-    <button onclick="showPage('historyPage')">📋 History</button>
-    <button id="adminBtn" onclick="showPage('adminPage')">⚙️ Admin</button>
-    <button class="danger" onclick="logout()">Logout</button>
-  </div>
-
-  <div id="shiftPanel" class="card">
-    <h3>🕐 Cashier Shift</h3><div id="shiftStatus"></div>
-    <div id="shiftControls"><label>Shift Type</label><select id="shiftType"><option>Opening</option><option>Closing</option></select>
-      <button class="green" style="width:100%" onclick="startShift()">▶️ START SHIFT</button>
-    </div>
-    <div id="closeShiftControls" class="hidden"><button class="danger" style="width:100%" onclick="closeShift()">🔴 CLOSE SHIFT</button></div>
-  </div>
-
-  <div id="posPage">
-    <div class="card">
-      <h3>Order Type</h3>
-      <button id="dineBtn" class="primary" onclick="setOrderType('Dine In')">🍽️ Dine In</button>
-      <button id="takeBtn" onclick="setOrderType('Take Out')">🥡 Take Out</button>
-      <p>Order #: <b id="orderNumber">1001</b></p>
-    </div>
-    <div class="card"><h3>Menu</h3><p class="small">Pumili ng category para makita ang mga produkto.</p><div id="categoryTabs" class="category-tabs"></div><div id="menuList" class="menu"></div></div>
-    <div class="card">
-      <h3>Current Order</h3><div id="cart"></div>
-      <div class="total">Total: ₱<span id="total">0.00</span></div>
-      <h3>Payment Method / Paraan ng Bayad</h3>
-      <div class="pay-grid">
-        <button id="pay-Cash" class="pay-option selected" onclick="setPaymentMethod('Cash')">💵<strong>Cash</strong></button>
-        <button id="pay-GCash" class="pay-option" onclick="setPaymentMethod('GCash')">📱<strong>GCash</strong></button>
-        <button id="pay-Maya" class="pay-option" onclick="setPaymentMethod('Maya')">💚<strong>Maya</strong></button>
-        <button id="pay-Bank Transfer" class="pay-option" onclick="setPaymentMethod('Bank Transfer')">🏦<strong>Bank Transfer</strong></button>
-      </div>
-      <div id="cashFields">
-        <label>Cash Received</label><input id="cash" type="number" min="0" step="0.01" inputmode="decimal" placeholder="Ilagay ang bayad" oninput="calculateChange()">
-        <h3>Sukli: ₱<span id="change">0.00</span></h3>
-      </div>
-      <div id="cashlessNote" class="summary hidden">Cashless payment ang pinili. Kumpirmahin muna na natanggap ang bayad bago i-complete ang order.</div>
-      <button class="green" style="width:100%;margin-top:10px" onclick="completeOrder()">✅ COMPLETE ORDER</button>
-      <button class="blue" style="width:100%;margin-top:8px" onclick="printLastReceipt()">🧾 PRINT LAST RECEIPT</button>
-      <button class="gray" style="width:100%;margin-top:8px" onclick="clearCart()">CLEAR ORDER</button>
-    </div>
-  </div>
-
-  <div id="historyPage" class="hidden"><div class="card"><h2>📋 Sales History</h2><button class="gray" onclick="clearHistory()">Clear History</button><div id="history"></div></div></div>
-
-  <div id="adminPage" class="hidden">
-    <div class="card"><h2>📊 Sales & Shift Summary</h2><div id="salesSummary"></div></div>
-    <div class="card"><h2>📈 Sales Reports</h2><label>Report period</label><select id="reportPeriod" onchange="renderReports()"><option value="today">Daily / Today</option><option value="week">Weekly / Last 7 days</option><option value="month">Monthly / Last 30 days</option><option value="all">All time</option></select><div id="reports"></div></div>
-    <div class="card"><h2>🏆 Best-Selling Products</h2><div id="bestSellers"></div></div>
-    <div class="card"><h2>🍔 Menu Management</h2><h3>Add Menu</h3><input id="newName" placeholder="Product name"><label>Menu Category</label><select id="newCategory"><option>Snacks</option><option>Refreshment</option><option>Meal</option><option>Combo Meal</option><option>Combo Basket</option></select><input id="newPrice" type="number" min="0.01" step="0.01" placeholder="Price"><input id="newStock" type="number" min="0" step="1" placeholder="Starting stock quantity"><label>Product Picture (optional)</label><input id="newPicture" type="file" accept="image/*" capture="environment"><p class="small">Pumili ng larawan mula sa Gallery o Camera. Awtomatikong i-compress at ise-save para magamit offline.</p><button class="green" onclick="addMenu()">➕ Add Menu</button><p class="small">Ang stock ay awtomatikong mababawasan kapag nakumpleto ang sale. Ang zero stock ay hindi mabebentang produkto.</p></div>
-    <div class="card"><h3>Existing Menu & Inventory</h3><div id="adminMenu"></div></div>
-    <div class="card"><h2>👤 Cashier Management</h2><h3>Add Cashier</h3><input id="newCashierName" placeholder="Cashier name"><input id="newCashierId" placeholder="User ID"><input id="newCashierPassword" type="password" placeholder="New password"><button class="green" onclick="addCashier()">➕ Add Cashier</button><h3>Cashier Accounts</h3><div id="cashierList"></div></div>
-    <div class="card"><h2>🔐 Admin Password</h2><p class="small">Baguhin ang default admin password. Ang password ay hindi ipinapakita sa cashier screen.</p><input id="adminNewPassword" type="password" placeholder="Bagong admin password"><button class="blue" onclick="changeAdminPassword()">Change Admin Password</button></div>
-  </div>
-</div>
+</section>
+<main id="app" class="container hidden">
+  <nav class="tabs"><button class="primary" onclick="showPage('posPage')">🛒 POS</button><button onclick="showPage('historyPage')">📋 History</button><button id="adminBtn" onclick="showPage('adminPage')">⚙️ Admin</button><button class="danger" onclick="logout()">Logout</button></nav>
+  <section id="shiftPanel" class="card"><h3>🕐 Cashier Shift</h3><div id="shiftStatus"></div><div id="shiftControls"><label>Shift Type</label><select id="shiftType"><option>Opening</option><option>Closing</option></select><button class="green" style="width:100%" onclick="startShift()">▶️ START SHIFT</button></div><div id="closeShiftControls" class="hidden"><button class="danger" style="width:100%" onclick="closeShift()">🔴 CLOSE SHIFT</button></div></section>
+  <section id="posPage"><div class="card"><h3>Order Type</h3><button id="dineBtn" class="primary" onclick="setOrderType('Dine In')">🍽️ Dine In</button><button id="takeBtn" onclick="setOrderType('Take Out')">🥡 Take Out</button><p>Order #: <b id="orderNumber">1001</b></p></div><div class="card"><h3>Menu</h3><p class="small">Pumili ng category para makita ang mga produkto.</p><div id="categoryTabs" class="category-tabs"></div><div id="menuList" class="menu"></div></div><div class="card"><h3>Current Order</h3><div id="cart"></div><div class="total">Total: ₱<span id="total">0.00</span></div><h3>Payment Method / Paraan ng Bayad</h3><div class="pay-grid"><button id="pay-Cash" class="pay-option selected" onclick="setPaymentMethod('Cash')">💵<strong>Cash</strong></button><button id="pay-GCash" class="pay-option" onclick="setPaymentMethod('GCash')">📱<strong>GCash</strong></button><button id="pay-Maya" class="pay-option" onclick="setPaymentMethod('Maya')">💚<strong>Maya</strong></button><button id="pay-Bank Transfer" class="pay-option" onclick="setPaymentMethod('Bank Transfer')">🏦<strong>Bank Transfer</strong></button></div><div id="cashFields"><label>Cash Received</label><input id="cash" type="number" min="0" step="0.01" inputmode="decimal" placeholder="Ilagay ang bayad" oninput="calculateChange()"><h3>Sukli: ₱<span id="change">0.00</span></h3></div><div id="cashlessNote" class="summary hidden">Cashless payment ang pinili. Kumpirmahin muna na natanggap ang bayad bago i-complete ang order.</div><button class="green" style="width:100%;margin-top:10px" onclick="completeOrder()">✅ COMPLETE ORDER</button><button class="blue" style="width:100%;margin-top:8px" onclick="printLastReceipt()">🧾 PRINT LAST RECEIPT</button><button class="gray" style="width:100%;margin-top:8px" onclick="clearCart()">CLEAR ORDER</button></div></section>
+  <section id="historyPage" class="hidden"><div class="card"><h2>📋 Sales History</h2><button id="clearHistoryBtn" class="gray" onclick="clearHistory()">Clear History (Admin)</button><div id="history"></div></div></section>
+  <section id="adminPage" class="hidden"><div class="card"><h2>📊 Sales & Shift Summary</h2><div id="salesSummary"></div></div><div class="card"><h2>📈 Sales Reports</h2><label>Report period</label><select id="reportPeriod" onchange="renderReports()"><option value="today">Daily / Today</option><option value="week">Weekly / Last 7 days</option><option value="month">Monthly / Last 30 days</option><option value="all">All time</option></select><div id="reports"></div></div><div class="card"><h2>🏆 Best-Selling Products</h2><div id="bestSellers"></div></div><div class="card"><h2>🍔 Menu Management</h2><h3>Add Menu</h3><input id="newName" placeholder="Product name"><label>Menu Category</label><select id="newCategory"><option>Snacks</option><option>Refreshment</option><option>Meal</option><option>Combo Meal</option><option>Combo Basket</option></select><input id="newPrice" type="number" min="0.01" step="0.01" placeholder="Price"><input id="newStock" type="number" min="0" step="1" placeholder="Starting stock quantity"><label>Product Picture (optional)</label><input id="newPicture" type="file" accept="image/*"><p class="small">Pumili ng larawan mula sa Gallery. Iko-compress ito para magamit offline.</p><button class="green" onclick="addMenu()">➕ Add Menu</button><p class="small">Awtomatikong mababawasan ang stock pagkatapos ng completed sale.</p></div><div class="card"><h3>Existing Menu & Inventory</h3><div id="adminMenu"></div></div><div class="card"><h2>👤 Cashier Management</h2><h3>Add Cashier</h3><input id="newCashierName" placeholder="Cashier name"><input id="newCashierId" placeholder="User ID"><input id="newCashierPassword" type="password" placeholder="New password"><button class="green" onclick="addCashier()">➕ Add Cashier</button><h3>Cashier Accounts</h3><div id="cashierList"></div></div><div class="card"><h2>🔐 Admin Password</h2><p class="small">Baguhin ang admin password at itago sa ligtas na lugar.</p><input id="adminNewPassword" type="password" placeholder="Bagong admin password"><button class="blue" onclick="changeAdminPassword()">Change Admin Password</button></div></section>
+</main>
 <div id="printReceipt"></div>
-
 <script>
 "use strict";
-const $ = id => document.getElementById(id);
-const money = n => Number(n||0).toFixed(2);
-const todayKey = () => { const d=new Date(); return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"); };
-function readArray(key,fallback){try{const x=JSON.parse(localStorage.getItem(key));return Array.isArray(x)?x:fallback;}catch(e){return fallback;}}
-function readValue(key,fallback){try{const x=localStorage.getItem(key);return x===null?fallback:JSON.parse(x);}catch(e){return fallback;}}
-function write(key,value){try{localStorage.setItem(key,JSON.stringify(value));return true;}catch(e){alert("Hindi ma-save ang data. Maaaring puno ang storage.");return false;}}
-function escapeHtml(v){return String(v??"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;");}
-function safeJs(v){return String(v).replace(/\\/g,"\\\\").replace(/'/g,"\\'");}
-  const MENU_CATEGORIES=["Snacks","Refreshment","Meal","Combo Meal","Combo Basket"];
-let currentCategory="All";
-let currentUser=null,orderType="Dine In",paymentMethod="Cash",cart=[],lastSale=null;
-let menu=readArray("foodMenu",[
-{id:1,name:"Sundae",price:50,available:true,stock:50},
-{id:2,name:"Fries",price:50,available:true,stock:50},
-{id:3,name:"Fried Chicken",price:99,available:true,stock:50},
-{id:4,name:"Float",price:60,available:true,stock:50}
-]);
-menu=menu.map(x=>{
- const n=String(x.name||"").toLowerCase();
- const inferred=n.includes("float")||n.includes("drink")||n.includes("soda")?"Refreshment":n.includes("combo basket")||n.includes("basket")?"Combo Basket":n.includes("combo")?"Combo Meal":n.includes("chicken")||n.includes("rice")||n.includes("meal")?"Meal":n.includes("sundae")||n.includes("ice cream")?"Refreshment":"Snacks";
- return {...x,category:MENU_CATEGORIES.includes(x.category)?x.category:inferred,stock:Number.isFinite(Number(x.stock))?Math.max(0,Number(x.stock)):50,available:x.available!==false};
-});
+const $=id=>document.getElementById(id),money=n=>Number(n||0).toFixed(2),todayKey=()=>{const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")};
+function readArray(k,f){try{const x=JSON.parse(localStorage.getItem(k));return Array.isArray(x)?x:f}catch(e){return f}}
+function readValue(k,f){try{const x=localStorage.getItem(k);return x===null?f:JSON.parse(x)}catch(e){return f}}
+function write(k,v){try{localStorage.setItem(k,JSON.stringify(v));return true}catch(e){alert("Hindi ma-save ang data. Maaaring puno ang storage.");return false}}
+function esc(v){return String(v??"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;")}
+const CATS=["Snacks","Refreshment","Meal","Combo Meal","Combo Basket"];
+let currentCategory="All",currentUser=null,orderType="Dine In",paymentMethod="Cash",cart=[],lastSale=null;
+let menu=readArray("foodMenu",[{id:1,name:"Sundae",price:50,available:true,stock:50},{id:2,name:"Fries",price:50,available:true,stock:50},{id:3,name:"Fried Chicken",price:99,available:true,stock:50},{id:4,name:"Float",price:60,available:true,stock:50}]);
+menu=menu.map(x=>{const n=String(x.name||"").toLowerCase(),inferred=n.includes("float")||n.includes("drink")||n.includes("soda")||n.includes("sundae")||n.includes("ice cream")?"Refreshment":n.includes("basket")?"Combo Basket":n.includes("combo")?"Combo Meal":n.includes("chicken")||n.includes("rice")||n.includes("meal")?"Meal":"Snacks";return {...x,category:CATS.includes(x.category)?x.category:inferred,stock:Number.isFinite(Number(x.stock))?Math.max(0,Number(x.stock)):50,available:x.available!==false}});
 let cashiers=readArray("foodCashiers",[{id:"CASH001",name:"Cashier 1",password:"2026",active:true}]);
-let sales=readArray("foodSales",[]),shifts=readArray("foodShifts",[]);
-let activeShift=readValue("activeShift",null);
-let adminPassword=readValue("foodAdminPassword","2026");
+let sales=readArray("foodSales",[]),shifts=readArray("foodShifts",[]),activeShift=readValue("activeShift",null),adminPassword=readValue("foodAdminPassword","2026");
 let orderNo=Math.max(1001,Number(localStorage.getItem("orderNumber")||1000)+1);
-function saveMenu(){return write("foodMenu",menu)}
-function saveCashiers(){return write("foodCashiers",cashiers)}
-function saveSales(){return write("foodSales",sales)}
-function saveShifts(){return write("foodShifts",shifts)}
-function saveShift(){try{if(activeShift)localStorage.setItem("activeShift",JSON.stringify(activeShift));else localStorage.removeItem("activeShift");}catch(e){}}
-
-document.addEventListener("DOMContentLoaded",()=>{$("orderNumber").textContent=orderNo;renderAll();updateShiftUI();});
-function renderAll(){renderMenu();renderCart();renderHistory();renderAdminMenu();renderCashiers();renderSalesSummary();renderReports();renderBestSellers();}
-
-function login(){
- const id=$("loginId").value.trim().toLowerCase(),pw=$("loginPassword").value;
- if(id==="admin"&&pw===adminPassword){currentUser={id:"admin",name:"Administrator",role:"admin"};}
- else {
-  const c=cashiers.find(x=>String(x.id).trim().toLowerCase()===id&&String(x.password)===pw);
-  if(!c){alert("Mali ang User ID o Password.");return;}
-  if(!c.active){alert("Disabled ang cashier account.");return;}
-  currentUser={id:c.id,name:c.name,role:"cashier"};
- }
- $("loginPage").classList.add("hidden");$("app").classList.remove("hidden");
- $("userInfo").textContent=currentUser.role.toUpperCase()+" • "+currentUser.name+" • ID: "+currentUser.id;
- $("adminBtn").style.display=currentUser.role==="admin"?"block":"none";
- renderAll();updateShiftUI();showPage("posPage");
-}
-function logout(){currentUser=null;cart=[];$("app").classList.add("hidden");$("loginPage").classList.remove("hidden");$("loginId").value="";$("loginPassword").value="";$("userInfo").textContent="Mag-login upang magsimula";clearCart();}
-function isAdmin(){return !!currentUser&&currentUser.role==="admin";}
-function requireAdmin(){if(!isAdmin()){alert("Admin lang ang puwedeng gumamit ng feature na ito.");return false;}return true;}
-function showPage(page){
- if(page==="adminPage"&&!requireAdmin())return;
- if(page==="historyPage"&&!currentUser){alert("Mag-login muna.");return;}
- ["posPage","historyPage","adminPage"].forEach(id=>$(id).classList.add("hidden"));
- $(page).classList.remove("hidden");
-}
-function setOrderType(t){orderType=t;$("dineBtn").className=t==="Dine In"?"primary":"";$("takeBtn").className=t==="Take Out"?"primary":"";}
-function setPaymentMethod(method){
- paymentMethod=method;
- ["Cash","GCash","Maya","Bank Transfer"].forEach(m=>{const b=$("pay-"+m);if(b)b.classList.toggle("selected",m===method);});
- $("cashFields").classList.toggle("hidden",method!=="Cash");
- $("cashlessNote").classList.toggle("hidden",method==="Cash");
- if(method!=="Cash"){$("cash").value="";$("change").textContent="0.00";}
- calculateChange();
-}
-
-function startShift(){
- if(!currentUser||currentUser.role!=="cashier"){alert("Ang shift ay para sa cashier.");return;}
- if(activeShift){alert(activeShift.cashier===currentUser.id?"May active shift ka na.":"May active shift ang ibang cashier.");return;}
- const type=$("shiftType").value;
- activeShift={id:"SHIFT-"+Date.now(),cashier:currentUser.id,cashierName:currentUser.name,type,startTime:new Date().toLocaleString(),startTimestamp:Date.now(),endTime:"",endTimestamp:0,orders:0,sales:0};
- saveShift();updateShiftUI();renderSalesSummary();alert("Na-open na ang "+type+" Shift.");
-}
-function closeShift(){
- if(!currentUser||currentUser.role!=="cashier"||!activeShift||activeShift.cashier!==currentUser.id){alert("Walang active shift na pag-aari mo.");return;}
- const ss=sales.filter(s=>s.shiftId===activeShift.id),total=ss.reduce((a,s)=>a+Number(s.total||0),0);
- if(!confirm("Isara ang shift?\nOrders: "+ss.length+"\nTotal sales: ₱"+money(total)))return;
- shifts.unshift({...activeShift,endTime:new Date().toLocaleString(),endTimestamp:Date.now(),orders:ss.length,sales:total});
- saveShifts();activeShift=null;saveShift();updateShiftUI();renderSalesSummary();alert("Na-close na ang shift.");
-}
-function updateShiftUI(){
- if(!$("shiftStatus"))return;
- if(isAdmin()){
-  $("shiftStatus").innerHTML='<div class="summary"><b>👑 ADMIN MODE</b><br>Hindi kailangan ng cashier shift.</div>';
-  $("shiftControls").classList.add("hidden");$("closeShiftControls").classList.add("hidden");return;
- }
- if(!currentUser){
-  $("shiftStatus").textContent="Mag-login muna.";
-  $("shiftControls").classList.remove("hidden");$("closeShiftControls").classList.add("hidden");return;
- }
- if(activeShift&&activeShift.cashier===currentUser.id){
-  $("shiftStatus").innerHTML=`<div class="summary shift-open"><b>🟢 SHIFT OPEN</b><br>Cashier: ${escapeHtml(activeShift.cashierName)}<br>Shift: ${escapeHtml(activeShift.type)}<br>Start: ${escapeHtml(activeShift.startTime)}<br>Current Sales: ₱${money(getActiveShiftSales())}<br>Orders: ${getActiveShiftOrders()}</div>`;
-  $("shiftControls").classList.add("hidden");$("closeShiftControls").classList.remove("hidden");
- }else if(activeShift){
-  $("shiftStatus").innerHTML=`<div class="summary shift-closed"><b>🔴 MAY ACTIVE SHIFT ANG IBANG CASHIER</b><br>Cashier: ${escapeHtml(activeShift.cashierName)}</div>`;
-  $("shiftControls").classList.add("hidden");$("closeShiftControls").classList.add("hidden");
- }else{
-  $("shiftStatus").innerHTML='<div class="summary shift-closed"><b>🔴 NO ACTIVE SHIFT</b><br>Mag-open ng shift bago mag-order.</div>';
-  $("shiftControls").classList.remove("hidden");$("closeShiftControls").classList.add("hidden");
- }
-}
-function getActiveShiftSales(){return sales.filter(s=>activeShift&&s.shiftId===activeShift.id).reduce((a,s)=>a+Number(s.total||0),0)}
-function getActiveShiftOrders(){return sales.filter(s=>activeShift&&s.shiftId===activeShift.id).length}
-
-function renderMenu(){
- const counts={All:menu.length};MENU_CATEGORIES.forEach(c=>counts[c]=menu.filter(i=>i.category===c).length);
- $("categoryTabs").innerHTML=["All",...MENU_CATEGORIES].map(c=>`<button class="${currentCategory===c?"selected":""}" onclick="setMenuCategory('${safeJs(c)}')">${escapeHtml(c)} (${counts[c]||0})</button>`).join("");
- const shown=currentCategory==="All"?menu:menu.filter(i=>i.category===currentCategory);
- $("menuList").innerHTML=shown.map(i=>`<div class="product ${(!i.available||Number(i.stock)<=0)?"out":""}">${i.image?`<img class="product-photo" src="${i.image}" alt="${escapeHtml(i.name)}">`:`<div class="product-photo" style="display:flex;align-items:center;justify-content:center;font-size:38px">🍽️</div>`}<div class="small">${escapeHtml(i.category||"Snacks")}</div><h3>${escapeHtml(i.name)}</h3><div class="price">₱${money(i.price)}</div><div class="small">Stock: ${Number(i.stock)||0}</div>${i.available&&Number(i.stock)>0?`<button class="primary" style="width:100%;margin-top:8px" onclick="addToCart(${Number(i.id)})">ADD</button>`:`<button disabled style="width:100%;margin-top:8px">OUT OF STOCK</button>`}</div>`).join("")||'<p>Wala pang produkto sa category na ito.</p>';
-}
-function setMenuCategory(category){currentCategory=category;renderMenu();}
-function addToCart(id){
- if(currentUser&&currentUser.role==="cashier"&&(!activeShift||activeShift.cashier!==currentUser.id)){alert("Kailangan mong may active shift bago mag-order.");return;}
- const i=menu.find(x=>Number(x.id)===Number(id));if(!i||!i.available||Number(i.stock)<=0)return;
- const existing=cart.find(x=>Number(x.id)===Number(id));
- if(existing){if(existing.qty>=Number(i.stock)){alert("Hindi sapat ang stock.");return;}existing.qty++;}
- else cart.push({id:Number(i.id),name:i.name,price:Number(i.price),qty:1});
- renderCart();
-}
-function renderCart(){
- if(!cart.length)$("cart").innerHTML="<p>Wala pang order.</p>";
- else $("cart").innerHTML=cart.map(i=>`<div class="cart-row"><div><b>${escapeHtml(i.name)}</b><br>₱${money(i.price)}</div><div class="qty"><button onclick="changeQty(${i.id},-1)">−</button><b>${i.qty}</b><button onclick="changeQty(${i.id},1)">+</button></div><b>₱${money(i.price*i.qty)}</b></div>`).join("");
- updateTotal();
-}
-function changeQty(id,amount){
- const c=cart.find(x=>Number(x.id)===Number(id));if(!c)return;
- const p=menu.find(x=>Number(x.id)===Number(id));c.qty+=amount;
- if(c.qty<=0)cart=cart.filter(x=>Number(x.id)!==Number(id));
- else if(p&&c.qty>Number(p.stock)){c.qty=Number(p.stock);alert("Hindi sapat ang stock.");}
- renderCart();
-}
-function getTotal(){return cart.reduce((a,i)=>a+Number(i.price)*Number(i.qty),0)}
-function updateTotal(){$("total").textContent=money(getTotal());calculateChange();}
-function calculateChange(){const total=getTotal(),cash=Number($("cash").value||0);$("change").textContent=money(Math.max(0,cash-total));}
-function clearCart(){cart=[];$("cash").value="";$("change").textContent="0.00";renderCart();}
-
-function completeOrder(){
- if(!currentUser){alert("Mag-login muna.");return;}
- if(currentUser.role==="cashier"&&(!activeShift||activeShift.cashier!==currentUser.id)){alert("Mag-open muna ng shift bago mag-complete ng order.");return;}
- if(!cart.length){alert("Wala pang order.");return;}
- for(const ci of cart){const p=menu.find(x=>Number(x.id)===Number(ci.id));if(!p||!p.available||Number(p.stock)<Number(ci.qty)){alert("Hindi sapat ang stock ng "+ci.name+". Pakisuri ang inventory.");return;}}
- const total=getTotal(),cash=paymentMethod==="Cash"?Number($("cash").value||0):total;
- if(paymentMethod==="Cash"&&cash<total){alert("Kulang ang bayad. Total: ₱"+money(total));return;}
- if(paymentMethod!=="Cash"&&!confirm("Nakumpirma mo na bang natanggap ang "+paymentMethod+" payment na ₱"+money(total)+"?"))return;
- const change=paymentMethod==="Cash"?cash-total:0;
- const sale={orderNo,date:new Date().toLocaleString(),timestamp:Date.now(),dateKey:todayKey(),cashier:currentUser.id,cashierName:currentUser.name,type:orderType,paymentMethod,shiftId:activeShift?activeShift.id:"ADMIN",shiftType:activeShift?activeShift.type:"ADMIN",items:cart.map(i=>({id:i.id,name:i.name,price:Number(i.price),qty:Number(i.qty)})),total,cash,change};
- const oldSales=sales.slice(),oldMenu=menu.map(x=>({...x}));sales.unshift(sale);
- cart.forEach(ci=>{const p=menu.find(x=>Number(x.id)===Number(ci.id));p.stock=Math.max(0,Number(p.stock)-Number(ci.qty));if(p.stock===0)p.available=false;});
- if(!saveSales()||!saveMenu()){sales=oldSales;menu=oldMenu;return;}
- try{localStorage.setItem("orderNumber",String(orderNo));}catch(e){}
- lastSale=sale;prepareReceipt(sale);renderAll();updateShiftUI();
- alert("ORDER COMPLETED!\nOrder #: "+orderNo+"\nPayment: "+paymentMethod+"\nTotal: ₱"+money(total)+(paymentMethod==="Cash"?"\nBayad: ₱"+money(cash)+"\nSukli: ₱"+money(change):""));
- orderNo++;$("orderNumber").textContent=orderNo;clearCart();
-}
-  function prepareReceipt(s){
- let h=`<div style="text-align:center"><b>FOOD POS</b><br>------------------------------</div>
-<div>Order #: ${escapeHtml(s.orderNo)}<br>Date: ${escapeHtml(s.date)}<br>Cashier: ${escapeHtml(s.cashierName||s.cashier)}<br>ID: ${escapeHtml(s.cashier)}<br>Shift: ${escapeHtml(s.shiftType||"")}<br>Type: ${escapeHtml(s.type||"")}</div><hr>`;
- (s.items||[]).forEach(i=>h+=`<div style="display:flex;justify-content:space-between;gap:3px"><span>${escapeHtml(i.name)} x${Number(i.qty)}</span><span>₱${money(i.price*i.qty)}</span></div>`);
- h+=`<hr><div style="display:flex;justify-content:space-between"><b>TOTAL</b><b>₱${money(s.total)}</b></div><div>PAYMENT: <b>${escapeHtml(s.paymentMethod||"Cash")}</b></div>`;
- if((s.paymentMethod||"Cash")==="Cash")h+=`<div style="display:flex;justify-content:space-between"><span>CASH</span><span>₱${money(s.cash)}</span></div><div style="display:flex;justify-content:space-between"><span>CHANGE</span><span>₱${money(s.change)}</span></div>`;
- h+='<hr><div style="text-align:center">Thank you!<br>Please come again.</div>';
- $("printReceipt").innerHTML=h;
-}
-function printLastReceipt(){
- if(!lastSale){if(sales.length)lastSale=sales[0];else{alert("Wala pang receipt.");return;}}
- prepareReceipt(lastSale);setTimeout(()=>window.print(),100);
-}
-function printReceiptByOrder(n){
- const s=sales.find(x=>String(x.orderNo)===String(n));
- if(!s){alert("Receipt not found.");return;}
- lastSale=s;prepareReceipt(s);setTimeout(()=>window.print(),100);
-}
-function renderHistory(){
- if(!sales.length){$("history").innerHTML="<p>Wala pang sales history.</p>";return;}
- $("history").innerHTML=sales.map(s=>`<div class="admin-item"><b>Order #${escapeHtml(s.orderNo)}</b><br><span class="small">${escapeHtml(s.date||"")}</span><div class="summary"><b>Cashier:</b> ${escapeHtml(s.cashierName||s.cashier)}<br><b>ID:</b> ${escapeHtml(s.cashier)}<br><b>Shift:</b> ${escapeHtml(s.shiftType||"")}<br><b>Type:</b> ${escapeHtml(s.type||"")}<br><b>Payment:</b> ${escapeHtml(s.paymentMethod||"Cash")}<br><b>Total:</b> ₱${money(s.total)}${(s.paymentMethod||"Cash")==="Cash"?`<br><b>Cash:</b> ₱${money(s.cash)}<br><b>Change:</b> ₱${money(s.change)}`:""}</div>${(s.items||[]).map(i=>`<div>${escapeHtml(i.name)} x${i.qty} = ₱${money(i.price*i.qty)}</div>`).join("")}<button class="blue" onclick="printReceiptByOrder('${safeJs(s.orderNo)}')">🧾 PRINT RECEIPT</button></div>`).join("");
-}
-function clearHistory(){
- if(!requireAdmin())return;
- if(!confirm("Burahin ang lahat ng sales history at closed shifts? Hindi nito ibabalik ang stock."))return;
- sales=[];shifts=[];localStorage.removeItem("foodSales");localStorage.removeItem("foodShifts");localStorage.removeItem("orderNumber");orderNo=1001;$("orderNumber").textContent=orderNo;lastSale=null;renderAll();updateShiftUI();alert("Na-clear ang history. Susunod na order #1001.");
-}
-
-function renderAdminMenu(){
- if(!isAdmin()){$("adminMenu").innerHTML="";return;}
- $("adminMenu").innerHTML=menu.map(i=>`<div class="admin-item"><div style="display:flex;align-items:center;gap:8px">${i.image?`<img class="admin-photo" src="${i.image}" alt="${escapeHtml(i.name)}">`:`<div class="admin-photo" style="display:inline-flex;align-items:center;justify-content:center;font-size:28px">🍽️</div>`}<div><h3>${escapeHtml(i.name)}</h3><p>Category: <b>${escapeHtml(i.category||"Snacks")}</b></p></div></div><p>Price: <b>₱${money(i.price)}</b></p><p>Stock: <b>${Number(i.stock)||0}</b></p><p>Status: ${i.available&&Number(i.stock)>0?'<span class="active">AVAILABLE</span>':'<span class="disabled">OUT OF STOCK</span>'}</p><button class="blue" onclick="editMenu(${Number(i.id)})">✏️ Edit</button><button class="blue" onclick="changeMenuPicture(${Number(i.id)})">🖼️ ${i.image?'Change Picture':'Add Picture'}</button><button class="orange" onclick="adjustStock(${Number(i.id)})">📦 Adjust Stock</button><button class="gray" onclick="toggleStock(${Number(i.id)})">${i.available?"🚫 Mark Out of Stock":"✅ Mark Available"}</button><button class="danger" onclick="deleteMenu(${Number(i.id)})">🗑️ Delete</button></div>`).join("")||"<p>Wala pang menu.</p>";
-}
-async function addMenu(){
- if(!requireAdmin())return;
- const name=$("newName").value.trim(),category=$("newCategory").value,price=Number($("newPrice").value),stock=Number($("newStock").value||0);
- if(!name||!MENU_CATEGORIES.includes(category)||!Number.isFinite(price)||price<=0||!Number.isInteger(stock)||stock<0){alert("Ilagay ang tamang pangalan, category, presyo at stock.");return;}
- let image="";const file=$("newPicture").files&&$("newPicture").files[0];
- if(file){try{image=await compressImage(file);}catch(e){alert("Hindi mabasa ang larawan. Subukan ang ibang image.");return;}}
- const id=Math.max(0,...menu.map(x=>Number(x.id)||0))+1;const item={id,name,category,price,stock,available:stock>0};if(image)item.image=image;
- menu.push(item);if(!saveMenu()){menu=menu.filter(x=>Number(x.id)!==id);return;}
- renderAll();$("newName").value="";$("newPrice").value="";$("newStock").value="";$("newCategory").value="Snacks";$("newPicture").value="";alert("Naidagdag ang menu."+(image?" Naka-save ang larawan para sa offline use.":""));
-}
-function compressImage(file){
- return new Promise((resolve,reject)=>{
-  if(!file||!file.type||!file.type.startsWith("image/")){reject(new Error("Not an image"));return;}
-  const reader=new FileReader();reader.onerror=()=>reject(new Error("Read failed"));reader.onload=()=>{
-   const img=new Image();img.onerror=()=>reject(new Error("Image failed"));img.onload=()=>{
-    const max=420,scale=Math.min(1,max/Math.max(img.width,img.height));const w=Math.max(1,Math.round(img.width*scale)),h=Math.max(1,Math.round(img.height*scale));
-    const canvas=document.createElement("canvas");canvas.width=w;canvas.height=h;const ctx=canvas.getContext("2d");ctx.drawImage(img,0,0,w,h);
-    try{resolve(canvas.toDataURL("image/jpeg",0.68));}catch(e){reject(e);}
-   };img.src=reader.result;
-  };reader.readAsDataURL(file);
- });
-}
-async function changeMenuPicture(id){
- if(!requireAdmin())return;const item=menu.find(x=>Number(x.id)===Number(id));if(!item)return;
- const picker=document.createElement("input");picker.type="file";picker.accept="image/*";picker.setAttribute("capture","environment");
- picker.onchange=async()=>{const file=picker.files&&picker.files[0];if(!file)return;try{const image=await compressImage(file);const old=item.image;item.image=image;if(!saveMenu()){item.image=old;return;}renderAll();alert("Na-update ang larawan ng "+item.name+".");}catch(e){alert("Hindi ma-save ang larawan. Subukan ang ibang image.");}};picker.click();
-}
-function removeMenuPicture(id){
- if(!requireAdmin())return;const item=menu.find(x=>Number(x.id)===Number(id));if(!item||!item.image)return;
- if(!confirm("Alisin ang larawan ng "+item.name+"?"))return;delete item.image;saveMenu();renderAll();
-}
-function editMenu(id){
- if(!requireAdmin())return;const i=menu.find(x=>Number(x.id)===Number(id));if(!i)return;
- const name=prompt("Product name:",i.name);if(name===null)return;
- const price=prompt("Price:",i.price);if(price===null)return;const p=Number(price);
- if(!name.trim()||!Number.isFinite(p)||p<=0){alert("Hindi valid ang pangalan o presyo.");return;}
- const category=prompt("Category (Snacks, Refreshment, Meal, Combo Meal, Combo Basket):",i.category||"Snacks");if(category===null)return;
- const normalized=MENU_CATEGORIES.find(c=>c.toLowerCase()===category.trim().toLowerCase());
- if(!normalized){alert("Pumili lamang sa: "+MENU_CATEGORIES.join(", "));return;}
- i.name=name.trim();i.price=p;i.category=normalized;saveMenu();renderAll();
-}
-function adjustStock(id){
- if(!requireAdmin())return;const i=menu.find(x=>Number(x.id)===Number(id));if(!i)return;
- const val=prompt("Bagong stock quantity:",String(i.stock));if(val===null)return;const n=Number(val);
- if(!Number.isInteger(n)||n<0){alert("Stock ay dapat whole number na 0 o higit pa.");return;}
- i.stock=n;i.available=n>0;saveMenu();renderAll();
-}
-function toggleStock(id){
- if(!requireAdmin())return;const i=menu.find(x=>Number(x.id)===Number(id));if(!i)return;
- if(Number(i.stock)<=0&&!i.available){alert("Dagdagan muna ang stock bago markahang available.");return;}
- i.available=!i.available;saveMenu();renderAll();
-}
-function deleteMenu(id){
- if(!requireAdmin())return;const i=menu.find(x=>Number(x.id)===Number(id));if(!i)return;
- if(!confirm("Burahin ang "+i.name+"?"))return;menu=menu.filter(x=>Number(x.id)!==Number(id));saveMenu();renderAll();
-}
-
-function renderCashiers(){
- if(!isAdmin()){$("cashierList").innerHTML="";return;}
- if(!cashiers.length){$("cashierList").innerHTML="<p>Wala pang cashier account.</p>";return;}
- $("cashierList").innerHTML=cashiers.map(c=>`<div class="admin-item"><h3>${escapeHtml(c.name)}</h3><p>User ID: <b>${escapeHtml(c.id)}</b></p><p>Password: <span class="small">Nakatago para sa seguridad; gamitin ang Reset Password.</span></p><p>Status: ${c.active?'<span class="active">ACTIVE</span>':'<span class="disabled">DISABLED</span>'}</p><button class="blue" onclick="editCashier('${safeJs(c.id)}')">✏️ Edit Name / Reset Password</button><button class="gray" onclick="toggleCashier('${safeJs(c.id)}')">${c.active?"🚫 Disable":"✅ Enable"}</button><button class="danger" onclick="deleteCashier('${safeJs(c.id)}')">🗑️ Delete</button></div>`).join("");
-}
-function addCashier(){
- if(!requireAdmin())return;
- const name=$("newCashierName").value.trim(),id=$("newCashierId").value.trim(),password=$("newCashierPassword").value;
- if(!name||!id||!password){alert("Kumpletuhin ang pangalan, User ID at password.");return;}
- if(password.length<4){alert("Gumamit ng password na hindi bababa sa 4 na character.");return;}
- if(cashiers.some(x=>String(x.id).toLowerCase()===id.toLowerCase())){alert("May gumagamit na ng User ID na ito.");return;}
- cashiers.push({id,name,password,active:true});saveCashiers();renderCashiers();$("newCashierName").value=$("newCashierId").value=$("newCashierPassword").value="";alert("Naidagdag ang cashier.");
-}
-function editCashier(id){
- if(!requireAdmin())return;const c=cashiers.find(x=>String(x.id)===String(id));if(!c)return;
- const name=prompt("Cashier name:",c.name);if(name===null)return;if(!name.trim()){alert("Kailangan ng pangalan.");return;}
- const pw=prompt("Bagong password (iwanang blanko kung walang pagbabago):","");if(pw===null)return;
- if(pw&&pw.length<4){alert("Password ay dapat hindi bababa sa 4 na character.");return;}
- c.name=name.trim();if(pw)c.password=pw;saveCashiers();renderCashiers();alert("Na-update ang account.");
-}
-function toggleCashier(id){
- if(!requireAdmin())return;const c=cashiers.find(x=>String(x.id)===String(id));if(!c)return;c.active=!c.active;saveCashiers();renderCashiers();
-}
-function deleteCashier(id){
- if(!requireAdmin())return;const c=cashiers.find(x=>String(x.id)===String(id));if(!c)return;
- if(!confirm("Burahin ang cashier "+c.name+"?"))return;cashiers=cashiers.filter(x=>String(x.id)!==String(id));saveCashiers();renderCashiers();
-}
-function changeAdminPassword(){
- if(!requireAdmin())return;const p=$("adminNewPassword").value;
- if(!p||p.length<4){alert("Maglagay ng password na hindi bababa sa 4 na character.");return;}
- if(!confirm("Palitan ang admin password? Itago ito sa ligtas na lugar."))return;
- adminPassword=p;write("foodAdminPassword",adminPassword);$("adminNewPassword").value="";alert("Na-update ang admin password.");
-}
-
-function dateStamp(s){if(s.timestamp)return new Date(Number(s.timestamp));const d=new Date(s.date||0);return isNaN(d)?null:d;}
-function inPeriod(s,period){
- const d=dateStamp(s);if(!d)return false;
- const now=new Date(),start=new Date(now.getFullYear(),now.getMonth(),now.getDate());
- if(period==="today")return d>=start;
- if(period==="week"){start.setDate(start.getDate()-6);return d>=start;}
- if(period==="month"){start.setDate(start.getDate()-29);return d>=start;}
- return true;
-}
-function renderReports(){
- if(!isAdmin()){$("reports").innerHTML="";return;}
- const period=$("reportPeriod")?$("reportPeriod").value:"today",rows=sales.filter(s=>inPeriod(s,period)),total=rows.reduce((a,s)=>a+Number(s.total||0),0),payments={Cash:0,GCash:0,Maya:0,"Bank Transfer":0};
- rows.forEach(s=>{const p=s.paymentMethod||"Cash";payments[p]=(payments[p]||0)+Number(s.total||0);});
- $("reports").innerHTML=`<div class="stat-grid"><div class="stat"><div>Orders</div><div class="stat-number">${rows.length}</div></div><div class="stat"><div>Total Sales</div><div class="stat-number">₱${money(total)}</div></div></div><h3>Sales by Payment Method</h3>${Object.keys(payments).map(p=>`<div class="admin-item"><b>${escapeHtml(p)}</b><br>₱${money(payments[p])}</div>`).join("")}<h3>Inventory Report</h3>${menu.map(i=>`<div class="admin-item">${escapeHtml(i.name)} (${escapeHtml(i.category||"Snacks")}) — Stock: <b>${Number(i.stock)||0}</b> — ${i.available&&Number(i.stock)>0?"Available":"Out of stock"}</div>`).join("")}`;
-}
-function renderBestSellers(){
- if(!isAdmin()){$("bestSellers").innerHTML="";return;}
- const totals={};
- sales.forEach(s=>(s.items||[]).forEach(i=>{const k=i.id+"|"+i.name;if(!totals[k])totals[k]={name:i.name,qty:0,sales:0};totals[k].qty+=Number(i.qty||0);totals[k].sales+=Number(i.qty||0)*Number(i.price||0);}));
- const sorted=Object.values(totals).sort((a,b)=>b.qty-a.qty);
- $("bestSellers").innerHTML=sorted.length?sorted.map((x,n)=>`<div class="admin-item"><b>#${n+1} ${escapeHtml(x.name)}</b><br>Units sold: ${x.qty}<br>Sales: ₱${money(x.sales)}</div>`).join(""):"<p>Wala pang sales data.</p>";
-}
-function renderSalesSummary(){
- if(!isAdmin()){$("salesSummary").innerHTML="";return;}
- const total=sales.reduce((a,s)=>a+Number(s.total||0),0),cashierTotals={};
- const todayRows=sales.filter(s=>{
-   if(s.dateKey)return s.dateKey===todayKey();
-   const d=dateStamp(s);return d&&d.getFullYear()===new Date().getFullYear()&&d.getMonth()===new Date().getMonth()&&d.getDate()===new Date().getDate();
- });
- const todayPayments={Cash:0,GCash:0,Maya:0,"Bank Transfer":0};let todayCashlessOrders=0;
- todayRows.forEach(s=>{const p=s.paymentMethod||"Cash";todayPayments[p]=(todayPayments[p]||0)+Number(s.total||0);if(p!=="Cash")todayCashlessOrders++;});
- const todayCashlessTotal=todayPayments.GCash+todayPayments.Maya+todayPayments["Bank Transfer"];
- sales.forEach(s=>{const id=s.cashier||"UNKNOWN";if(!cashierTotals[id])cashierTotals[id]={name:s.cashierName||id,orders:0,sales:0};cashierTotals[id].orders++;cashierTotals[id].sales+=Number(s.total||0);});
- let h=`<div class="stat-grid">
- <div class="stat"><div>💰 All-Time Sales</div><div class="stat-number">₱${money(total)}</div></div>
- <div class="stat"><div>📦 All-Time Orders</div><div class="stat-number">${sales.length}</div></div>
- <div class="stat"><div>🕐 Closed Shifts</div><div class="stat-number">${shifts.length}</div></div>
- </div>
- <h3>📅 Today's Sales — ${escapeHtml(todayKey())}</h3>
- <div class="stat-grid">
- <div class="stat"><div>💵 Cash Sales</div><div class="stat-number">₱${money(todayPayments.Cash)}</div></div>
- <div class="stat"><div>📱 GCash Sales</div><div class="stat-number">₱${money(todayPayments.GCash)}</div></div>
- <div class="stat"><div>💚 Maya Sales</div><div class="stat-number">₱${money(todayPayments.Maya)}</div></div>
- <div class="stat"><div>🏦 Bank Transfer Sales</div><div class="stat-number">₱${money(todayPayments["Bank Transfer"])}</div></div>
- <div class="stat"><div>💳 Total Cashless Sales</div><div class="stat-number">₱${money(todayCashlessTotal)}</div></div>
- <div class="stat"><div>🧾 Cashless Orders</div><div class="stat-number">${todayCashlessOrders}</div></div>
- <div class="stat"><div>📈 Today's Total Sales</div><div class="stat-number">₱${money(todayRows.reduce((a,s)=>a+Number(s.total||0),0))}</div></div>
- </div>
- <p class="small">Cashless totals ay batay sa mga order na naitala bilang GCash, Maya o Bank Transfer at nakumpirmang bayad sa POS.</p>
- <h3>Sales Per Cashier</h3>`;
- h+=Object.keys(cashierTotals).length?Object.entries(cashierTotals).map(([id,x])=>`<div class="admin-item"><b>${escapeHtml(x.name)}</b><br>ID: ${escapeHtml(id)}<br>Orders: ${x.orders}<br>Total Sales: ₱${money(x.sales)}</div>`).join(""):"<p>Wala pang sales.</p>";
- h+="<h3>🕐 Shift History</h3>"+(shifts.length?shifts.map(s=>`<div class="admin-item"><b>${escapeHtml(s.cashierName)}</b><br>ID: ${escapeHtml(s.cashier)}<br>Shift: ${escapeHtml(s.type)}<br>Start: ${escapeHtml(s.startTime)}<br>End: ${escapeHtml(s.endTime)}<br>Orders: ${s.orders}<br>Total Sales: ₱${money(s.sales)}</div>`).join(""):"<p>Wala pang closed shift.</p>");
- $("salesSummary").innerHTML=h;
-}
-if("serviceWorker" in navigator&&location.protocol!=="file:"){window.addEventListener("load",()=>navigator.serviceWorker.register("./service-worker.js").catch(e=>console.log("Service worker error",e)));}
+function saveMenu(){return write("foodMenu",menu)}function saveCashiers(){return write("foodCashiers",cashiers)}function saveSales(){return write("foodSales",sales)}function saveShifts(){return write("foodShifts",shifts)}function saveShift(){try{if(activeShift)localStorage.setItem("activeShift",JSON.stringify(activeShift));else localStorage.removeItem("activeShift")}catch(e){alert("Hindi ma-save ang shift.")}}
+function togglePassword(){const p=$("loginPassword");p.type=p.type==="password"?"text":"password";$("showPasswordBtn").textContent=p.type==="password"?"Show":"Hide"}
+function login(){const id=$("loginId").value.trim().toLowerCase(),pw=$("loginPassword").value;if(id==="admin"&&pw===adminPassword)currentUser={id:"admin",name:"Administrator",role:"admin"};else{const c=cashiers.find(x=>String(x.id).trim().toLowerCase()===id&&String(x.password)===pw);if(!c){alert("Mali ang User ID o Password. Kung nabago na ang admin password, gamitin ang bagong password.");return}if(!c.active){alert("Disabled ang cashier account.");return}currentUser={id:c.id,name:c.name,role:"cashier"}}$("loginPage").classList.add("hidden");$("app").classList.remove("hidden");$("userInfo").textContent=currentUser.role.toUpperCase()+" • "+currentUser.name+" • ID: "+currentUser.id;$("adminBtn").style.display=isAdmin()?"block":"none";$("clearHistoryBtn").style.display=isAdmin()?"inline-block":"none";renderAll();updateShiftUI();showPage("posPage")}
+function logout(){currentUser=null;cart=[];$("app").classList.add("hidden");$("loginPage").classList.remove("hidden");$("loginId").value="";$("loginPassword").value="";$("loginPassword").type="password";$("showPasswordBtn").textContent="Show";$("userInfo").textContent="Mag-login upang magsimula";clearCart()}
+function isAdmin(){return !!currentUser&&currentUser.role==="admin"}function requireAdmin(){if(!isAdmin()){alert("Admin lang ang puwedeng gumamit ng feature na ito.");return false}return true}
+function showPage(p){if(!currentUser)return;if(p==="adminPage"&&!requireAdmin())return;["posPage","historyPage","adminPage"].forEach(x=>$(x).classList.add("hidden"));$(p).classList.remove("hidden")}
+function renderAll(){renderMenu();renderCart();renderHistory();renderAdminMenu();renderCashiers();renderSalesSummary();renderReports();renderBestSellers()}
+function setOrderType(t){orderType=t;$("dineBtn").className=t==="Dine In"?"primary":"";$("takeBtn").className=t==="Take Out"?"primary":""}
+function setPaymentMethod(m){paymentMethod=m;["Cash","GCash","Maya","Bank Transfer"].forEach(x=>$("pay-"+x).classList.toggle("selected",x===m));$("cashFields").classList.toggle("hidden",m!=="Cash");$("cashlessNote").classList.toggle("hidden",m==="Cash");if(m!=="Cash"){$("cash").value="";$("change").textContent="0.00"}calculateChange()}
+function getActiveShiftSales(){return sales.filter(s=>activeShift&&s.shiftId===activeShift.id).reduce((a,s)=>a+Number(s.total||0),0)}function getActiveShiftOrders(){return sales.filter(s=>activeShift&&s.shiftId===activeShift.id).length}
+function startShift(){if(!currentUser||currentUser.role!=="cashier"){alert("Ang shift ay para sa cashier.");return}if(activeShift){alert(activeShift.cashier===currentUser.id?"May active shift ka na.":"May active shift ang ibang cashier.");return}const type=$("shiftType").value;activeShift={id:"SHIFT-"+Date.now(),cashier:currentUser.id,cashierName:currentUser.name,type,startTime:new Date().toLocaleString(),startTimestamp:Date.now(),endTime:"",endTimestamp:0,orders:0,sales:0};saveShift();updateShiftUI();renderSalesSummary();alert("Na-open na ang "+type+" Shift.")}
+function closeShift(){if(!currentUser||currentUser.role!=="cashier"||!activeShift||activeShift.cashier!==currentUser.id){alert("Walang active shift na pag-aari mo.");return}const ss=sales.filter(s=>s.shiftId===activeShift.id),total=ss.reduce((a,s)=>a+Number(s.total||0),0);if(!confirm("Isara ang shift?\nOrders: "+ss.length+"\nTotal sales: ₱"+money(total)))return;shifts.unshift({...activeShift,endTime:new Date().toLocaleString(),endTimestamp:Date.now(),orders:ss.length,sales:total});saveShifts();activeShift=null;saveShift();updateShiftUI();renderSalesSummary();alert("Na-close na ang shift.")}
+function updateShiftUI(){if(isAdmin()){$("shiftStatus").innerHTML='<div class="summary"><b>👑 ADMIN MODE</b><br>Hindi kailangan ng cashier shift.</div>';$("shiftControls").classList.add("hidden");$("closeShiftControls").classList.add("hidden");return}if(!currentUser){$("shiftStatus").textContent="Mag-login muna.";return}if(activeShift&&activeShift.cashier===currentUser.id){$("shiftStatus").innerHTML=`<div class="summary shift-open"><b>🟢 SHIFT OPEN</b><br>Cashier: ${esc(activeShift.cashierName)}<br>Shift: ${esc(activeShift.type)}<br>Start: ${esc(activeShift.startTime)}<br>Current Sales: ₱${money(getActiveShiftSales())}<br>Orders: ${getActiveShiftOrders()}</div>`;$("shiftControls").classList.add("hidden");$("closeShiftControls").classList.remove("hidden")}else if(activeShift){$("shiftStatus").innerHTML=`<div class="summary shift-closed"><b>🔴 MAY ACTIVE SHIFT ANG IBANG CASHIER</b><br>Cashier: ${esc(activeShift.cashierName)}</div>`;$("shiftControls").classList.add("hidden");$("closeShiftControls").classList.add("hidden")}else{$("shiftStatus").innerHTML='<div class="summary shift-closed"><b>🔴 NO ACTIVE SHIFT</b><br>Mag-open ng shift bago mag-order.</div>';$("shiftControls").classList.remove("hidden");$("closeShiftControls").classList.add("hidden")}}
+function renderMenu(){const counts={All:menu.length};CATS.forEach(c=>counts[c]=menu.filter(i=>i.category===c).length);$("categoryTabs").innerHTML=["All",...CATS].map((c,n)=>`<button class="${currentCategory===c?"selected":""}" onclick="setMenuCategory(${n})">${esc(c)} (${counts[c]||0})</button>`).join("");const shown=currentCategory==="All"?menu:menu.filter(i=>i.category===currentCategory);$("menuList").innerHTML=shown.map(i=>`<div class="product ${(!i.available||Number(i.stock)<=0)?"out":""}">${i.image?`<img class="product-photo" src="${esc(i.image)}" alt="${esc(i.name)}">`:'<div class="product-photo" style="display:flex;align-items:center;justify-content:center;font-size:38px">🍽️</div>'}<div class="small">${esc(i.category||"Snacks")}</div><h3>${esc(i.name)}</h3><div class="price">₱${money(i.price)}</div><div class="small">Stock: ${Number(i.stock)||0}</div>${i.available&&Number(i.stock)>0?`<button class="primary" style="width:100%" onclick="addToCart(${Number(i.id)})">ADD</button>`:'<button disabled style="width:100%">OUT OF STOCK</button>'}</div>`).join("")||"<p>Wala pang produkto sa category na ito.</p>"}
+function setMenuCategory(n){currentCategory=["All",...CATS][n]||"All";renderMenu()}
+function addToCart(id){if(currentUser&&currentUser.role==="cashier"&&(!activeShift||activeShift.cashier!==currentUser.id)){alert("Kailangan ng active shift bago mag-order.");return}const p=menu.find(x=>Number(x.id)===Number(id));if(!p||!p.available||Number(p.stock)<=0)return;const c=cart.find(x=>Number(x.id)===Number(id));if(c){if(c.qty>=Number(p.stock)){alert("Hindi sapat ang stock.");return}c.qty++}else cart.push({id:Number(p.id),name:p.name,price:Number(p.price),qty:1});renderCart()}
+function renderCart(){$("cart").innerHTML=cart.length?cart.map(i=>`<div class="cart-row"><div><b>${esc(i.name)}</b><br>₱${money(i.price)}</div><div class="qty"><button onclick="changeQty(${i.id},-1)">−</button><b>${i.qty}</b><button onclick="changeQty(${i.id},1)">+</button></div><b>₱${money(i.price*i.qty)}</b></div>`).join(""):"<p>Wala pang order.</p>";updateTotal()}
+function changeQty(id,amount){const c=cart.find(x=>Number(x.id)===Number(id));if(!c)return;const p=menu.find(x=>Number(x.id)===Number(id));c.qty+=amount;if(c.qty<=0)cart=cart.filter(x=>Number(x.id)!==Number(id));else if(p&&c.qty>Number(p.stock)){c.qty=Number(p.stock);alert("Hindi sapat ang stock.")}renderCart()}
+function getTotal(){return cart.reduce((a,i)=>a+Number(i.price)*Number(i.qty),0)}function updateTotal(){$("total").textContent=money(getTotal());calculateChange()}function calculateChange(){$("change").textContent=money(Math.max(0,Number($("cash").value||0)-getTotal()))}function clearCart(){cart=[];$("cash").value="";$("change").textContent="0.00";renderCart()}
+function completeOrder(){if(!currentUser){alert("Mag-login muna.");return}if(currentUser.role==="cashier"&&(!activeShift||activeShift.cashier!==currentUser.id)){alert("Mag-open muna ng shift.");return}if(!cart.length){alert("Wala pang order.");return}for(const ci of cart){const p=menu.find(x=>Number(x.id)===Number(ci.id));if(!p||!p.available||Number(p.stock)<Number(ci.qty)){alert("Hindi sapat ang stock ng "+ci.name);return}}const total=getTotal(),cash=paymentMethod==="Cash"?Number($("cash").value||0):total;if(paymentMethod==="Cash"&&cash<total){alert("Kulang ang bayad. Total: ₱"+money(total));return}if(paymentMethod!=="Cash"&&!confirm("Nakumpirma mo na bang natanggap ang "+paymentMethod+" payment na ₱"+money(total)+"?"))return;const change=paymentMethod==="Cash"?cash-total:0;const sale={orderNo,date:new Date().toLocaleString(),timestamp:Date.now(),dateKey:todayKey(),cashier:currentUser.id,cashierName:currentUser.name,type:orderType,paymentMethod,shiftId:activeShift?activeShift.id:"ADMIN",shiftType:activeShift?activeShift.type:"ADMIN",items:cart.map(i=>({...i})),total,cash,change};const oldSales=sales.slice(),oldMenu=menu.map(x=>({...x}));sales.unshift(sale);cart.forEach(ci=>{const p=menu.find(x=>Number(x.id)===Number(ci.id));p.stock=Math.max(0,Number(p.stock)-Number(ci.qty));if(p.stock===0)p.available=false});if(!saveSales()||!saveMenu()){sales=oldSales;menu=oldMenu;saveSales();saveMenu();return}try{localStorage.setItem("orderNumber",String(orderNo))}catch(e){}lastSale=sale;prepareReceipt(sale);renderAll();updateShiftUI();alert("ORDER COMPLETED!\nOrder #: "+orderNo+"\nPayment: "+paymentMethod+"\nTotal: ₱"+money(total)+(paymentMethod==="Cash"?"\nBayad: ₱"+money(cash)+"\nSukli: ₱"+money(change):""));orderNo++;$("orderNumber").textContent=orderNo;clearCart()}
+function prepareReceipt(s){let h=`<div style="text-align:center"><b>QUICKSERVE POS</b><br>------------------------------</div><div>Order #: ${esc(s.orderNo)}<br>Date: ${esc(s.date)}<br>Cashier: ${esc(s.cashierName||s.cashier)}<br>ID: ${esc(s.cashier)}<br>Shift: ${esc(s.shiftType||"")}<br>Type: ${esc(s.type||"")}</div><hr>`;(s.items||[]).forEach(i=>h+=`<div style="display:flex;justify-content:space-between;gap:3px"><span>${esc(i.name)} x${Number(i.qty)}</span><span>₱${money(i.price*i.qty)}</span></div>`);h+=`<hr><div style="display:flex;justify-content:space-between"><b>TOTAL</b><b>₱${money(s.total)}</b></div><div>PAYMENT: <b>${esc(s.paymentMethod||"Cash")}</b></div>`;if((s.paymentMethod||"Cash")==="Cash")h+=`<div>CASH: ₱${money(s.cash)}</div><div>CHANGE: ₱${money(s.change)}</div>`;h+='<hr><div style="text-align:center">Thank you!<br>Please come again.</div>';$("printReceipt").innerHTML=h}
+function printLastReceipt(){if(!lastSale){if(sales.length)lastSale=sales[0];else{alert("Wala pang receipt.");return}}prepareReceipt(lastSale);setTimeout(()=>window.print(),100)}
+function printReceiptByOrder(n){const s=sales.find(x=>String(x.orderNo)===String(n));if(!s){alert("Receipt not found.");return}lastSale=s;prepareReceipt(s);setTimeout(()=>window.print(),100)}
+function renderHistory(){$("history").innerHTML=sales.length?sales.map(s=>`<div class="admin-item"><b>Order #${esc(s.orderNo)}</b><br><span class="small">${esc(s.date||"")}</span><div class="summary"><b>Cashier:</b> ${esc(s.cashierName||s.cashier)}<br><b>ID:</b> ${esc(s.cashier)}<br><b>Shift:</b> ${esc(s.shiftType||"")}<br><b>Type:</b> ${esc(s.type||"")}<br><b>Payment:</b> ${esc(s.paymentMethod||"Cash")}<br><b>Total:</b> ₱${money(s.total)}${(s.paymentMethod||"Cash")==="Cash"?`<br><b>Cash:</b> ₱${money(s.cash)}<br><b>Change:</b> ₱${money(s.change)}`:""}</div>${(s.items||[]).map(i=>`<div>${esc(i.name)} x${i.qty} = ₱${money(i.price*i.qty)}</div>`).join("")}<button class="blue" onclick="printReceiptByOrder(${JSON.stringify(String(s.orderNo)).replace(/"/g,'&quot;')})">🧾 PRINT RECEIPT</button></div>`).join(""):"<p>Wala pang sales history.</p>"}
+function clearHistory(){if(!requireAdmin())return;if(!confirm("Burahin ang LAHAT ng sales history at closed shifts? Mawawala rin ang reports na nakabatay sa sales. Hindi ibabalik ang stock."))return;if(!confirm("Final confirmation: permanenteng burahin ang sales records sa device na ito?"))return;sales=[];shifts=[];localStorage.removeItem("foodSales");localStorage.removeItem("foodShifts");localStorage.removeItem("orderNumber");orderNo=1001;$("orderNumber").textContent=orderNo;lastSale=null;renderAll();updateShiftUI();alert("Na-clear ang history. Susunod na order #1001.")}
+function renderAdminMenu(){if(!isAdmin()){$("adminMenu").innerHTML="";return}$("adminMenu").innerHTML=menu.map(i=>`<div class="admin-item"><div style="display:flex;align-items:center;gap:8px">${i.image?`<img class="admin-photo" src="${esc(i.image)}" alt="${esc(i.name)}">`:'<div class="admin-photo" style="display:inline-flex;align-items:center;justify-content:center;font-size:28px">🍽️</div>'}<div><h3>${esc(i.name)}</h3><p>Category: <b>${esc(i.category||"Snacks")}</b></p></div></div><p>Price: <b>₱${money(i.price)}</b></p><p>Stock: <b>${Number(i.stock)||0}</b></p><p>Status: ${i.available&&Number(i.stock)>0?'<span class="active">AVAILABLE</span>':'<span class="disabled">OUT OF STOCK</span>'}</p><button class="blue" onclick="editMenu(${Number(i.id)})">✏️ Edit</button><button class="blue" onclick="changeMenuPicture(${Number(i.id)})">🖼️ ${i.image?"Change Picture":"Add Picture"}</button>${i.image?`<button class="gray" onclick="removeMenuPicture(${Number(i.id)})">Remove Picture</button>`:""}<button class="orange" onclick="adjustStock(${Number(i.id)})">📦 Adjust Stock</button><button class="gray" onclick="toggleStock(${Number(i.id)})">${i.available?"🚫 Mark Out of Stock":"✅ Mark Available"}</button><button class="danger" onclick="deleteMenu(${Number(i.id)})">🗑️ Delete</button></div>`).join("")||"<p>Wala pang menu.</p>"}
+function compressImage(file){return new Promise((resolve,reject)=>{if(!file||!file.type.startsWith("image/")){reject(new Error("Not an image"));return}const reader=new FileReader();reader.onerror=()=>reject(new Error("Read failed"));reader.onload=()=>{const img=new Image();img.onerror=()=>reject(new Error("Image failed"));img.onload=()=>{const scale=Math.min(1,420/Math.max(img.width,img.height)),canvas=document.createElement("canvas");canvas.width=Math.max(1,Math.round(img.width*scale));canvas.height=Math.max(1,Math.round(img.height*scale));canvas.getContext("2d").drawImage(img,0,0,canvas.width,canvas.height);try{resolve(canvas.toDataURL("image/jpeg",.68))}catch(e){reject(e)}};img.src=reader.result};reader.readAsDataURL(file)})}
+async function addMenu(){if(!requireAdmin())return;const name=$("newName").value.trim(),category=$("newCategory").value,price=Number($("newPrice").value),stock=Number($("newStock").value||0);if(!name||!CATS.includes(category)||!Number.isFinite(price)||price<=0||!Number.isInteger(stock)||stock<0){alert("Ilagay ang tamang pangalan, category, presyo at stock.");return}let image="",file=$("newPicture").files?.[0];if(file){try{image=await compressImage(file)}catch(e){alert("Hindi mabasa ang larawan.");return}}const id=Math.max(0,...menu.map(x=>Number(x.id)||0))+1,item={id,name,category,price,stock,available:stock>0};if(image)item.image=image;menu.push(item);if(!saveMenu()){menu=menu.filter(x=>Number(x.id)!==id);return}renderAll();$("newName").value="";$("newPrice").value="";$("newStock").value="";$("newCategory").value="Snacks";$("newPicture").value="";alert("Naidagdag ang menu.")}
+async function changeMenuPicture(id){if(!requireAdmin())return;const item=menu.find(x=>Number(x.id)===Number(id));if(!item)return;const picker=document.createElement("input");picker.type="file";picker.accept="image/*";picker.onchange=async()=>{const file=picker.files?.[0];if(!file)return;try{const image=await compressImage(file),old=item.image;item.image=image;if(!saveMenu()){item.image=old;return}renderAll();alert("Na-update ang larawan.")}catch(e){alert("Hindi ma-save ang larawan.")}};picker.click()}
+function removeMenuPicture(id){if(!requireAdmin())return;const item=menu.find(x=>Number(x.id)===Number(id));if(!item?.image||!confirm("Alisin ang larawan?"))return;const old=item.image;delete item.image;if(!saveMenu())item.image=old;renderAll()}
+function editMenu(id){if(!requireAdmin())return;const i=menu.find(x=>Number(x.id)===Number(id));if(!i)return;const name=prompt("Product name:",i.name);if(name===null)return;const price=prompt("Price:",i.price);if(price===null)return;const p=Number(price);if(!name.trim()||!Number.isFinite(p)||p<=0){alert("Hindi valid ang pangalan o presyo.");return}const category=prompt("Category (Snacks, Refreshment, Meal, Combo Meal, Combo Basket):",i.category||"Snacks");if(category===null)return;const normalized=CATS.find(c=>c.toLowerCase()===category.trim().toLowerCase());if(!normalized){alert("Pumili lamang sa: "+CATS.join(", "));return}const old={...i};i.name=name.trim();i.price=p;i.category=normalized;if(!saveMenu())Object.assign(i,old);renderAll()}
+function adjustStock(id){if(!requireAdmin())return;const i=menu.find(x=>Number(x.id)===Number(id));if(!i)return;const val=prompt("Bagong stock quantity:",String(i.stock));if(val===null)return;const n=Number(val);if(!Number.isInteger(n)||n<0){alert("Stock ay dapat whole number na 0 o higit pa.");return}const old={...i};i.stock=n;i.available=n>0;if(!saveMenu())Object.assign(i,old);renderAll()}
+function toggleStock(id){if(!requireAdmin())return;const i=menu.find(x=>Number(x.id)===Number(id));if(!i)return;if(Number(i.stock)<=0&&!i.available){alert("Dagdagan muna ang stock.");return}i.available=!i.available;if(!saveMenu())i.available=!i.available;renderAll()}
+function deleteMenu(id){if(!requireAdmin())return;const i=menu.find(x=>Number(x.id)===Number(id));if(!i||!confirm("Burahin ang "+i.name+"?"))return;const old=menu;menu=menu.filter(x=>Number(x.id)!==Number(id));if(!saveMenu())menu=old;renderAll()}
+function renderCashiers(){if(!isAdmin()){$("cashierList").innerHTML="";return}$("cashierList").innerHTML=cashiers.length?cashiers.map((c,n)=>`<div class="admin-item"><h3>${esc(c.name)}</h3><p>User ID: <b>${esc(c.id)}</b></p><p>Password: <span class="small">Nakatago; gamitin ang Reset Password.</span></p><p>Status: ${c.active?'<span class="active">ACTIVE</span>':'<span class="disabled">DISABLED</span>'}</p><button class="blue" onclick="editCashier(${n})">✏️ Edit Name / Reset Password</button><button class="gray" onclick="toggleCashier(${n})">${c.active?"🚫 Disable":"✅ Enable"}</button><button class="danger" onclick="deleteCashier(${n})">🗑️ Delete</button></div>`).join(""):"<p>Wala pang cashier account.</p>"}
+function addCashier(){if(!requireAdmin())return;const name=$("newCashierName").value.trim(),id=$("newCashierId").value.trim(),password=$("newCashierPassword").value;if(!name||!id||!password){alert("Kumpletuhin ang pangalan, User ID at password.");return}if(password.length<4){alert("Password: minimum 4 characters.");return}if(id.toLowerCase()==="admin"||cashiers.some(x=>String(x.id).toLowerCase()===id.toLowerCase())){alert("May gumagamit na ng User ID na ito.");return}cashiers.push({id,name,password,active:true});if(!saveCashiers()){cashiers.pop();return}renderCashiers();$("newCashierName").value=$("newCashierId").value=$("newCashierPassword").value="";alert("Naidagdag ang cashier.")}
+function editCashier(n){if(!requireAdmin())return;const c=cashiers[n];if(!c)return;const name=prompt("Cashier name:",c.name);if(name===null)return;if(!name.trim()){alert("Kailangan ng pangalan.");return}const pw=prompt("Bagong password (blanko kung walang pagbabago):","");if(pw===null)return;if(pw&&pw.length<4){alert("Minimum 4 characters.");return}const old={...c};c.name=name.trim();if(pw)c.password=pw;if(!saveCashiers())Object.assign(c,old);renderCashiers()}
+function toggleCashier(n){if(!requireAdmin())return;const c=cashiers[n];if(!c)return;c.active=!c.active;if(!saveCashiers())c.active=!c.active;renderCashiers()}
+function deleteCashier(n){if(!requireAdmin())return;const c=cashiers[n];if(!c||!confirm("Burahin ang cashier "+c.name+"?"))return;const old=cashiers;cashiers=cashiers.filter((_,j)=>j!==n);if(!saveCashiers())cashiers=old;renderCashiers()}
+function changeAdminPassword(){if(!requireAdmin())return;const p=$("adminNewPassword").value;if(!p||p.length<4){alert("Minimum 4 characters.");return}if(!confirm("Palitan ang admin password?"))return;if(write("foodAdminPassword",p)){adminPassword=p;$("adminNewPassword").value="";alert("Na-update ang admin password.")}}
+function dateStamp(s){if(s.timestamp)return new Date(Number(s.timestamp));const d=new Date(s.date||0);return isNaN(d)?null:d}
+function inPeriod(s,period){const d=dateStamp(s);if(!d)return false;const now=new Date(),start=new Date(now.getFullYear(),now.getMonth(),now.getDate());if(period==="today")return d>=start;if(period==="week"){start.setDate(start.getDate()-6);return d>=start}if(period==="month"){start.setDate(start.getDate()-29);return d>=start}return true}
+function renderReports(){if(!isAdmin()){$("reports").innerHTML="";return}const period=$("reportPeriod").value,rows=sales.filter(s=>inPeriod(s,period)),total=rows.reduce((a,s)=>a+Number(s.total||0),0),payments={Cash:0,GCash:0,Maya:0,"Bank Transfer":0};rows.forEach(s=>{const p=s.paymentMethod||"Cash";payments[p]=(payments[p]||0)+Number(s.total||0)});$("reports").innerHTML=`<div class="stat-grid"><div class="stat"><div>Orders</div><div class="stat-number">${rows.length}</div></div><div class="stat"><div>Total Sales</div><div class="stat-number">₱${money(total)}</div></div></div><h3>Sales by Payment Method</h3>${Object.keys(payments).map(p=>`<div class="admin-item"><b>${esc(p)}</b><br>₱${money(payments[p])}</div>`).join("")}<h3>Inventory Report (Current Stock)</h3>${menu.map(i=>`<div class="admin-item">${esc(i.name)} (${esc(i.category||"Snacks")}) — Stock: <b>${Number(i.stock)||0}</b> — ${i.available&&Number(i.stock)>0?"Available":"Out of stock"}</div>`).join("")}`}
+function renderBestSellers(){if(!isAdmin()){$("bestSellers").innerHTML="";return}const totals={};sales.forEach(s=>(s.items||[]).forEach(i=>{const k=i.id+"|"+i.name;if(!totals[k])totals[k]={name:i.name,qty:0,sales:0};totals[k].qty+=Number(i.qty||0);totals[k].sales+=Number(i.qty||0)*Number(i.price||0)}));const sorted=Object.values(totals).sort((a,b)=>b.qty-a.qty);$("bestSellers").innerHTML=sorted.length?sorted.map((x,n)=>`<div class="admin-item"><b>#${n+1} ${esc(x.name)}</b><br>Units sold: ${x.qty}<br>Sales: ₱${money(x.sales)}</div>`).join(""):"<p>Wala pang sales data.</p>"}
+function renderSalesSummary(){if(!isAdmin()){$("salesSummary").innerHTML="";return}const total=sales.reduce((a,s)=>a+Number(s.total||0),0),cashierTotals={},todayRows=sales.filter(s=>s.dateKey?s.dateKey===todayKey():(dateStamp(s)&&dateStamp(s).toDateString()===new Date().toDateString())),todayPayments={Cash:0,GCash:0,Maya:0,"Bank Transfer":0};let todayCashlessOrders=0;todayRows.forEach(s=>{const p=s.paymentMethod||"Cash";todayPayments[p]=(todayPayments[p]||0)+Number(s.total||0);if(p!=="Cash")todayCashlessOrders++});const todayCashlessTotal=todayPayments.GCash+todayPayments.Maya+todayPayments["Bank Transfer"];sales.forEach(s=>{const id=s.cashier||"UNKNOWN";if(!cashierTotals[id])cashierTotals[id]={name:s.cashierName||id,orders:0,sales:0};cashierTotals[id].orders++;cashierTotals[id].sales+=Number(s.total||0)});let h=`<div class="stat-grid"><div class="stat"><div>💰 All-Time Sales</div><div class="stat-number">₱${money(total)}</div></div><div class="stat"><div>📦 All-Time Orders</div><div class="stat-number">${sales.length}</div></div><div class="stat"><div>🕐 Closed Shifts</div><div class="stat-number">${shifts.length}</div></div></div><h3>📅 Today's Sales — ${esc(todayKey())}</h3><div class="stat-grid">${Object.entries(todayPayments).map(([p,v])=>`<div class="stat"><div>${esc(p)} Sales</div><div class="stat-number">₱${money(v)}</div></div>`).join("")}<div class="stat"><div>💳 Total Cashless Sales</div><div class="stat-number">₱${money(todayCashlessTotal)}</div></div><div class="stat"><div>🧾 Cashless Orders</div><div class="stat-number">${todayCashlessOrders}</div></div><div class="stat"><div>📈 Today's Total Sales</div><div class="stat-number">₱${money(todayRows.reduce((a,s)=>a+Number(s.total||0),0))}</div></div></div><p class="small">Cashless totals ay batay sa mga order na naitala bilang bayad sa POS.</p><h3>Sales Per Cashier</h3>`;h+=Object.keys(cashierTotals).length?Object.entries(cashierTotals).map(([id,x])=>`<div class="admin-item"><b>${esc(x.name)}</b><br>ID: ${esc(id)}<br>Orders: ${x.orders}<br>Total Sales: ₱${money(x.sales)}</div>`).join(""):"<p>Wala pang sales.</p>";h+="<h3>🕐 Shift History</h3>"+(shifts.length?shifts.map(s=>`<div class="admin-item"><b>${esc(s.cashierName)}</b><br>ID: ${esc(s.cashier)}<br>Shift: ${esc(s.type)}<br>Start: ${esc(s.startTime)}<br>End: ${esc(s.endTime)}<br>Orders: ${s.orders}<br>Total Sales: ₱${money(s.sales)}</div>`).join(""):"<p>Wala pang closed shift.</p>");$("salesSummary").innerHTML=h}
+function updateConnectionStatus(){const el=$("connectionStatus");if(el)el.textContent=navigator.onLine?"Online • Offline support requires installation":"Offline • Local POS data available"}
+window.addEventListener("online",updateConnectionStatus);window.addEventListener("offline",updateConnectionStatus);
+document.addEventListener("DOMContentLoaded",()=>{updateConnectionStatus();$("orderNumber").textContent=orderNo;renderAll();updateShiftUI();$("loginPassword").addEventListener("keydown",e=>{if(e.key==="Enter")login()})});
+if("serviceWorker" in navigator&&location.protocol!=="file:"){window.addEventListener("load",()=>navigator.serviceWorker.register("./service-worker.js").catch(e=>console.log("Service worker error",e)))}
 </script>
-</body>
-</html>
+</body></html>
