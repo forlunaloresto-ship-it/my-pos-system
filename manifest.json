@@ -1,9 +1,10 @@
+
 {
-  "name": "My POS System",
-  "short_name": "POS",
+  "name": "QuickServe POS",
+  "short_name": "QuickServe",
   "start_url": "./",
   "display": "standalone",
   "background_color": "#ffffff",
-  "theme_color": "#ffffff",
+  "theme_color": "#e65100",
   "icons": []
 }
