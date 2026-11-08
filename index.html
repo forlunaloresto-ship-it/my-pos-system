@@ -334,4 +334,52 @@ const qsOldHistory=renderHistory;
 renderHistory=function(){qsOldHistory();const cards=$("history").querySelectorAll(".admin-item");cards.forEach((card,index)=>{const sale=sales[index];if(!sale)return;for(const line of sale.items||[]){if(!line.size)continue;for(const div of card.querySelectorAll("div")){if(div.children.length===0&&div.textContent.startsWith(line.name+" x")){div.textContent=line.name+" ("+line.size+") x"+line.qty+" = PHP "+money(itemPrice(line)*line.qty);break}}}})};
 document.addEventListener("DOMContentLoaded",()=>{$("newCategory").addEventListener("change",qsToggleNewSizes);qsToggleNewSizes()});
 </script>
+
+<script>
+"use strict";
+/* Flavor + size menus for Refreshments; does not delete or merge existing products. */
+const qsFlavorDefaults={
+ 'Iced Coffee':['Hazelnut','Vanilla Latte','Matcha Latte','Americano','Mocha','Caramel Latte','Original','Spanish Latte','White Chocolate'],
+ 'Sundae':['Chocolate','Strawberry','Caramel','Mango','Mango Graham','Boba','Strawberry Oreo','Wafelo']
+};
+function qsFlavorList(p){return Array.isArray(p.flavors)?p.flavors:[]}
+function qsFlavorMenu(p){return qsRefresh(p)&&qsFlavorList(p).length>0}
+function qsFlavorSetup(id){
+ if(!requireAdmin())return;
+ const p=menu.find(x=>Number(x.id)===Number(id));if(!p||!qsRefresh(p))return;
+ const host=document.querySelector('.qs-flavor-editor[data-product-id="'+Number(id)+'"]');if(!host)return;
+ if(!host.classList.contains('hidden')){host.classList.add('hidden');return}
+ const preset=/sundae/i.test(p.name)?qsFlavorDefaults.Sundae:qsFlavorDefaults['Iced Coffee'];
+ if(!qsFlavorList(p).length){host.innerHTML='<p class="small">Piliin ang default flavors o magdagdag ng sarili. Bawat flavor ay may sariling size prices.</p><button class="blue" type="button" onclick="qsFlavorPreset('+Number(id)+')">Load Sample Flavors</button><button class="green" type="button" onclick="qsFlavorAdd('+Number(id)+')">+ Add Flavor</button><div class="qs-flavor-rows"></div>'}
+ else qsFlavorDraw(p,host);
+ host.classList.remove('hidden');
+}
+function qsFlavorPreset(id){const p=menu.find(x=>Number(x.id)===Number(id));if(!p||!requireAdmin())return;const names=/sundae/i.test(p.name)?qsFlavorDefaults.Sundae:qsFlavorDefaults['Iced Coffee'];p.flavors=names.map(name=>({name,prices:{...qsPrices(p)}}));if(!saveMenu())return;renderAll();qsFlavorSetup(id)}
+function qsFlavorDraw(p,host){
+ host.innerHTML='<h4>☕🍦 Flavors & Size Prices</h4><p class="small">I-edit ang pangalan at presyo. Blank price = unavailable size. Save bago lumipat sa ibang page.</p><div class="qs-flavor-rows">'+qsFlavorList(p).map((f,i)=>qsFlavorRow(f,i)).join('')+'</div><button type="button" class="blue" onclick="qsFlavorAdd('+Number(p.id)+')">+ Add Flavor</button><button type="button" class="green" onclick="qsFlavorSave('+Number(p.id)+')">💾 Save Flavors & Prices</button><button type="button" class="gray" onclick="qsFlavorSetup('+Number(p.id)+')">Cancel</button>';
+}
+function qsFlavorRow(f,i){return '<div class="admin-item qs-flavor-row"><label>Flavor name</label><input class="qs-flavor-name" value="'+esc(f.name||'')+'" placeholder="Flavor"><div class="qs-flavor-grid">'+QS_SIZE_NAMES.map(size=>'<label class="small">'+esc(size)+'<input type="number" inputmode="decimal" min="0" step="0.01" class="qs-flavor-price" data-size="'+esc(size)+'" placeholder="Not set" value="'+(f.prices?.[size]===undefined?'':esc(f.prices[size]))+'"></label>').join('')+'</div><button type="button" class="danger" onclick="this.closest(\'.qs-flavor-row\').remove()">Remove Flavor</button></div>'}
+function qsFlavorAdd(id){const host=document.querySelector('.qs-flavor-editor[data-product-id="'+Number(id)+'"]');if(!host)return;host.querySelector('.qs-flavor-rows').insertAdjacentHTML('beforeend',qsFlavorRow({name:'',prices:{}},0))}
+function qsFlavorSave(id){
+ if(!requireAdmin())return;const p=menu.find(x=>Number(x.id)===Number(id));const host=document.querySelector('.qs-flavor-editor[data-product-id="'+Number(id)+'"]');if(!p||!host)return;
+ const flavors=[],seen=new Set();for(const row of host.querySelectorAll('.qs-flavor-row')){const name=row.querySelector('.qs-flavor-name').value.trim();if(!name||seen.has(name.toLowerCase())){alert('Flavor names must be unique and not blank.');return}seen.add(name.toLowerCase());const prices={};for(const input of row.querySelectorAll('.qs-flavor-price')){if(input.value.trim()==='')continue;const n=Number(input.value);if(!Number.isFinite(n)||n<0){alert('Invalid price for '+name);return}prices[input.dataset.size]=n}flavors.push({name,prices})}
+ const old=p.flavors;p.flavors=flavors;if(!saveMenu()){p.flavors=old;return}renderAll();alert('Saved '+flavors.length+' flavors for '+p.name+'.')
+}
+const qsFlavorOldAdmin=renderAdminMenu;
+renderAdminMenu=function(){qsFlavorOldAdmin();if(!isAdmin())return;document.querySelectorAll('#adminMenu .admin-item').forEach((node,i)=>{const p=menu[i];if(!qsRefresh(p))return;const btn=document.createElement('button');btn.className='blue';btn.textContent='☕🍦 Manage Flavors & Prices';btn.onclick=()=>qsFlavorSetup(p.id);node.appendChild(btn);const host=document.createElement('div');host.className='qs-flavor-editor summary hidden';host.dataset.productId=String(p.id);node.appendChild(host);if(qsFlavorMenu(p)){const note=document.createElement('p');note.className='small';note.textContent=p.flavors.length+' flavors configured';node.appendChild(note)}})};
+const qsFlavorOldPicker=openAddonPicker;
+openAddonPicker=function(id){qsFlavorOldPicker(id);const p=menu.find(x=>Number(x.id)===Number(id));if(!qsFlavorMenu(p)||Number(pendingProductId)!==Number(id))return;const picker=$('addonPicker');picker.querySelectorAll('.qs-size-radio').forEach(x=>x.closest('label')?.remove());picker.querySelectorAll('.summary').forEach(el=>{if(el.querySelector('h3')?.textContent.includes('Select Size'))el.remove()});const block=document.createElement('div');block.className='summary';block.innerHTML='<h3>1. Select Flavor</h3>'+p.flavors.map((f,i)=>'<label class="addon-choice"><input type="radio" name="qsFlavor" class="qs-flavor-radio" value="'+i+'" onchange="qsFlavorChoose()"><span>'+esc(f.name)+'</span></label>').join('')+'<h3>2. Select Size</h3><div id="qsFlavorSizes">Pumili muna ng flavor.</div>';picker.insertBefore(block,picker.firstChild.nextSibling);const btn=[...picker.querySelectorAll('button')].find(b=>b.textContent.trim()==='Add to Order');if(btn)btn.disabled=true};
+function qsFlavorChoose(){const p=menu.find(x=>Number(x.id)===Number(pendingProductId)),idx=Number(document.querySelector('.qs-flavor-radio:checked')?.value);if(!p||!Number.isInteger(idx))return;const f=p.flavors[idx],prices=f?.prices||{};const host=$('qsFlavorSizes');host.innerHTML=QS_SIZE_NAMES.map(size=>{const ok=Object.prototype.hasOwnProperty.call(prices,size)&&Number.isFinite(Number(prices[size]))&&Number(prices[size])>=0;return '<label class="addon-choice" style="'+(ok?'':'opacity:.5')+'"><input type="radio" name="qsFlavorSize" class="qs-flavor-size" value="'+esc(size)+'" '+(ok?'':'disabled')+'><span>'+esc(size)+'</span><b>'+(ok?'₱'+money(prices[size]):'Not set')+'</b></label>'}).join('');const btn=[...$('addonPicker').querySelectorAll('button')].find(b=>b.textContent.trim()==='Add to Order');if(btn)btn.disabled=!Object.keys(prices).some(k=>QS_SIZE_NAMES.includes(k))}
+const qsFlavorOldConfirm=confirmAddonPicker;
+confirmAddonPicker=function(){const p=menu.find(x=>Number(x.id)===Number(pendingProductId));if(!qsFlavorMenu(p))return qsFlavorOldConfirm();const fi=document.querySelector('.qs-flavor-radio:checked'),si=document.querySelector('.qs-flavor-size:checked');if(!fi||!si){alert('Pumili ng flavor at available size.');return}const f=p.flavors[Number(fi.value)],size=si.value,price=f?.prices?.[size];if(price===undefined||!Number.isFinite(Number(price))){alert('Invalid size price.');return}if(Number(p.stock)<=productUse(Number(p.id))||!checkComboCartStock(p.id,1)){alert('Kulang ang stock.');return}const chosen=[];for(const el of document.querySelectorAll('.addon-check:checked')){const a=addons.find(x=>Number(x.id)===Number(el.value));if(!a||!a.available||Number(a.stock)<=addonUse(Number(a.id))){alert('Add-on out of stock.');return}chosen.push({id:Number(a.id),name:a.name,price:Number(a.price)})}const key=chosen.map(a=>a.id).sort((a,b)=>a-b).join(',');const existing=cart.find(x=>Number(x.id)===Number(p.id)&&x.flavor===f.name&&x.size===size&&(x.addons||[]).map(a=>a.id).sort((a,b)=>a-b).join(',')===key);if(existing)existing.qty++;else cart.push({id:Number(p.id),name:p.name,flavor:f.name,size,price:Number(price),qty:1,addons:chosen,lineId:Date.now()+Math.random()});cancelAddonPicker();renderCart()};
+const qsFlavorOldCart=renderCart;
+renderCart=function(){qsFlavorOldCart();document.querySelectorAll('#cart .cart-row').forEach((row,i)=>{const line=cart[i];if(line?.flavor){const title=row.querySelector('b');if(title)title.textContent=line.name+' — '+line.flavor+' ('+line.size+')'}})};
+const qsFlavorOldReceipt=prepareReceipt;
+prepareReceipt=function(s){qsFlavorOldReceipt(s);const rows=$('printReceipt').querySelectorAll('div[style*="justify-content:space-between"]');(s.items||[]).forEach((line,i)=>{if(line.flavor&&rows[i]){const span=rows[i].querySelector('span');if(span)span.textContent=line.name+' — '+line.flavor+' ('+line.size+') x'+line.qty}})};
+const qsFlavorOldKitchen=kitchenTicketMarkup;
+kitchenTicketMarkup=function(s){return qsFlavorOldKitchen({...s,items:(s.items||[]).map(i=>({...i,name:i.flavor?i.name+' — '+i.flavor:i.name}))})};
+const qsFlavorOldHistory=renderHistory;
+renderHistory=function(){qsFlavorOldHistory();document.querySelectorAll('#history .admin-item').forEach((card,j)=>{const sale=sales[j];for(const line of sale?.items||[]){if(!line.flavor)continue;for(const div of card.querySelectorAll('div')){if(!div.children.length&&div.textContent.startsWith(line.name+' ('+line.size+') x')){div.textContent=line.name+' — '+line.flavor+' ('+line.size+') x'+line.qty+' = PHP '+money(itemPrice(line)*line.qty);break}}}})};
+</script>
+<style>.qs-flavor-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.qs-flavor-grid input{margin:4px 0 6px}.qs-flavor-editor{margin-top:12px}.qs-flavor-editor .admin-item{background:white}</style>
 </body></html>
