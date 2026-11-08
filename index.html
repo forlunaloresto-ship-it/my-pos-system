@@ -382,4 +382,478 @@ const qsFlavorOldHistory=renderHistory;
 renderHistory=function(){qsFlavorOldHistory();document.querySelectorAll('#history .admin-item').forEach((card,j)=>{const sale=sales[j];for(const line of sale?.items||[]){if(!line.flavor)continue;for(const div of card.querySelectorAll('div')){if(!div.children.length&&div.textContent.startsWith(line.name+' ('+line.size+') x')){div.textContent=line.name+' — '+line.flavor+' ('+line.size+') x'+line.qty+' = PHP '+money(itemPrice(line)*line.qty);break}}}})};
 </script>
 <style>.qs-flavor-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.qs-flavor-grid input{margin:4px 0 6px}.qs-flavor-editor{margin-top:12px}.qs-flavor-editor .admin-item{background:white}</style>
+
+<style>
+.qs-hierarchy{border:1px solid #e3e5e9;border-radius:12px;padding:12px;margin:12px 0;background:#fff}
+.qs-hierarchy select,.qs-hierarchy input{width:100%;margin:5px 0 10px}
+.qs-group-tabs{display:flex;gap:6px;overflow-x:auto;padding:7px 0}
+.qs-group-tabs button{flex-shrink:0}
+.qs-hierarchy .small{line-height:1.5}
+</style>
+<script>
+"use strict";
+/* Category > product series > flavor > size & price. Preserves old menu and sales. */
+const QS_GROUPS={
+ "Refreshment":["Iced Coffee","Milk Tea","Milky Series","Fruit Soda","Milk Shake","Regular Sundae","Premium Sundae","Sundae Cone"],
+ "Sundae":[]
+};
+const QS_SUNDAE_FLAVORS={
+ "Regular Sundae":["Chocolate","Strawberry","Caramel","Vanilla"],
+ "Premium Sundae":["Mango Graham","Boba","Strawberry Oreo","Wafelo"]
+};
+let qsActiveGroup="All";
+function qsGroupOf(p){
+ if(p.qsGroup)return p.qsGroup;
+ const n=String(p.name||"").toLowerCase();
+ if(n.includes("sundae"))return n.includes("premium")?"Premium Sundae":"Regular Sundae";
+ if(n.includes("coffee")||n.includes("latte")||n.includes("americano")||n.includes("hazelnut")||n.includes("matcha"))return "Iced Coffee";
+ if(n.includes("milk tea")||n.includes("milktea"))return "Milk Tea";
+ if(n.includes("milky"))return "Milky Series";
+ if(n.includes("fruit soda")||n.includes("soda"))return "Fruit Soda";
+ if(n.includes("milk shake")||n.includes("milkshake"))return "Milk Shake";
+ return "Other";
+}
+function qsGroupCategory(g){return "Refreshment"}
+function qsEnsureSundaeCategory(){
+ if(!CATS.includes("Sundae")){CATS.push("Sundae");write("quickserveCategories",CATS)}
+}
+// Sundae is a subcategory of Refreshment, not a separate cashier tab.
+function qsNewSeries(g){
+ if(!requireAdmin())return;
+ const category=qsGroupCategory(g);
+ const found=menu.find(p=>p.qsGroup===g&&p.category===category);
+ if(found){qsOpenSeries(found.id);return}
+ const id=Math.max(0,...menu.map(x=>Number(x.id)||0))+1;
+ const flavors=QS_SUNDAE_FLAVORS[g]||[];
+ const item={id,name:g,category,qsGroup:g,price:1,stock:50,available:true,
+   flavors:flavors.map(name=>({name,prices:{}}))};
+ menu.push(item);
+ if(!saveMenu()){menu.pop();return}
+ renderAll();
+ qsOpenSeries(id);
+}
+function qsOpenSeries(id){
+ const p=menu.find(x=>Number(x.id)===Number(id));if(!p)return;
+ const host=document.querySelector('.qs-flavor-editor[data-product-id="'+Number(id)+'"]');
+ if(host){host.classList.add("hidden");qsFlavorSetup(id);host.scrollIntoView({block:"nearest",behavior:"smooth"})}
+ else alert("I-refresh ang Admin page at buksan ang Manage Flavors & Prices.");
+}
+function qsSetGroup(id,value){
+ if(!requireAdmin())return;
+ const p=menu.find(x=>Number(x.id)===Number(id));if(!p)return;
+ const old={category:p.category,qsGroup:p.qsGroup};
+ if(value==="Other"){p.qsGroup="Other"}else{p.qsGroup=value;p.category=qsGroupCategory(value)}
+ if(!saveMenu()){Object.assign(p,old);return}
+ renderAll();
+}
+const qsHierarchyAdmin=renderAdminMenu;
+renderAdminMenu=function(){
+ qsHierarchyAdmin();
+ if(!isAdmin())return;
+ const target=$("adminMenu");
+ let panel=document.getElementById("qsHierarchyPanel");
+ if(!panel){
+  panel=document.createElement("div");panel.id="qsHierarchyPanel";panel.className="qs-hierarchy";
+  target.parentElement.insertBefore(panel,target);
+ }
+ panel.innerHTML='<h3>🥤 Refreshment & Sundae Menu Management</h3>'+
+ '<p class="small">Category → Series → Flavor → Size & Price. Pumili ng series para gumawa o i-edit. Hindi awtomatikong buburahin ang lumang menu at sales.</p>'+
+ '<h4>Refreshment</h4><div class="qs-group-tabs">'+QS_GROUPS.Refreshment.map(g=>'<button class="blue" type="button" onclick="qsNewSeries('+JSON.stringify(g).replace(/"/g,"&quot;")+')">'+esc(g)+'</button>').join('')+'</div>'+
+
+ '<p class="small">Bawat series ay may Manage Flavors & Prices sa ibaba. Puwede ring i-assign ang existing products sa tamang series.</p>';
+ target.querySelectorAll(".admin-item").forEach((node,i)=>{
+  const p=menu[i];if(!p)return;
+  const label=document.createElement("label");label.className="small";label.textContent="Series / Subcategory";
+  const select=document.createElement("select");
+  const options=["Other",...QS_GROUPS.Refreshment,...QS_GROUPS.Sundae];
+  select.innerHTML=options.map(g=>'<option value="'+esc(g)+'" '+(qsGroupOf(p)===g?"selected":"")+'>'+esc(g)+'</option>').join("");
+  select.onchange=()=>qsSetGroup(p.id,select.value);
+  node.appendChild(label);node.appendChild(select);
+ });
+};
+const qsHierarchyRenderMenu=renderMenu;
+renderMenu=function(){
+ qsHierarchyRenderMenu();
+ const tabs=$("categoryTabs"),list=$("menuList");
+ let bar=document.getElementById("qsSeriesTabs");
+ if(!bar){bar=document.createElement("div");bar.id="qsSeriesTabs";bar.className="qs-group-tabs";tabs.insertAdjacentElement("afterend",bar)}
+ const groups=currentCategory==="Sundae"?QS_GROUPS.Refreshment:
+ currentCategory==="Refreshment"?QS_GROUPS.Refreshment:currentCategory==="All"?[...QS_GROUPS.Refreshment,...QS_GROUPS.Sundae]:[];
+ if(!groups.length){bar.innerHTML="";qsActiveGroup="All";return}
+ if(qsActiveGroup!=="All"&&!groups.includes(qsActiveGroup))qsActiveGroup="All";
+ bar.innerHTML=["All",...groups].map(g=>'<button type="button" class="'+(qsActiveGroup===g?"primary":"gray")+'" onclick="qsChooseSeries('+JSON.stringify(g).replace(/"/g,"&quot;")+')">'+esc(g)+'</button>').join("");
+ if(qsActiveGroup!=="All"){
+  const shown=currentCategory==="All"?menu:menu.filter(p=>p.category===currentCategory);
+  [...list.children].forEach((el,i)=>{if(shown[i]&&qsGroupOf(shown[i])!==qsActiveGroup)el.style.display="none"});
+ }
+};
+function qsChooseSeries(g){qsActiveGroup=g;renderMenu()}
+const qsHierarchySetCategory=setMenuCategory;
+setMenuCategory=function(n){qsActiveGroup="All";qsHierarchySetCategory(n)};
+/* Permit flavor management for Sundae category as well as Refreshment. */
+const qsOldRefresh=qsRefresh;
+qsRefresh=function(p){return !!p&&(p.category==="Refreshment"||p.category==="Sundae")};
+/* Keep flavors in the checkout label and preserve existing add-ons, receipts and kitchen tickets. */
+const qsHierarchyFlavorPreset=qsFlavorPreset;
+qsFlavorPreset=function(id){
+ const p=menu.find(x=>Number(x.id)===Number(id));
+ if(p&&QS_SUNDAE_FLAVORS[qsGroupOf(p)]){
+  p.flavors=QS_SUNDAE_FLAVORS[qsGroupOf(p)].map(name=>({name,prices:{}}));
+  if(saveMenu()){renderAll();qsFlavorSetup(id)}
+  return;
+ }
+ qsHierarchyFlavorPreset(id);
+};
+</script>
+
+<script>
+/* Pricing for Refreshment is configured only in size fields, not product base price. */
+(function(){
+ const oldToggle=qsToggleNewSizes;
+ qsToggleNewSizes=function(){
+   oldToggle();
+   const refresh=$('newCategory').value==='Refreshment';
+   const field=$('newPrice');
+   field.style.display=refresh?'none':'';
+   field.disabled=refresh;
+   field.setAttribute('aria-hidden',refresh?'true':'false');
+   let label=document.getElementById('qsPriceInstruction');
+   if(!label){label=document.createElement('p');label.id='qsPriceInstruction';label.className='small';field.insertAdjacentElement('afterend',label)}
+   label.style.display=refresh?'':'none';
+   label.textContent='Ang presyo ng Refreshment ay ilalagay sa bawat size sa ibaba, hindi sa product price.';
+ };
+ const oldAdd=addMenu;
+ addMenu=async function(){
+   const refresh=$('newCategory').value==='Refreshment';
+   if(!refresh)return oldAdd();
+   const sizes=qsReadNewSizes();
+   if(!sizes||Object.keys(sizes).length===0){alert('Maglagay muna ng presyo sa kahit isang size bago i-save ang Refreshment.');return}
+   const priceField=$('newPrice');
+   priceField.disabled=false;
+   priceField.value=String(Object.values(sizes)[0]);
+   try{await oldAdd()}finally{priceField.value='';qsToggleNewSizes()}
+ };
+ document.addEventListener('DOMContentLoaded',()=>qsToggleNewSizes());
+})();
+</script>
+<style>
+#qsAddMenuBuilder{margin:12px 0;padding:14px;border:1px solid #d6d6d6;border-radius:12px;background:#fafafa}
+#qsAddMenuBuilder label{display:block;margin-top:8px;font-weight:600}
+#qsAddMenuBuilder .qs-flavor-entry{border:1px solid #ddd;border-radius:9px;padding:10px;margin:12px 0;background:white}
+#qsAddMenuBuilder .qs-price-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+#qsAddMenuBuilder input,#qsAddMenuBuilder select{box-sizing:border-box;max-width:100%}
+</style>
+<script>
+/* Admin Add Menu: category -> series -> flavor -> size/price, before saving. */
+(function(){
+ const SIZE_LABELS=['6.5 oz','8 oz','12 oz','Medium','Large'];
+ const SERIES=['Iced Coffee','Milk Tea','Milky Series','Fruit Soda','Milk Shake','Sundae','Sundae Cone'];
+ const SUNDAE_TYPES=['Regular Sundae','Premium Sundae'];
+ const CONES=['Small Cone','Giant Belgian Cone'];
+ const SAMPLES={
+  'Iced Coffee':['Americano','Vanilla Latte','Hazelnut','Matcha Latte','Caramel Latte','Mocha','Spanish Latte','White Chocolate','Original'],
+  'Milk Tea':['Classic','Wintermelon','Okinawa','Taro'],
+  'Milky Series':['Strawberry','Mango','Chocolate'],
+  'Fruit Soda':['Blue Lemonade','Strawberry','Green Apple'],
+  'Milk Shake':['Chocolate','Vanilla','Strawberry'],
+  'Regular Sundae':['Chocolate','Strawberry','Caramel','Vanilla'],
+  'Premium Sundae':['Mango Graham','Boba','Strawberry Oreo','Wafelo']
+ };
+ const $id=id=>document.getElementById(id);
+ const htmlEscape=t=>String(t).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+ function currentSeries(){return $id('qsAddSeries')?.value==='Sundae'?$id('qsAddSundaeType')?.value:$id('qsAddSeries')?.value}
+ function addFlavor(name=''){
+  const host=$id('qsAddFlavorRows');if(!host)return;
+  const row=document.createElement('div');row.className='qs-flavor-entry';
+  row.innerHTML='<label>Flavor name</label><input class="qs-add-flavor-name" placeholder="Hal. Hazelnut" value="'+htmlEscape(name)+'">'+
+   '<label>Flavor Picture (optional)</label><input type="file" accept="image/*" class="qs-add-flavor-picture"><img class="qs-add-flavor-preview" style="display:none;width:86px;height:86px;object-fit:cover;border-radius:10px;margin:6px 0">'+
+   '<div class="qs-price-grid">'+SIZE_LABELS.map(size=>'<label>'+size+' — ₱<input type="number" inputmode="decimal" min="0.01" step="0.01" class="qs-add-flavor-price" data-size="'+size+'" placeholder="Price"></label>').join('')+'</div>'+
+   '<button type="button" class="danger qs-remove-flavor">Remove Flavor</button>';
+  row.querySelector('.qs-remove-flavor').onclick=()=>row.remove();
+  row.querySelector('.qs-add-flavor-picture').onchange=async e=>{
+   const file=e.target.files?.[0];if(!file)return;
+   try{const data=await compressImage(file);row.dataset.flavorImage=data;const preview=row.querySelector('.qs-add-flavor-preview');preview.src=data;preview.style.display='block'}
+   catch(err){alert('Hindi mabasa ang larawan.');e.target.value=''}
+  };
+  host.appendChild(row);
+ }
+ function addCone(name=''){
+  const host=$id('qsAddFlavorRows'),row=document.createElement('div');row.className='qs-flavor-entry qs-cone-entry';
+  row.innerHTML='<label>Cone Name</label><input class="qs-cone-name" placeholder="Cone name" value="'+htmlEscape(name)+'">'+
+  '<label>Cone Picture</label><input type="file" accept="image/*" class="qs-cone-picture"><img class="qs-cone-preview" style="display:none;width:96px;height:96px;object-fit:cover;border-radius:10px">'+
+  '<label>Selling Price (₱)</label><input type="number" min="0.01" step="0.01" inputmode="decimal" class="qs-cone-price" placeholder="Price">'+
+  '<button type="button" class="danger qs-remove-cone">Remove Cone</button>';
+  row.querySelector('.qs-remove-cone').onclick=()=>row.remove();
+  row.querySelector('.qs-cone-picture').onchange=async e=>{const f=e.target.files?.[0];if(!f)return;try{row.dataset.flavorImage=await compressImage(f);const img=row.querySelector('.qs-cone-preview');img.src=row.dataset.flavorImage;img.style.display='block'}catch(err){alert('Hindi mabasa ang picture.')}};
+  host.appendChild(row);
+ }
+ function populateSamples(){
+  const host=$id('qsAddFlavorRows');host.innerHTML='';
+  if($id('qsAddSeries').value==='Sundae Cone'){CONES.forEach(n=>addCone(n));return;}
+  (SAMPLES[currentSeries()]||[]).forEach(n=>addFlavor(n));
+  if(!host.children.length)addFlavor();
+ }
+ function updateType(){
+  const sundae=$id('qsAddSeries').value==='Sundae';
+  $id('qsAddSundaeWrap').style.display=sundae?'':'none';
+  populateSamples();
+ }
+ function updateForm(){
+  const refresh=$id('newCategory').value==='Refreshment';
+  $id('qsAddMenuBuilder').style.display=refresh?'':'none';
+  $id('newPrice').style.display=refresh?'none':'';
+  $id('newPrice').disabled=refresh;
+  $id('qsNewSizes').style.display='none';
+  const instruction=$id('qsPriceInstruction');if(instruction)instruction.style.display='none';
+  if(refresh&& !$id('qsAddFlavorRows').children.length)populateSamples();
+ }
+ function init(){
+  const category=$id('newCategory'),price=$id('newPrice');if(!category||!price||$id('qsAddMenuBuilder'))return;
+  const panel=document.createElement('div');panel.id='qsAddMenuBuilder';
+  panel.innerHTML='<h3>🥤 Refreshment Menu Setup</h3><p class="small">Piliin ang drink o Sundae, pagkatapos flavor at presyo ng bawat size. Blank = unavailable size.</p>'+
+  '<label>Choose Refreshment</label><select id="qsAddSeries">'+SERIES.map(n=>'<option>'+n+'</option>').join('')+'</select>'+
+  '<div id="qsAddSundaeWrap" style="display:none"><label>Sundae Type</label><select id="qsAddSundaeType">'+SUNDAE_TYPES.map(n=>'<option>'+n+'</option>').join('')+'</select></div>'+
+  '<h4>Flavors & Sizes with Prices</h4><div id="qsAddFlavorRows"></div>'+
+  '<button type="button" class="blue" id="qsAddFlavorButton">+ Add Flavor</button>'+
+  '<button type="button" class="gray" id="qsLoadFlavorSamples">Load Sample Flavors</button>';
+  price.insertAdjacentElement('afterend',panel);
+  $id('qsAddSeries').onchange=updateType;
+  $id('qsAddSundaeType').onchange=populateSamples;
+  $id('qsAddFlavorButton').onclick=()=>($id('qsAddSeries').value==='Sundae Cone'?addCone():addFlavor());
+  $id('qsLoadFlavorSamples').onclick=populateSamples;
+  category.addEventListener('change',updateForm);
+  updateType();updateForm();
+ }
+ const oldAddMenu=addMenu;
+ addMenu=async function(){
+  if($id('newCategory').value!=='Refreshment')return oldAddMenu();
+  if(!requireAdmin())return;
+  const group=currentSeries();const name=group;
+  const stockRaw=$id('newStock').value;const stock=stockRaw===''?0:Number(stockRaw);
+  if(!Number.isInteger(stock)||stock<0){alert('Ilagay ang tamang starting stock.');return}
+  const isCone=$id('qsAddSeries').value==='Sundae Cone';
+  const flavors=[];const seen=new Set();
+  if(isCone){
+   for(const row of $id('qsAddFlavorRows').querySelectorAll('.qs-cone-entry')){
+    const flavorName=row.querySelector('.qs-cone-name').value.trim(),price=Number(row.querySelector('.qs-cone-price').value);
+    if(!flavorName||!Number.isFinite(price)||price<=0){alert('Ilagay ang cone name at selling price.');return}
+    if(seen.has(flavorName.toLowerCase())){alert('Duplicate cone name.');return}
+    seen.add(flavorName.toLowerCase());
+    flavors.push({name:flavorName,prices:{Cone:price},...(row.dataset.flavorImage?{image:row.dataset.flavorImage}:{})});
+   }
+  }
+  for(const row of $id('qsAddFlavorRows').querySelectorAll('.qs-flavor-entry')){
+   const flavorName=row.querySelector('.qs-add-flavor-name').value.trim();
+   const prices={};
+   for(const field of row.querySelectorAll('.qs-add-flavor-price')){
+    if(field.value.trim()==='')continue;
+    const price=Number(field.value);
+    if(!Number.isFinite(price)||price<=0){alert('Dapat higit sa zero ang presyo ng bawat available size.');return}
+    prices[field.dataset.size]=price;
+   }
+   if(!flavorName){if(Object.keys(prices).length){alert('Lagyan ng pangalan ang flavor.');return}continue}
+   if(seen.has(flavorName.toLowerCase())){alert('May duplicate flavor: '+flavorName);return}
+   seen.add(flavorName.toLowerCase());
+   if(!Object.keys(prices).length){alert('Lagyan ng size price ang '+flavorName);return}
+   flavors.push({name:flavorName,prices,...(row.dataset.flavorImage?{image:row.dataset.flavorImage}:{})});
+  }
+  if(!flavors.length){alert(isCone?'Magdagdag ng cone at presyo.':'Maglagay ng kahit isang flavor na may size at presyo.');return}
+  if(menu.some(p=>p.category==='Refreshment'&&p.qsGroup===group&&p.name===name)){
+   alert('Existing na ang '+group+'. Gamitin ang Manage Flavors & Prices sa Existing Menu para baguhin ito.');return;
+  }
+  let picture='';const file=$id('newPicture').files?.[0];
+  if(file){try{picture=await compressImage(file)}catch(e){alert('Hindi mabasa ang larawan.');return}}
+  const id=Math.max(0,...menu.map(p=>Number(p.id)||0))+1;
+  const item={id,name,category:'Refreshment',qsGroup:group,qsCone:isCone,price:Math.min(...flavors.flatMap(f=>Object.values(f.prices))),stock,available:stock>0,flavors};
+  if(picture)item.image=picture;
+  menu.push(item);
+  if(!saveMenu()){menu=menu.filter(p=>Number(p.id)!==id);return}
+  renderAll();
+  $id('newName').value='';$id('newStock').value='';$id('newPicture').value='';
+  $id('newCategory').value='Snacks';
+  $id('qsAddFlavorRows').innerHTML='';
+  updateForm();
+  alert('Na-save ang '+name+' kasama ang flavors at size prices.');
+ };
+ document.addEventListener('DOMContentLoaded',init);
+})();
+</script>
+
+<style>
+.qs-flavor-picture-preview{display:block;width:76px;height:76px;object-fit:cover;border-radius:9px;margin:6px 0}
+.qs-flavor-photo-picker{display:block;margin:6px 0 10px}
+.qs-picker-flavor-image{width:52px;height:52px;object-fit:cover;border-radius:8px;vertical-align:middle;margin-right:8px}
+</style>
+<script>
+(function(){
+ const oldRow=qsFlavorRow;
+ qsFlavorRow=function(f,i){
+  const html=oldRow(f,i);
+  const img=f.image&&/^data:image\//.test(f.image)?f.image:'';
+  const photo='<label>Flavor Picture (optional)</label><input class="qs-flavor-photo-picker" type="file" accept="image/*">'+
+  '<img class="qs-flavor-picture-preview" '+(img?'src="'+img+'"':'style="display:none"')+'>';
+  return html.replace('<div class="qs-flavor-grid">',photo+'<div class="qs-flavor-grid">');
+ };
+ const oldDraw=qsFlavorDraw;
+ qsFlavorDraw=function(p,host){
+  oldDraw(p,host);
+  [...host.querySelectorAll('.qs-flavor-row')].forEach((row,i)=>{
+   row.dataset.flavorImage=p.flavors[i]?.image||'';
+   const input=row.querySelector('.qs-flavor-photo-picker');
+   if(input)input.onchange=async e=>{
+    const file=e.target.files?.[0];if(!file)return;
+    try{const image=await compressImage(file);row.dataset.flavorImage=image;
+      const preview=row.querySelector('.qs-flavor-picture-preview');preview.src=image;preview.style.display='block'}
+    catch(err){alert('Hindi mabasa ang picture.');e.target.value=''}
+   };
+  });
+ };
+ const oldAdd=qsFlavorAdd;
+ qsFlavorAdd=function(id){
+  oldAdd(id);
+  const host=document.querySelector('.qs-flavor-editor[data-product-id="'+Number(id)+'"]');
+  const row=host?.querySelector('.qs-flavor-row:last-child');
+  if(row){
+   row.dataset.flavorImage='';
+   const input=row.querySelector('.qs-flavor-photo-picker');
+   if(input)input.onchange=async e=>{
+    const file=e.target.files?.[0];if(!file)return;
+    try{const image=await compressImage(file);row.dataset.flavorImage=image;
+      const preview=row.querySelector('.qs-flavor-picture-preview');preview.src=image;preview.style.display='block'}
+    catch(err){alert('Hindi mabasa ang picture.')}
+   };
+  }
+ };
+ const oldSave=qsFlavorSave;
+ qsFlavorSave=function(id){
+  const p=menu.find(x=>Number(x.id)===Number(id));
+  const host=document.querySelector('.qs-flavor-editor[data-product-id="'+Number(id)+'"]');
+  if(!p||!host)return oldSave(id);
+  const images=[...host.querySelectorAll('.qs-flavor-row')].map(row=>row.dataset.flavorImage||'');
+  const names=[...host.querySelectorAll('.qs-flavor-row')].map(row=>row.querySelector('.qs-flavor-name')?.value.trim());
+  const prior=p.flavors;
+  oldSave(id);
+  // oldSave renders the Admin panel after a successful save. Attach pictures only if it saved these names.
+  if(p.flavors!==prior&&p.flavors.length===names.length&&p.flavors.every((f,i)=>f.name===names[i])){
+   p.flavors.forEach((f,i)=>{if(images[i])f.image=images[i]});
+   if(!saveMenu()){p.flavors=prior;return}
+   renderAll();
+  }
+ };
+ const oldChoose=qsFlavorChoose;
+ qsFlavorChoose=function(){
+  oldChoose();
+  const p=menu.find(x=>Number(x.id)===Number(pendingProductId));
+  const selected=document.querySelector('.qs-flavor-radio:checked');
+  const f=p?.flavors?.[Number(selected?.value)];
+  const host=document.getElementById('qsFlavorSizes');
+  if(host&&f?.image&&/^data:image\//.test(f.image)){
+   const img=document.createElement('img');img.src=f.image;img.alt=f.name;
+   img.style.cssText='display:block;width:110px;height:110px;object-fit:cover;border-radius:12px;margin:8px auto';
+   host.prepend(img);
+  }
+ };
+})();
+</script>
+<script>
+/* Optional add-on pictures, stored in the existing add-ons collection. */
+(function(){
+ const field=document.getElementById('addonStock');
+ if(field){
+  const wrap=document.createElement('div');
+  wrap.innerHTML='<label>Add-on Picture (optional)</label><input id="qsAddonPhoto" type="file" accept="image/*" style="width:100%;margin:6px 0"><img id="qsAddonPhotoPreview" alt="Add-on preview" style="display:none;width:100px;height:100px;object-fit:cover;border-radius:10px;margin:8px 0">';
+  field.insertAdjacentElement('afterend',wrap);
+  document.getElementById('qsAddonPhoto').addEventListener('change',async function(){
+   const f=this.files&&this.files[0],preview=document.getElementById('qsAddonPhotoPreview');
+   if(!f){this.dataset.photo='';preview.style.display='none';return}
+   try{this.dataset.photo=await compressImage(f);preview.src=this.dataset.photo;preview.style.display='block'}
+   catch(e){alert('Hindi mabasa ang add-on picture.');this.value='';this.dataset.photo='';preview.style.display='none'}
+  });
+ }
+ const addOriginal=addAddon;
+ addAddon=function(){
+  const before=new Set(addons.map(a=>Number(a.id)));
+  const input=document.getElementById('qsAddonPhoto'),photo=input?.dataset.photo||'';
+  addOriginal();
+  const item=addons.find(a=>!before.has(Number(a.id))&&a.kind!=='upgrade');
+  if(!item)return;
+  if(photo){item.image=photo;if(!saveAddons()){delete item.image;alert('Hindi na-save ang picture. Posibleng puno ang phone storage.')}}
+  if(input){input.value='';input.dataset.photo='';document.getElementById('qsAddonPhotoPreview').style.display='none'}
+  renderAddonManager();
+ };
+ const managerOriginal=renderAddonManager;
+ renderAddonManager=function(){
+  managerOriginal();
+  const host=document.getElementById('addonManager');if(!host)return;
+  const items=addons.filter(a=>a.kind!=='upgrade');
+  [...host.querySelectorAll('.admin-item')].forEach((node,i)=>{
+   const a=items[i];if(!a)return;
+   if(a.image&&/^data:image\//.test(a.image)){
+    const img=document.createElement('img');img.src=a.image;img.alt=a.name;
+    img.style.cssText='width:84px;height:84px;object-fit:cover;border-radius:9px;display:block;margin:8px 0';
+    node.insertBefore(img,node.firstChild);
+   }
+   const button=document.createElement('button');button.type='button';button.className='blue';
+   button.textContent='📷 '+(a.image?'Change Picture':'Add Picture');
+   const input=document.createElement('input');input.type='file';input.accept='image/*';input.style.display='none';
+   button.onclick=()=>input.click();
+   input.onchange=async()=>{
+    if(!input.files?.[0])return;
+    try{const pic=await compressImage(input.files[0]);const old=a.image;a.image=pic;
+     if(!saveAddons()){a.image=old;return}renderAddonManager();}
+    catch(e){alert('Hindi ma-save ang add-on picture.')} 
+   };
+   node.appendChild(button);node.appendChild(input);
+  });
+ };
+ const pickerOriginal=openAddonPicker;
+ openAddonPicker=function(id){
+  pickerOriginal(id);
+  const picker=document.getElementById('addonPicker');if(!picker||picker.classList.contains('hidden'))return;
+  picker.querySelectorAll('.addon-check').forEach(input=>{
+   const a=addons.find(x=>Number(x.id)===Number(input.value));
+   if(!a?.image||!/^data:image\//.test(a.image))return;
+   const img=document.createElement('img');img.src=a.image;img.alt=a.name;
+   img.style.cssText='width:55px;height:55px;object-fit:cover;border-radius:8px;margin:0 8px';
+   input.insertAdjacentElement('afterend',img);
+  });
+ };
+})();
+</script>
+
+<style>.qs-cone-option{display:flex;align-items:center;gap:12px}.qs-cone-option img{width:75px;height:75px;object-fit:cover;border-radius:10px}.qs-cone-option b{margin-left:auto}</style>
+<script>
+(function(){
+ const priorOpen=openAddonPicker,priorConfirm=confirmAddonPicker;
+ openAddonPicker=function(id){
+  priorOpen(id);
+  const p=menu.find(x=>Number(x.id)===Number(id));
+  if(!p?.qsCone||Number(pendingProductId)!==Number(id))return;
+  const picker=document.getElementById('addonPicker');
+  picker.querySelectorAll('.summary').forEach(el=>el.remove());
+  const box=document.createElement('div');box.className='summary';
+  box.innerHTML='<h3>🍦 Select Cone & Price</h3>'+(p.flavors||[]).map((f,i)=>{
+   const price=Number(f.prices?.Cone),ok=Number.isFinite(price)&&price>0;
+   return '<label class="addon-choice qs-cone-option"><input type="radio" name="qsCone" class="qs-cone-radio" value="'+i+'" '+(ok?'':'disabled')+'>'+
+   (f.image&&/^data:image\//.test(f.image)?'<img src="'+f.image+'" alt="Cone">':'🍦')+
+   '<span>'+esc(f.name)+'</span><b>'+(ok?'₱'+money(price):'Not set')+'</b></label>';
+  }).join('');
+  picker.insertBefore(box,picker.firstChild.nextSibling);
+  const button=[...picker.querySelectorAll('button')].find(b=>b.textContent.trim()==='Add to Order');if(button)button.disabled=!(p.flavors||[]).some(f=>Number(f.prices?.Cone)>0);
+ };
+ confirmAddonPicker=function(){
+  const p=menu.find(x=>Number(x.id)===Number(pendingProductId));if(!p?.qsCone)return priorConfirm();
+  const selected=document.querySelector('.qs-cone-radio:checked');if(!selected){alert('Pumili ng cone.');return}
+  const f=p.flavors[Number(selected.value)],price=Number(f?.prices?.Cone);
+  if(!Number.isFinite(price)||price<=0){alert('Walang valid na cone price.');return}
+  if(Number(p.stock)<=productUse(Number(p.id))||!checkComboCartStock(p.id,1)){alert('Kulang ang stock.');return}
+  const chosen=[];
+  for(const el of document.querySelectorAll('.addon-check:checked')){const a=addons.find(x=>Number(x.id)===Number(el.value));if(!a||!a.available||Number(a.stock)<=addonUse(Number(a.id))){alert('Add-on out of stock.');return}chosen.push({id:Number(a.id),name:a.name,price:Number(a.price)})}
+  const key=chosen.map(a=>a.id).sort((a,b)=>a-b).join(',');
+  const existing=cart.find(x=>Number(x.id)===Number(p.id)&&x.flavor===f.name&&x.size==='Cone'&&(x.addons||[]).map(a=>a.id).sort((a,b)=>a-b).join(',')===key);
+  if(existing)existing.qty++;else cart.push({id:Number(p.id),name:p.name,flavor:f.name,size:'Cone',price,qty:1,addons:chosen,lineId:Date.now()+Math.random()});
+  cancelAddonPicker();renderCart();
+ };
+})();
+</script>
 </body></html>
