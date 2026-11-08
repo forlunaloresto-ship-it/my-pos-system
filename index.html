@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#151515"><meta name="description" content="QuickServe POS - offline-capable point of sale">
-<link rel="manifest" href="./manifest.json"><title>QuickServe POS</title>
+<link rel="manifest" href="./manifest.json"><title>QuickServe POS | 2026-11-08</title>
 <style>
 *{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#f4f4f4;color:#222}header{background:#151515;color:white;padding:14px;text-align:center}header h2{margin:0 0 5px}.container{max-width:1100px;margin:auto;padding:12px}.card{background:white;border-radius:12px;padding:14px;margin-bottom:14px;box-shadow:0 2px 8px #0002}button{border:0;border-radius:8px;padding:11px 13px;cursor:pointer;font-weight:bold;margin:2px}button:disabled{opacity:.5;cursor:not-allowed}input,select{width:100%;padding:11px;margin:6px 0 10px;border:1px solid #ccc;border-radius:8px;font-size:16px}.primary{background:linear-gradient(135deg,#e50914,#ff9500);color:#fff}.green{background:#168a45;color:#fff}.gray{background:#777;color:#fff}.danger{background:#b00020;color:#fff}.blue{background:#1769aa;color:#fff}.orange{background:#f08a00;color:#fff}.hidden{display:none!important}.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}.tabs button{flex:1;min-width:85px}.category-tabs{display:flex;gap:7px;flex-wrap:wrap;margin:8px 0 14px}.category-tabs button{background:#eee;color:#222;border:1px solid #ddd}.category-tabs button.selected{background:#d71920;color:white}.menu{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:9px}.product{border:1px solid #ddd;border-radius:10px;padding:12px;background:white}.product h3{margin:5px 0}.product-photo{width:100%;height:118px;object-fit:cover;border-radius:8px;background:#f1f1f1;display:block;margin-bottom:8px}.admin-photo{width:84px;height:72px;object-fit:cover;border-radius:8px;background:#eee;margin-right:10px}.price{font-size:20px;font-weight:bold}.out{opacity:.55}.cart-row{display:flex;justify-content:space-between;align-items:center;gap:8px;border-bottom:1px solid #ddd;padding:10px 0}.qty{display:flex;align-items:center;gap:5px}.qty button{padding:5px 9px}.total{font-size:24px;font-weight:bold;margin:14px 0}.small{font-size:13px;color:#666}.active{color:green;font-weight:bold}.disabled{color:#b00020;font-weight:bold}.admin-item{border:1px solid #ddd;border-radius:10px;padding:12px;margin:8px 0}.summary{background:#f7f7f7;border-radius:8px;padding:10px;margin-top:8px}.shift-open{background:#e8f8ee;border:1px solid #168a45}.shift-closed{background:#fff0f0;border:1px solid #d71920}.stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:9px}.stat{background:#f7f7f7;border-radius:10px;padding:13px;border:1px solid #ddd}.stat-number{font-size:22px;font-weight:bold;margin-top:5px}.pay-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.pay-option{background:white;border:2px solid #ddd;border-radius:10px;padding:13px;text-align:center}.pay-option.selected{border-color:#d71920;background:#fff1f1}.pay-option strong{display:block;font-size:16px}#printReceipt{display:none}
 /* QuickServe branded login — visual changes only; all POS data keys retained */
@@ -63,7 +63,7 @@ body:has(#loginPage:not(.hidden))>header{display:none}
   <section id="shiftPanel" class="card"><h3>🕐 Cashier Shift</h3><div id="shiftStatus"></div><div id="shiftControls"><label>Shift Type</label><select id="shiftType"><option>Opening</option><option>Closing</option></select><button class="green" style="width:100%" onclick="startShift()">▶️ START SHIFT</button></div><div id="closeShiftControls" class="hidden"><button class="danger" style="width:100%" onclick="closeShift()">🔴 CLOSE SHIFT</button></div></section>
   <section id="posPage"><div class="card"><h3>Order Type</h3><button id="dineBtn" class="primary" onclick="setOrderType('Dine In')">🍽️ Dine In</button><button id="takeBtn" onclick="setOrderType('Take Out')">🥡 Take Out</button><p>Order #: <b id="orderNumber">1001</b></p></div><div class="card"><h3>Menu</h3><p class="small">Pumili ng category para makita ang mga produkto.</p><div id="categoryTabs" class="category-tabs"></div><div id="menuList" class="menu"></div></div><div id="addonPicker" class="card hidden"></div><div class="card"><h3>Current Order</h3><div id="cart"></div><div class="total">Total: PHP <span id="total">0.00</span></div><h3>Payment Method / Paraan ng Bayad</h3><div class="pay-grid"><button id="pay-Cash" class="pay-option selected" onclick="setPaymentMethod('Cash')">💵<strong>Cash</strong></button><button id="pay-GCash" class="pay-option" onclick="setPaymentMethod('GCash')">📱<strong>GCash</strong></button><button id="pay-Maya" class="pay-option" onclick="setPaymentMethod('Maya')">💚<strong>Maya</strong></button><button id="pay-Bank Transfer" class="pay-option" onclick="setPaymentMethod('Bank Transfer')">🏦<strong>Bank Transfer</strong></button></div><div id="cashFields"><label>Cash Received</label><input id="cash" type="number" min="0" step="0.01" inputmode="decimal" placeholder="Ilagay ang bayad" oninput="calculateChange()"><h3>Sukli: PHP <span id="change">0.00</span></h3></div><div id="cashlessNote" class="summary hidden">Cashless payment ang pinili. Kumpirmahin muna na natanggap ang bayad bago i-complete ang order.</div><button class="green" style="width:100%;margin-top:10px" onclick="completeOrder()">✅ COMPLETE ORDER</button><button class="blue" style="width:100%;margin-top:8px" onclick="printLastReceipt()">🧾 PRINT LAST RECEIPT</button><button class="orange" style="width:100%;margin-top:8px" onclick="printLastKitchenTicket()">🍳 PRINT KITCHEN ORDER</button><button class="gray" style="width:100%;margin-top:8px" onclick="clearCart()">CLEAR ORDER</button></div></section>
   <section id="historyPage" class="hidden"><div class="card"><h2>📋 Sales History</h2><button id="clearHistoryBtn" class="gray" onclick="clearHistory()">Clear History (Admin)</button><div id="history"></div></div></section>
-  <section id="adminPage" class="hidden"><div class="card"><h2>📊 Sales & Shift Summary</h2><div id="salesSummary"></div></div><div class="card"><h2>📈 Sales Reports</h2><label>Report period</label><select id="reportPeriod" onchange="renderReports()"><option value="today">Daily / Today</option><option value="week">Weekly / Last 7 days</option><option value="month">Monthly / Last 30 days</option><option value="all">All time</option></select><div id="reports"></div></div><div class="card"><h2>🏆 Best-Selling Products</h2><div id="bestSellers"></div></div><div class="card"><h2>🍔 Menu Management</h2><h3>Add Menu</h3><input id="newName" placeholder="Product name"><label>Menu Category</label><select id="newCategory"><option>Snacks</option><option>Refreshment</option><option>Meal</option><option>Combo Meal</option><option>Combo Basket</option></select><input id="newPrice" type="number" min="0.01" step="0.01" placeholder="Price"><input id="newStock" type="number" min="0" step="1" placeholder="Starting stock quantity"><div id="qsNewSizes" class="summary hidden"><b>🥤 Refreshment Sizes & Prices</b><p class="small">Ilagay ang presyo sa mga size na available. Blank = hindi available.</p><div class="qs-size-grid"><label>6.5 oz<input class="qs-new-size" data-size="6.5 oz" type="number" min="0" step="0.01" placeholder="Price for 6.5 oz"></label><label>8 oz<input class="qs-new-size" data-size="8 oz" type="number" min="0" step="0.01" placeholder="Price for 8 oz"></label><label>12 oz<input class="qs-new-size" data-size="12 oz" type="number" min="0" step="0.01" placeholder="Price for 12 oz"></label><label>Medium<input class="qs-new-size" data-size="Medium" type="number" min="0" step="0.01" placeholder="Price for Medium"></label><label>Large<input class="qs-new-size" data-size="Large" type="number" min="0" step="0.01" placeholder="Price for Large"></label></div></div><label>Product Picture (optional)</label><input id="newPicture" type="file" accept="image/*"><p class="small">Pumili ng larawan mula sa Gallery. Iko-compress ito para magamit offline.</p><button class="green" onclick="addMenu()">➕ Add Menu</button><p class="small">Awtomatikong mababawasan ang stock pagkatapos ng completed sale.</p></div><div class="card"><h2>🗂️ Editable Menu Categories</h2><p class="small">Add, rename at delete categories. Hindi puwedeng burahin ang category na may produkto o add-on.</p><input id="newCategoryName" placeholder="New category name"><button class="green" onclick="addCategory()">➕ Add Category</button><div id="categoryManager"></div></div><div class="card"><h2>➕ Add-ons Management</h2><p class="small">Piliin ang mismong mga produkto na maaaring lagyan ng add-on. Puwedeng higit sa isa.</p><label>Add-on Name</label><input id="addonName" placeholder="Hal. Extra Rice"><label>Category (pang-filter lamang)</label><select id="addonCategory" onchange="renderAddonProductChoices()"></select><label>Applicable Products (pumili ng isa o higit pa)</label><div id="addonProductChoices" class="summary"></div><label>Price</label><input id="addonPrice" type="number" min="0" step="0.01" placeholder="Add-on price"><label>Starting Stock</label><input id="addonStock" type="number" min="0" step="1" placeholder="Quantity"><button class="green" onclick="addAddon()">➕ Add Add-on</button><div id="addonManager"></div></div><div class="card"><h2>🍱 Meal Upgrade Management</h2><p class="small">Isang meal upgrade lamang ang maaaring piliin sa bawat product. Optional ito at may sariling presyo at stock.</p><label>Upgrade name</label><input id="upgradeName" placeholder="Hal. Upgrade to Large Fries"><label>Category</label><select id="upgradeCategory" onchange="renderUpgradeProductChoices()"></select><label>Applicable Products</label><div id="upgradeProductChoices" class="summary"></div><label>Additional Price</label><input id="upgradePrice" type="number" min="0" step="0.01" placeholder="Additional price"><label>Stock</label><input id="upgradeStock" type="number" min="0" step="1" placeholder="Available quantity"><button class="green" onclick="addUpgrade()">➕ Add Meal Upgrade</button><div id="upgradeManager"></div></div><div class="card"><h2>🍱 Meal Builder</h2><p class="small">Bumuo ng combo mula sa existing products. Ang bawat completed combo sale ay magbabawas ng stock ng bawat component. Puwede pa rin ang add-ons at upgrades.</p><label>Meal Name</label><input id="comboName" placeholder="Hal. Chicken + Rice + Drink"><label>Combo Category</label><select id="comboCategory"></select><label>Combo Selling Price</label><input id="comboPrice" type="number" min="0.01" step="0.01" placeholder="Hal. 129"><label>Ingredients / Products (quantity bawat combo)</label><div id="comboComponents"></div><button class="green" onclick="addCombo()">➕ Create Combo Meal</button><h3>Saved Combo Meals</h3><div id="comboManager"></div></div><div class="card"><h3>Existing Menu & Inventory</h3><div id="adminMenu"></div></div><div class="card"><h2>👤 Cashier Management</h2><h3>Add Cashier</h3><input id="newCashierName" placeholder="Cashier name"><input id="newCashierId" placeholder="User ID"><input id="newCashierPassword" type="password" placeholder="New password"><button class="green" onclick="addCashier()">➕ Add Cashier</button><h3>Cashier Accounts</h3><div id="cashierList"></div></div><div class="card"><h2>🔐 Admin Password</h2><p class="small">Baguhin ang admin password at itago sa ligtas na lugar.</p><input id="adminNewPassword" type="password" placeholder="Bagong admin password"><button class="blue" onclick="changeAdminPassword()">Change Admin Password</button></div></section>
+  <section id="adminPage" class="hidden"><div class="card"><b>QuickServe POS Version 2026.11.08</b><div class="small">Build: November 8, 2026 • Shift History + Admin Clear Trial History (YES/NO)</div></div><div class="card"><h2>📊 Sales & Shift Summary</h2><div id="salesSummary"></div></div><div class="card"><h2>📈 Sales Reports</h2><label>Report period</label><select id="reportPeriod" onchange="renderReports()"><option value="today">Daily / Today</option><option value="week">Weekly / This Week (Mon–Sun)</option><option value="month">Monthly / This Month</option><option value="all">All time</option></select><div id="reports"></div></div><div class="card"><h2>🏆 Best-Selling Products</h2><div id="bestSellers"></div></div><div class="card"><h2>🍔 Menu Management</h2><h3>Add Menu</h3><input id="newName" placeholder="Product name"><label>Menu Category</label><select id="newCategory"><option>Snacks</option><option>Refreshment</option><option>Meal</option><option>Combo Meal</option><option>Combo Basket</option></select><input id="newPrice" type="number" min="0.01" step="0.01" placeholder="Price"><input id="newStock" type="number" min="0" step="1" placeholder="Starting stock quantity"><div id="qsNewSizes" class="summary hidden"><b>🥤 Refreshment Sizes & Prices</b><p class="small">Ilagay ang presyo sa mga size na available. Blank = hindi available.</p><div class="qs-size-grid"><label>6.5 oz<input class="qs-new-size" data-size="6.5 oz" type="number" min="0" step="0.01" placeholder="Price for 6.5 oz"></label><label>8 oz<input class="qs-new-size" data-size="8 oz" type="number" min="0" step="0.01" placeholder="Price for 8 oz"></label><label>12 oz<input class="qs-new-size" data-size="12 oz" type="number" min="0" step="0.01" placeholder="Price for 12 oz"></label><label>Medium<input class="qs-new-size" data-size="Medium" type="number" min="0" step="0.01" placeholder="Price for Medium"></label><label>Large<input class="qs-new-size" data-size="Large" type="number" min="0" step="0.01" placeholder="Price for Large"></label></div></div><label>Product Picture (optional)</label><input id="newPicture" type="file" accept="image/*"><p class="small">Pumili ng larawan mula sa Gallery. Iko-compress ito para magamit offline.</p><button class="green" onclick="addMenu()">➕ Add Menu</button><p class="small">Awtomatikong mababawasan ang stock pagkatapos ng completed sale.</p></div><div class="card"><h2>🗂️ Editable Menu Categories</h2><p class="small">Add, rename at delete categories. Hindi puwedeng burahin ang category na may produkto o add-on.</p><input id="newCategoryName" placeholder="New category name"><button class="green" onclick="addCategory()">➕ Add Category</button><div id="categoryManager"></div></div><div class="card"><h2>➕ Add-ons Management</h2><p class="small">Piliin ang mismong mga produkto na maaaring lagyan ng add-on. Puwedeng higit sa isa.</p><label>Add-on Name</label><input id="addonName" placeholder="Hal. Extra Rice"><label>Category (pang-filter lamang)</label><select id="addonCategory" onchange="renderAddonProductChoices()"></select><label>Applicable Products (pumili ng isa o higit pa)</label><div id="addonProductChoices" class="summary"></div><label>Price</label><input id="addonPrice" type="number" min="0" step="0.01" placeholder="Add-on price"><label>Starting Stock</label><input id="addonStock" type="number" min="0" step="1" placeholder="Quantity"><button class="green" onclick="addAddon()">➕ Add Add-on</button><div id="addonManager"></div></div><div class="card"><h2>🍱 Meal Upgrade Management</h2><p class="small">Isang meal upgrade lamang ang maaaring piliin sa bawat product. Optional ito at may sariling presyo at stock.</p><label>Upgrade name</label><input id="upgradeName" placeholder="Hal. Upgrade to Large Fries"><label>Category</label><select id="upgradeCategory" onchange="renderUpgradeProductChoices()"></select><label>Applicable Products</label><div id="upgradeProductChoices" class="summary"></div><label>Additional Price</label><input id="upgradePrice" type="number" min="0" step="0.01" placeholder="Additional price"><label>Stock</label><input id="upgradeStock" type="number" min="0" step="1" placeholder="Available quantity"><button class="green" onclick="addUpgrade()">➕ Add Meal Upgrade</button><div id="upgradeManager"></div></div><div class="card"><h2>🍱 Meal Builder</h2><p class="small">Bumuo ng combo mula sa existing products. Ang bawat completed combo sale ay magbabawas ng stock ng bawat component. Puwede pa rin ang add-ons at upgrades.</p><label>Meal Name</label><input id="comboName" placeholder="Hal. Chicken + Rice + Drink"><label>Combo Category</label><select id="comboCategory"></select><label>Combo Selling Price</label><input id="comboPrice" type="number" min="0.01" step="0.01" placeholder="Hal. 129"><label>Ingredients / Products (quantity bawat combo)</label><div id="comboComponents"></div><button class="green" onclick="addCombo()">➕ Create Combo Meal</button><h3>Saved Combo Meals</h3><div id="comboManager"></div></div><div class="card"><h3>Existing Menu & Inventory</h3><div id="adminMenu"></div></div><div class="card"><h2>👤 Cashier Management</h2><h3>Add Cashier</h3><input id="newCashierName" placeholder="Cashier name"><input id="newCashierId" placeholder="User ID"><input id="newCashierPassword" type="password" placeholder="New password"><button class="green" onclick="addCashier()">➕ Add Cashier</button><h3>Cashier Accounts</h3><div id="cashierList"></div></div><div class="card"><h2>🔐 Admin Password</h2><p class="small">Baguhin ang admin password at itago sa ligtas na lugar.</p><input id="adminNewPassword" type="password" placeholder="Bagong admin password"><button class="blue" onclick="changeAdminPassword()">Change Admin Password</button></div></section>
 </main>
 <div id="printReceipt"></div>
 <script>
@@ -130,6 +130,33 @@ function updateConnectionStatus(){const el=$("connectionStatus");if(el)el.textCo
 window.addEventListener("online",updateConnectionStatus);window.addEventListener("offline",updateConnectionStatus);
 document.addEventListener("DOMContentLoaded",()=>{updateConnectionStatus();$("orderNumber").textContent=orderNo;renderAll();updateShiftUI();$("loginPassword").addEventListener("keydown",e=>{if(e.key==="Enter")login()})});
 if("serviceWorker" in navigator&&location.protocol!=="file:"){window.addEventListener("load",()=>navigator.serviceWorker.register("./service-worker.js").catch(e=>console.log("Service worker error",e)))}
+
+// Live Philippine clock: use online time when available; fall back to phone clock offline.
+let qsClockOffset=0,qsClockSource="Phone clock";
+function qsFormatClock(){
+ const d=new Date(Date.now()+qsClockOffset);
+ const date=new Intl.DateTimeFormat("en-PH",{timeZone:"Asia/Manila",month:"long",day:"numeric",year:"numeric",weekday:"long"}).format(d);
+ const time=new Intl.DateTimeFormat("en-PH",{timeZone:"Asia/Manila",hour:"numeric",minute:"2-digit",second:"2-digit",hour12:true}).format(d);
+ document.querySelectorAll(".qs-live-date").forEach(el=>el.textContent=date+" • "+time+" (PH) • "+qsClockSource);
+}
+async function qsSyncClock(){
+ if(!navigator.onLine){qsClockOffset=0;qsClockSource="Phone clock (offline)";qsFormatClock();return}
+ const ctrl=new AbortController(),timer=setTimeout(()=>ctrl.abort(),4500);
+ try{
+  const start=Date.now();
+  const res=await fetch("https://worldtimeapi.org/api/timezone/Asia/Manila",{cache:"no-store",signal:ctrl.signal});
+  if(!res.ok)throw Error("Time service unavailable");
+  const data=await res.json();
+  const serverTime=Date.parse(data.datetime);
+  if(!Number.isFinite(serverTime))throw Error("Invalid time");
+  qsClockOffset=serverTime+(Date.now()-start)/2-Date.now();qsClockSource="Internet synced";
+ }catch(e){qsClockOffset=0;qsClockSource="Phone clock (online sync unavailable)"}
+ finally{clearTimeout(timer);qsFormatClock()}
+}
+qsFormatClock();setInterval(qsFormatClock,1000);
+window.addEventListener("online",qsSyncClock);
+window.addEventListener("offline",()=>{qsClockOffset=0;qsClockSource="Phone clock (offline)";qsFormatClock()});
+qsSyncClock();
 
 // QuickServe Meal Builder — additive feature; original localStorage keys retained.
 function comboIngredientDemand(extraId=null,extraQty=0){
@@ -854,6 +881,131 @@ qsFlavorPreset=function(id){
   if(existing)existing.qty++;else cart.push({id:Number(p.id),name:p.name,flavor:f.name,size:'Cone',price,qty:1,addons:chosen,lineId:Date.now()+Math.random()});
   cancelAddonPicker();renderCart();
  };
+})();
+</script>
+
+<script>
+/* QuickServe shift-scoped cashier history and permanent admin archive.
+   Sales stay in the original foodSales key for backward compatibility. */
+(function(){
+  const originalRenderHistory=renderHistory;
+  function currentShiftRows(){
+    return activeShift&&currentUser&&currentUser.role==='cashier'&&activeShift.cashier===currentUser.id
+      ?sales.filter(s=>s.shiftId===activeShift.id&&s.cashier===currentUser.id):[];
+  }
+  renderHistory=function(){
+    if(!currentUser){$('history').innerHTML='';return;}
+    if(isAdmin()){
+      originalRenderHistory();
+      const note=document.createElement('div');note.className='summary';
+      note.innerHTML='<b>🔒 Admin Sales Archive</b><p class="small">Lahat ng completed orders, kasama ang closed shifts, ay nananatili rito. Piliin ang Daily, Weekly, Monthly o All-Time sa Admin Reports.</p>';
+      $('history').prepend(note);
+      return;
+    }
+    const original=sales;
+    try{sales=currentShiftRows();originalRenderHistory();}
+    finally{sales=original;}
+    const notice=document.createElement('div');notice.className='summary';
+    notice.innerHTML=activeShift&&activeShift.cashier===currentUser.id
+      ?'<b>🟢 Current Shift History</b><p class="small">Mga order ng kasalukuyang shift mo lamang. Automatic na mawawala sa cashier view kapag nag-Close Shift; naka-save pa rin sa Admin.</p>'
+      :'<b>🔴 No Active Shift</b><p class="small">Walang kasalukuyang cashier history. Ang mga natapos na shift ay naka-save sa Admin.</p>';
+    $('history').prepend(notice);
+  };
+  closeShift=function(){
+    if(!currentUser||currentUser.role!=='cashier'||!activeShift||activeShift.cashier!==currentUser.id){alert('Walang active shift na pag-aari mo.');return;}
+    const rows=sales.filter(s=>s.shiftId===activeShift.id);
+    const total=rows.reduce((a,s)=>a+Number(s.total||0),0);
+    if(!confirm('CLOSE SHIFT?\nOrders: '+rows.length+'\nTotal Sales: PHP '+money(total)+'\n\nMananatili sa Admin archive ang lahat ng sales. Ang cashier history lamang ang magre-reset.'))return;
+    const finished={...activeShift,endTime:new Date().toLocaleString(),endTimestamp:Date.now(),orders:rows.length,sales:total};
+    const oldShifts=shifts;
+    shifts=[finished,...shifts.filter(s=>s.id!==finished.id)];
+    if(!saveShifts()){shifts=oldShifts;alert('Hindi naisara ang shift dahil hindi na-save ang archive.');return;}
+    // The archived shift is persisted before clearing the active shift.
+    try{localStorage.removeItem('activeShift');activeShift=null;}
+    catch(e){alert('Naka-save ang closed shift pero hindi ma-reset ang active shift. I-reload at tingnan ang shift status.');return;}
+    lastSale=null;cart=[];clearCart();
+    renderAll();updateShiftUI();showPage('historyPage');
+    alert('SHIFT CLOSED!\n'+rows.length+' orders / PHP '+money(total)+'\nNaka-save sa Admin History. Na-reset na ang cashier history.');
+  };
+  inPeriod=function(s,period){
+    const d=dateStamp(s);if(!d||Number.isNaN(d.getTime()))return false;
+    const now=new Date(),start=new Date(now.getFullYear(),now.getMonth(),now.getDate());
+    if(period==='today')return d>=start&&d<new Date(start.getTime()+86400000);
+    if(period==='week'){
+      start.setDate(start.getDate()-(start.getDay()+6)%7);
+      const end=new Date(start);end.setDate(end.getDate()+7);
+      return d>=start&&d<end;
+    }
+    if(period==='month')return d>=new Date(now.getFullYear(),now.getMonth(),1)&&d<new Date(now.getFullYear(),now.getMonth()+1,1);
+    return true;
+  };
+  const previousRenderReports=renderReports;
+  renderReports=function(){
+    previousRenderReports();if(!isAdmin())return;
+    const period=$('reportPeriod').value,filtered=sales.filter(s=>inPeriod(s,period));
+    const groups=new Map();
+    filtered.forEach(s=>{
+      const d=dateStamp(s);if(!d)return;
+      const key=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+      const item=groups.get(key)||{orders:0,total:0};item.orders++;item.total+=Number(s.total||0);groups.set(key,item);
+    });
+    const html=[...groups].sort((a,b)=>b[0].localeCompare(a[0])).map(([date,x])=>'<div class="admin-item"><b>'+esc(date)+'</b><br>Orders: '+x.orders+'<br>Sales: PHP '+money(x.total)+'</div>').join('')||'<p>Wala pang sales sa period na ito.</p>';
+    $('reports').insertAdjacentHTML('beforeend','<h3>📅 Daily Sales Breakdown</h3>'+html);
+  };
+  clearHistory=function(){
+    if(!requireAdmin())return;
+    if(!confirm('YES = BURAHIN ANG TRIAL HISTORY\nNO = CANCEL\n\nKasama ang sales at shifts. Hindi mabubura ang menu, pictures, sizes, add-ons, cashier accounts at inventory.'))return;
+    const oldSales=sales,oldShifts=shifts,oldActiveShift=activeShift;
+    try{
+      localStorage.setItem('foodSales','[]');
+      localStorage.setItem('foodShifts','[]');
+      localStorage.removeItem('orderNumber');
+      localStorage.removeItem('activeShift');
+    }catch(e){
+      try{localStorage.setItem('foodSales',JSON.stringify(oldSales));localStorage.setItem('foodShifts',JSON.stringify(oldShifts));}catch(_){}
+      alert('Hindi natuloy ang reset dahil sa storage error.');return;
+    }
+    sales=[];shifts=[];activeShift=null;orderNo=1001;lastSale=null;cart=[];
+    $('orderNumber').textContent=orderNo;
+    renderAll();updateShiftUI();
+    alert('Trial sales history at lahat ng shifts cleared. Next order #1001. Menu at inventory ay hindi binago.');
+  };
+  const backup=document.createElement('div');backup.className='card';
+  backup.innerHTML='<h2>💾 Sales Backup</h2><p class="small">Download ng local JSON backup ng sales at closed shifts. Itago ang file sa ligtas na lugar. Hindi ito automatic cloud backup.</p><button class="blue" onclick="downloadQuickServeSalesBackup()">⬇️ DOWNLOAD SALES BACKUP</button>';
+  $('adminPage').appendChild(backup);
+  window.downloadQuickServeSalesBackup=function(){
+    if(!requireAdmin())return;
+    const data={app:'QuickServe POS',version:1,exportedAt:new Date().toISOString(),sales,shifts};
+    const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+    const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='QuickServe_Sales_Backup_'+todayKey()+'.json';
+    document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),3000);
+  };
+  const clear=$('clearHistoryBtn');if(clear){clear.textContent='🗑️ CLEAR TRIAL HISTORY (ADMIN)';clear.disabled=false;clear.className='danger';}
+})();
+</script>
+<script>
+/* Date details are displayed ONLY in Admin Sales & Shift Summary. */
+(function(){
+  const originalSummary=renderSalesSummary;
+  function refreshSummaryDate(){
+    const target=document.getElementById('qs-summary-date');
+    if(!target)return;
+    const d=new Date(Date.now()+(typeof qsClockOffset==='number'?qsClockOffset:0));
+    const day=d.toLocaleDateString('en-PH',{weekday:'long',timeZone:'Asia/Manila'});
+    const date=d.toLocaleDateString('en-PH',{day:'numeric',month:'long',year:'numeric',timeZone:'Asia/Manila'});
+    const ph=new Date(d.toLocaleString('en-US',{timeZone:'Asia/Manila'}));
+    const monday=new Date(ph.getFullYear(),ph.getMonth(),ph.getDate());monday.setDate(monday.getDate()-(monday.getDay()+6)%7);
+    const sunday=new Date(monday);sunday.setDate(sunday.getDate()+6);
+    const fmt=x=>x.toLocaleDateString('en-PH',{month:'short',day:'numeric',year:'numeric'});
+    target.innerHTML='<b>📅 Date:</b> '+esc(date)+'<br><b>Day:</b> '+esc(day)+'<br><b>Week:</b> '+esc(fmt(monday))+' – '+esc(fmt(sunday))+'<br><b>Month:</b> '+esc(ph.toLocaleDateString('en-PH',{month:'long',year:'numeric'}));
+  }
+  renderSalesSummary=function(){originalSummary();if(!isAdmin())return;
+    const panel=document.getElementById('salesSummary');
+    panel.insertAdjacentHTML('afterbegin','<div class="summary" id="qs-summary-date"></div>');
+    refreshSummaryDate();
+  };
+  setInterval(refreshSummaryDate,60000);
+  renderSalesSummary();
 })();
 </script>
 </body></html>
