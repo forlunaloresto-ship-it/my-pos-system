@@ -1497,4 +1497,22 @@ document.addEventListener('DOMContentLoaded',()=>{
   document.addEventListener('DOMContentLoaded',refresh);
 })();
 </script>
+
+<script>
+/* Final display safeguard: only Refreshment product card prices. */
+(function(){
+ function hideRefreshmentCardPrices(){
+  document.querySelectorAll('#menuList .product').forEach(card=>{
+   const category=card.querySelector('.small');
+   if(category && category.textContent.trim().toLowerCase()==='refreshment'){
+    card.querySelectorAll('.price').forEach(el=>el.style.setProperty('display','none','important'));
+   }
+  });
+ }
+ document.addEventListener('DOMContentLoaded',()=>{
+  const menuList=document.getElementById('menuList');
+  if(menuList){new MutationObserver(hideRefreshmentCardPrices).observe(menuList,{childList:true,subtree:true});hideRefreshmentCardPrices();}
+ });
+})();
+</script>
 </body></html>
