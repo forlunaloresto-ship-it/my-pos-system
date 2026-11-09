@@ -1302,4 +1302,81 @@ document.addEventListener('DOMContentLoaded',()=>{
  document.addEventListener('DOMContentLoaded',()=>{ensureCodes();drawMenu();});
 })();
 </script>
+<style>
+#qsBasketBuilder{border:2px solid #e6a653;background:#fffaf4;border-radius:12px;padding:14px;margin:14px 0}
+#qsBasketBuilder label{display:block;margin-top:9px;font-weight:bold}
+#qsBasketBuilder .qs-basket-help{font-size:13px;color:#666}
+</style>
+<script>
+'use strict';
+// Combo Basket: one price field only, integrated into Menu Management.
+(function(){
+ const isBasket=p=>p&&String(p.category||'').toLowerCase()==='combo basket';
+ function nextCode(){const used=new Set(menu.filter(isBasket).map(p=>String(p.comboCode||'').toUpperCase()));let n=1;while(used.has('CB'+n))n++;return 'CB'+n;}
+ function setup(){
+  const cat=$('newCategory'),name=$('newName');if(!cat||!name)return;
+  let panel=$('qsBasketBuilder');
+  if(!panel){
+   panel=document.createElement('div');panel.id='qsBasketBuilder';panel.className='hidden';
+   panel.innerHTML='<h2>🧺 Combo Basket Builder</h2><p class="qs-basket-help">Isang selling price lang. Automatic CB code, editable basket name at contents. Puwedeng magdagdag ng extra refreshments sa Cashier gamit ang existing Refreshment Menu.</p><label for="qsBasketName">Combo Basket Name</label><input id="qsBasketName" placeholder="Forluna Snack Basket"><label for="qsBasketContents">Basket Contents (Editable)</label><input id="qsBasketContents" placeholder="Fries + Nuggets + Siomai"><label for="qsBasketPrice">Combo Basket Selling Price (₱)</label><input id="qsBasketPrice" type="number" min="0.01" step="0.01" inputmode="decimal" placeholder="199"><label for="qsBasketStock">Starting Stock Quantity</label><input id="qsBasketStock" type="number" min="0" step="1" inputmode="numeric" value="50"><p class="qs-basket-help">Product Picture: gamitin ang Gallery upload sa itaas.</p><button type="button" class="green" id="qsBasketSave">➕ Save Combo Basket</button>';
+   const card=name.closest('.card');card.appendChild(panel);
+   $('qsBasketSave').addEventListener('click',saveBasket);
+  }
+  const active=cat.value==='Combo Basket';panel.classList.toggle('hidden',!active);
+  // Hide the original price/stock, since basket fields are inside the builder.
+  for(const id of ['newPrice','newStock']){const el=$(id);if(el){el.style.display=active?'none':'';el.disabled=active;}}
+  name.placeholder=active?'Product Code (hal. CB1)':'Product name';
+  if(active&&!name.value.trim())name.value=nextCode();
+  const button=document.querySelector('button[onclick="addMenu()"]');if(button)button.style.display=active?'none':'';
+  const combo=$('qsIntegratedCombo');if(combo&&active)combo.classList.add('hidden');
+ }
+ async function saveBasket(){
+  if(!requireAdmin())return;
+  const code=$('newName').value.trim().toUpperCase()||nextCode();
+  const name=$('qsBasketName').value.trim(),contents=$('qsBasketContents').value.trim();
+  const rawPrice=$('qsBasketPrice').value,rawStock=$('qsBasketStock').value;
+  const price=Number(rawPrice),stock=Number(rawStock);
+  if(!/^CB[0-9]+$/.test(code)){alert('Product Code ay dapat CB1, CB2, CB3, atbp.');return;}
+  if(menu.some(p=>isBasket(p)&&String(p.comboCode||'').toUpperCase()===code)){alert('May existing Combo Basket na gumagamit ng '+code+'.');return;}
+  if(!name||!contents||!rawPrice||!Number.isFinite(price)||price<=0||rawStock===''||!Number.isInteger(stock)||stock<0){alert('Kumpletuhin ang basket name, contents, selling price at stock.');return;}
+  let image='';const file=$('newPicture').files?.[0];if(file){try{image=await compressImage(file)}catch(e){alert('Hindi mabasa ang picture.');return;}}
+  const id=Math.max(0,...menu.map(p=>Number(p.id)||0))+1;
+  // Empty recipe marks a standalone combo without deducting unrelated ingredient stock.
+  const item={id,name,comboCode:code,comboContents:contents,category:'Combo Basket',price,stock,available:stock>0,recipe:[]};
+  if(image)item.image=image;
+  menu.push(item);if(!saveMenu()){menu.pop();return;}
+  $('newName').value='';$('qsBasketName').value='';$('qsBasketContents').value='';$('qsBasketPrice').value='';$('qsBasketStock').value='50';$('newPicture').value='';
+  renderAll();setup();alert('Saved ang '+code+' — '+name+'.');
+ }
+ // Existing baskets remain intact; allow their code, name and contents to be edited.
+ const originalEdit=editMenu;
+ editMenu=function(id){const p=menu.find(x=>Number(x.id)===Number(id));if(!isBasket(p))return originalEdit(id);
+  if(!requireAdmin())return;
+  const code=prompt('Combo Basket Code:',p.comboCode||nextCode());if(code===null)return;
+  const normalized=code.trim().toUpperCase();if(!/^CB[0-9]+$/.test(normalized)||menu.some(x=>x!==p&&isBasket(x)&&String(x.comboCode||'').toUpperCase()===normalized)){alert('Invalid o duplicate CB code.');return;}
+  const name=prompt('Combo Basket Name:',p.name);if(name===null)return;
+  const contents=prompt('Basket Contents:',p.comboContents||p.name);if(contents===null)return;
+  const raw=prompt('Combo Basket Selling Price:',String(p.price));if(raw===null)return;
+  if(!name.trim()||!contents.trim()||!raw.trim()||!(Number(raw)>0)){alert('Invalid basket details o price.');return;}
+  const old={...p};p.comboCode=normalized;p.name=name.trim();p.comboContents=contents.trim();p.price=Number(raw);
+  if(!saveMenu())Object.assign(p,old);renderAll();
+ };
+ const originalRender=renderMenu;
+ renderMenu=function(){originalRender();
+  // Display CB codes as the headline, while retaining names and existing product images.
+  document.querySelectorAll('#menuList .product').forEach((card,index)=>{
+   const shown=currentCategory==='All'?menu:menu.filter(p=>p.category===currentCategory);
+   const p=shown[index];if(!isBasket(p))return;
+   const heading=card.querySelector('.qs-combo-code, h3');if(!heading)return;
+   heading.className='qs-combo-code';heading.textContent=p.comboCode||p.name;
+   let desc=card.querySelector('.qs-combo-meal');if(!desc){desc=document.createElement('div');desc.className='qs-combo-meal';heading.after(desc);}
+   desc.textContent=p.name;
+  });
+ };
+ document.addEventListener('DOMContentLoaded',()=>{
+  const cat=$('newCategory');if(cat)cat.addEventListener('change',()=>setTimeout(setup,0));
+  setTimeout(setup,80);
+ });
+})();
+</script>
 </body></html>
