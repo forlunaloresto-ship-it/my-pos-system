@@ -446,7 +446,7 @@ renderHistory=function(){qsFlavorOldHistory();document.querySelectorAll('#histor
 "use strict";
 /* Category > product series > flavor > size & price. Preserves old menu and sales. */
 const QS_GROUPS={
- "Refreshment":["Iced Coffee","Milk Tea","Milky Series","Fruit Soda","Milk Shake","Regular Sundae","Premium Sundae","Sundae Cone"],
+ "Refreshment":["Iced Coffee","Milk Tea","Milky Series","Fruit Soda","Milk Shake","Regular Sundae","Premium Sundae","Sundae Cone","Float"],
  "Sundae":[]
 };
 const QS_SUNDAE_FLAVORS={
@@ -463,6 +463,7 @@ function qsGroupOf(p){
  if(n.includes("milky"))return "Milky Series";
  if(n.includes("fruit soda")||n.includes("soda"))return "Fruit Soda";
  if(n.includes("milk shake")||n.includes("milkshake"))return "Milk Shake";
+ if(n.includes("float")||n.includes("chukie")||n.includes("dutch mill"))return "Float";
  return "Other";
 }
 function qsGroupCategory(g){return "Refreshment"}
@@ -599,7 +600,8 @@ qsFlavorPreset=function(id){
 /* Admin Add Menu: category -> series -> flavor -> size/price, before saving. */
 (function(){
  const SIZE_LABELS=['6.5 oz','8 oz','12 oz','Medium','Large'];
- const SERIES=['Iced Coffee','Milk Tea','Milky Series','Fruit Soda','Milk Shake','Sundae','Sundae Cone'];
+ const sizesForSeries=()=>currentSeries()==='Float'?['16 oz','22 oz']:SIZE_LABELS;
+ const SERIES=['Iced Coffee','Milk Tea','Milky Series','Fruit Soda','Milk Shake','Sundae','Sundae Cone','Float'];
  const SUNDAE_TYPES=['Regular Sundae','Premium Sundae'];
  const CONES=['Small Cone','Giant Belgian Cone'];
  const SAMPLES={
@@ -608,6 +610,7 @@ qsFlavorPreset=function(id){
   'Milky Series':['Strawberry','Mango','Chocolate'],
   'Fruit Soda':['Blue Lemonade','Strawberry','Green Apple'],
   'Milk Shake':['Chocolate','Vanilla','Strawberry'],
+  'Float':['Chukie Float','Dutch Mill Float'],
   'Regular Sundae':['Chocolate','Strawberry','Caramel','Vanilla'],
   'Premium Sundae':['Mango Graham','Boba','Strawberry Oreo','Wafelo']
  };
@@ -619,7 +622,7 @@ qsFlavorPreset=function(id){
   const row=document.createElement('div');row.className='qs-flavor-entry';
   row.innerHTML='<label>Flavor name</label><input class="qs-add-flavor-name" placeholder="Hal. Hazelnut" value="'+htmlEscape(name)+'">'+
    '<label>Flavor Picture (optional)</label><input type="file" accept="image/*" class="qs-add-flavor-picture"><img class="qs-add-flavor-preview" style="display:none;width:86px;height:86px;object-fit:cover;border-radius:10px;margin:6px 0">'+
-   '<div class="qs-price-grid">'+SIZE_LABELS.map(size=>'<label>'+size+' — ₱<input type="number" inputmode="decimal" min="0.01" step="0.01" class="qs-add-flavor-price" data-size="'+size+'" placeholder="Price"></label>').join('')+'</div>'+
+   '<div class="qs-price-grid">'+sizesForSeries().map(size=>'<label>'+size+' — ₱<input type="number" inputmode="decimal" min="0.01" step="0.01" class="qs-add-flavor-price" data-size="'+size+'" placeholder="Price"></label>').join('')+'</div>'+
    '<button type="button" class="danger qs-remove-flavor">Remove Flavor</button>';
   row.querySelector('.qs-remove-flavor').onclick=()=>row.remove();
   row.querySelector('.qs-add-flavor-picture').onchange=async e=>{
