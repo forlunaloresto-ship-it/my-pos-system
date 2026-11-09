@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#151515"><meta name="description" content="QuickServe POS - offline-capable point of sale">
-<link rel="manifest" href="./manifest.json"><title>QuickServe POS | 2026-11-08</title>
+<link rel="manifest" href="./manifest.json"><title>QuickServe POS | Combo Cashier Choices</title>
 <style>
 *{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#f4f4f4;color:#222}header{background:#151515;color:white;padding:14px;text-align:center}header h2{margin:0 0 5px}.container{max-width:1100px;margin:auto;padding:12px}.card{background:white;border-radius:12px;padding:14px;margin-bottom:14px;box-shadow:0 2px 8px #0002}button{border:0;border-radius:8px;padding:11px 13px;cursor:pointer;font-weight:bold;margin:2px}button:disabled{opacity:.5;cursor:not-allowed}input,select{width:100%;padding:11px;margin:6px 0 10px;border:1px solid #ccc;border-radius:8px;font-size:16px}.primary{background:linear-gradient(135deg,#e50914,#ff9500);color:#fff}.green{background:#168a45;color:#fff}.gray{background:#777;color:#fff}.danger{background:#b00020;color:#fff}.blue{background:#1769aa;color:#fff}.orange{background:#f08a00;color:#fff}.hidden{display:none!important}.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}.tabs button{flex:1;min-width:85px}.category-tabs{display:flex;gap:7px;flex-wrap:wrap;margin:8px 0 14px}.category-tabs button{background:#eee;color:#222;border:1px solid #ddd}.category-tabs button.selected{background:#d71920;color:white}.menu{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:9px}.product{border:1px solid #ddd;border-radius:10px;padding:12px;background:white}.product h3{margin:5px 0}.product-photo{width:100%;height:118px;object-fit:cover;border-radius:8px;background:#f1f1f1;display:block;margin-bottom:8px}.admin-photo{width:84px;height:72px;object-fit:cover;border-radius:8px;background:#eee;margin-right:10px}.price{font-size:20px;font-weight:bold}.out{opacity:.55}.cart-row{display:flex;justify-content:space-between;align-items:center;gap:8px;border-bottom:1px solid #ddd;padding:10px 0}.qty{display:flex;align-items:center;gap:5px}.qty button{padding:5px 9px}.total{font-size:24px;font-weight:bold;margin:14px 0}.small{font-size:13px;color:#666}.active{color:green;font-weight:bold}.disabled{color:#b00020;font-weight:bold}.admin-item{border:1px solid #ddd;border-radius:10px;padding:12px;margin:8px 0}.summary{background:#f7f7f7;border-radius:8px;padding:10px;margin-top:8px}.shift-open{background:#e8f8ee;border:1px solid #168a45}.shift-closed{background:#fff0f0;border:1px solid #d71920}.stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:9px}.stat{background:#f7f7f7;border-radius:10px;padding:13px;border:1px solid #ddd}.stat-number{font-size:22px;font-weight:bold;margin-top:5px}.pay-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.pay-option{background:white;border:2px solid #ddd;border-radius:10px;padding:13px;text-align:center}.pay-option.selected{border-color:#d71920;background:#fff1f1}.pay-option strong{display:block;font-size:16px}#printReceipt{display:none}
 /* QuickServe branded login — visual changes only; all POS data keys retained */
@@ -1068,32 +1068,198 @@ function qsComboUI(){
  const field=$('comboName');if(!field||document.getElementById('qsComboLayers'))return;
  const parent=field.parentNode;
  const table=document.createElement('div');table.id='qsComboLayers';
- table.innerHTML='<h3>3 Layers — Field & Value</h3><table class="qs-layer-table"><thead><tr><th>Layer</th><th>Field</th><th>Value (Editable)</th></tr></thead><tbody><tr><td>1</td><td>Combo Code</td><td><input id="qsComboCode" placeholder="FC1" value="FC1"></td></tr><tr><td>2</td><td>Combo Meal Name</td><td><input id="qsComboMealName" placeholder="Spaghetti Fried Chicken" value="Spaghetti Fried Chicken"></td></tr><tr><td>3</td><td>Combo Selling Price (₱)</td><td><input id="qsComboSellPrice" type="number" min="0.01" step="0.01" value="150"></td></tr></tbody></table><p class="small">Drinks are optional. Add or upgrade sizes; prices below are additional charges on top of the combo price.</p><h3>Custom Drinks / Size Upgrade</h3><div class="qs-drink-grid"><label>Drink type<select id="qsDrinkType"><option>Milk Tea</option><option>Fruit Soda</option><option>Sundae</option><option>Coke Float</option><option>Custom Drink</option></select></label><label>Drink / Flavor Name<input id="qsDrinkName" placeholder="e.g. Wintermelon"></label><label>Size<select id="qsDrinkSize"><option>Medium</option><option>Large</option><option>8 oz</option><option>12 oz</option><option>6.5 oz</option><option>Custom Size</option></select></label><label>Additional Price (₱)<input id="qsDrinkPrice" type="number" min="0" step="0.01" value="0"></label><label>Linked menu product (optional, stock tracked)<select id="qsDrinkLinked"></select></label></div><button type="button" class="blue" onclick="qsAddDrinkOption()">➕ Add Drink / Upgrade</button><div id="qsDrinkOptions"></div><p class="small">Kung walang drink na pinili sa POS, base combo price lang. Puwedeng i-edit ang options pagkatapos i-save.</p>';
+ table.innerHTML='<h3>3 Layers — Field & Value</h3><table class="qs-layer-table"><thead><tr><th>Layer</th><th>Field</th><th>Value (Editable)</th></tr></thead><tbody><tr><td>1</td><td>Combo Code</td><td><input id="qsComboCode" placeholder="FC1" value="FC1"></td></tr><tr><td>2</td><td>Combo Meal Name</td><td><input id="qsComboMealName" placeholder="Spaghetti Fried Chicken" value="Spaghetti Fried Chicken"></td></tr><tr><td>3</td><td>Combo Selling Price (₱)</td><td><input id="qsComboSellPrice" type="number" min="0.01" step="0.01" value="150"></td></tr></tbody></table><p class="small">Drinks are optional. Add or upgrade sizes; prices below are additional charges on top of the combo price.</p><h3>Combo Meal Picture</h3><input id="qsComboPicture" type="file" accept="image/*"><img id="qsComboPreview" style="display:none;width:110px;height:95px;object-fit:cover;border-radius:9px"><p class="small">Upload mula sa Gallery; compressed at offline-ready.</p><h3>Admin — Set Available Drinks & Upgrade Prices</h3><p class="small"><b>Cashier POS:</b> Dito mo lang ise-set ang choices. Sa POS pipili ang cashier ng No Drink, drink, flavor at size kapag may customer na nag-order.</p><div class="qs-drink-grid"><label>Drink type<select id="qsDrinkType"><option>Milk Tea</option><option>Fruit Soda</option><option>Sundae</option><option>Coke Float</option><option>Custom Drink</option></select></label><label>Drink / Flavor Name<input id="qsDrinkName" placeholder="e.g. Wintermelon"></label><label>Size<select id="qsDrinkSize"><option>Medium</option><option>Large</option><option>8 oz</option><option>12 oz</option><option>6.5 oz</option><option>Custom Size</option></select></label><label>Additional Price (₱)<input id="qsDrinkPrice" type="number" min="0" step="0.01" value="0"></label><label>Linked menu product (optional, stock tracked)<select id="qsDrinkLinked"></select></label><label>Drink Picture (optional)<input id="qsDrinkPicture" type="file" accept="image/*"></label></div><button type="button" class="blue" onclick="qsAddDrinkOption()">➕ Add Drink / Upgrade</button><div id="qsDrinkOptions"></div><p class="small">Kung walang drink na pinili sa POS, base combo price lang. Puwedeng i-edit ang options pagkatapos i-save.</p>';
  parent.insertBefore(table,field);
  for(const id of ['comboName','comboPrice']){const el=$(id);el.closest('label')?.classList.add('hidden');el.style.display='none';if(el.previousElementSibling?.tagName==='LABEL')el.previousElementSibling.style.display='none';}
  const comp=$('comboComponents');if(comp){const label=comp.previousElementSibling;if(label?.tagName==='LABEL')label.textContent='Optional Ingredients / Products (0 = standalone combo with own stock)';}
  const button=parent.querySelector('button[onclick="addCombo()"]');if(button)button.textContent='➕ Create Combo Meal';
- qsDrinkLinkRefresh();qsDrinkOptionsRender();
+ qsDrinkLinkRefresh();qsDrinkOptionsRender();$('qsComboPicture').addEventListener('change',qsPickComboImage);$('qsDrinkPicture').addEventListener('change',qsPickDrinkImage);
 }
-let qsPendingDrinkOptions=[];
+let qsPendingDrinkOptions=[];let qsComboImageDraft='';let qsDrinkImageDraft='';
+function qsPickComboImage(){const f=$('qsComboPicture')?.files?.[0];if(!f)return;compressImage(f).then(img=>{qsComboImageDraft=img;const el=$('qsComboPreview');el.src=img;el.style.display='block';}).catch(()=>alert('Hindi mabasa ang picture.'));}
+function qsPickDrinkImage(){const f=$('qsDrinkPicture')?.files?.[0];if(!f)return;compressImage(f).then(img=>{qsDrinkImageDraft=img;}).catch(()=>alert('Hindi mabasa ang drink picture.'));}
+function qsChangeComboPicture(id){if(!requireAdmin())return;changeMenuPicture(id);}
+function qsChangeDrinkPicture(i){if(!requireAdmin())return;const d=qsPendingDrinkOptions[i];if(!d)return;const picker=document.createElement('input');picker.type='file';picker.accept='image/*';picker.onchange=async()=>{try{d.image=await compressImage(picker.files[0]);qsDrinkOptionsRender();}catch(e){alert('Hindi mabasa ang picture.')}};picker.click();}
 function qsDrinkLinkRefresh(){const el=$('qsDrinkLinked');if(!el)return;const old=el.value;el.innerHTML='<option value="">No linked stock (custom drink)</option>'+menu.filter(p=>!qsCombo(p)).map(p=>'<option value="'+Number(p.id)+'">'+esc(p.name)+'</option>').join('');el.value=old;}
-function qsDrinkOptionsRender(){const el=$('qsDrinkOptions');if(!el)return;el.innerHTML=qsPendingDrinkOptions.map((d,i)=>'<div class="admin-item"><b>'+esc(d.type)+' — '+esc(d.name||d.type)+' ('+esc(d.size)+')</b> +₱'+money(d.price)+' <button type="button" class="blue" onclick="qsEditDrinkOption('+i+')">Edit</button><button type="button" class="danger" onclick="qsRemoveDrinkOption('+i+')">Remove</button></div>').join('')||'<p class="small">No drinks configured. Combo can still be created.</p>';}
-function qsAddDrinkOption(){if(!requireAdmin())return;const type=$('qsDrinkType').value,name=$('qsDrinkName').value.trim()||type,size=$('qsDrinkSize').value,price=Number($('qsDrinkPrice').value),drinkProductId=Number($('qsDrinkLinked').value)||null;if(!Number.isFinite(price)||price<0){alert('Invalid additional price.');return}qsPendingDrinkOptions.push({type,name,size,price,drinkProductId});qsDrinkOptionsRender();$('qsDrinkName').value='';$('qsDrinkPrice').value='0';}
+function qsDrinkOptionsRender(){const el=$('qsDrinkOptions');if(!el)return;el.innerHTML=qsPendingDrinkOptions.map((d,i)=>'<div class="admin-item">'+(d.image?'<img class="admin-photo" src="'+esc(d.image)+'" alt="Drink picture">':'')+'<b>'+esc(d.type)+' — '+esc(d.name||d.type)+' ('+esc(d.size)+')</b> +₱'+money(d.price)+' <button type="button" class="blue" onclick="qsEditDrinkOption('+i+')">Edit</button><button type="button" class="blue" onclick="qsChangeDrinkPicture('+i+')">🖼️ Picture</button><button type="button" class="danger" onclick="qsRemoveDrinkOption('+i+')">Remove</button></div>').join('')||'<p class="small">No drinks configured. Combo can still be created.</p>';}
+function qsAddDrinkOption(){if(!requireAdmin())return;const type=$('qsDrinkType').value,name=$('qsDrinkName').value.trim()||type,size=$('qsDrinkSize').value,price=Number($('qsDrinkPrice').value),drinkProductId=Number($('qsDrinkLinked').value)||null;if(!Number.isFinite(price)||price<0){alert('Invalid additional price.');return}qsPendingDrinkOptions.push({type,name,size,price,drinkProductId,image:qsDrinkImageDraft||''});qsDrinkImageDraft='';$('qsDrinkPicture').value='';qsDrinkOptionsRender();$('qsDrinkName').value='';$('qsDrinkPrice').value='0';}
 function qsEditDrinkOption(i){const d=qsPendingDrinkOptions[i];if(!d)return;const name=prompt('Drink / flavor',d.name);if(name===null)return;const size=prompt('Size',d.size);if(size===null)return;const price=prompt('Additional price (₱)',d.price);if(price===null)return;if(!name.trim()||!size.trim()||price.trim()===''||!Number.isFinite(Number(price))||Number(price)<0){alert('Invalid drink details.');return}Object.assign(d,{name:name.trim(),size:size.trim(),price:Number(price)});qsDrinkOptionsRender();}
 function qsRemoveDrinkOption(i){qsPendingDrinkOptions.splice(i,1);qsDrinkOptionsRender();}
 // A standalone combo has an independent stock; recipes continue to consume their ingredients.
-addCombo=function(){if(!requireAdmin())return;const code=$('qsComboCode').value.trim(),meal=$('qsComboMealName').value.trim(),category=$('comboCategory').value,price=Number($('qsComboSellPrice').value),parts=readComboParts();if(!code||!meal||!CATS.includes(category)||!Number.isFinite(price)||price<=0||parts.some(x=>!Number.isInteger(x.qty)||x.qty<1)){alert('Ilagay ang valid Combo Code, Meal Name at Selling Price.');return}if(menu.some(p=>String(p.comboCode||'').toLowerCase()===code.toLowerCase())){alert('May combo code na '+code+'. I-edit ang existing combo.');return}const recipe=parts.map(x=>({...x,name:menu.find(p=>Number(p.id)===x.id)?.name||'Unknown'}));const id=Math.max(0,...menu.map(x=>Number(x.id)||0))+1;const item={id,comboCode:code,name:meal,category,price,stock:recipe.length?999999:50,available:true,recipe,comboDrinks:qsPendingDrinkOptions.map(x=>({...x}))};menu.push(item);if(!saveMenu()){menu.pop();return}qsPendingDrinkOptions=[];qsDrinkOptionsRender();renderAll();alert('Combo '+code+' created! Drinks optional. Standalone stock: 50 (editable in Inventory).');};
-renderComboBuilder=function(){if(!isAdmin())return;qsComboUI();const cat=$('comboCategory'),old=cat.value;cat.innerHTML=categoryOptions(CATS.includes(old)?old:(CATS.includes('Combo Meal')?'Combo Meal':CATS[0]));const previous={};document.querySelectorAll('.combo-qty').forEach(x=>previous[x.dataset.id]=x.value);$('comboComponents').innerHTML=menu.filter(p=>!qsCombo(p)).map(p=>'<div class="addon-choice"><span>'+esc(p.name)+' <span class="small">(stock '+Number(p.stock||0)+')</span></span><input class="combo-qty" data-id="'+Number(p.id)+'" type="number" min="0" step="1" value="'+esc(previous[p.id]||0)+'" style="width:85px;margin:0"></div>').join('')||'<p class="small">No regular products. Standalone combo is allowed.</p>';$('comboManager').innerHTML=menu.filter(qsCombo).map(p=>'<div class="admin-item"><b>'+esc(p.comboCode||'Combo')+' — '+esc(p.name)+'</b> • ₱'+money(p.price)+'<div class="small">'+(p.recipe?.length?p.recipe.map(r=>esc(r.name)+' ×'+r.qty).join(' + '):'Standalone combo • Stock: '+Number(p.stock||0))+'</div><div class="small">Drinks: '+(qsDrinkOptions(p).map(d=>esc(d.name)+' ('+esc(d.size)+') +₱'+money(d.price)).join('; ')||'Optional / none')+'</div><button class="blue" onclick="qsEditCombo('+Number(p.id)+')">✏️ Edit Combo & Drinks</button><button class="orange" onclick="adjustStock('+Number(p.id)+')">📦 Stock</button><button class="danger" onclick="deleteMenu('+Number(p.id)+')">Delete</button></div>').join('')||'<p>No combo meals yet.</p>';qsDrinkLinkRefresh();};
-function qsEditCombo(id){if(!requireAdmin())return;const p=menu.find(x=>Number(x.id)===id);if(!p)return;const code=prompt('Layer 1 — Combo Code',p.comboCode||'');if(code===null)return;const name=prompt('Layer 2 — Meal Name',p.name);if(name===null)return;const priceText=prompt('Layer 3 — Selling Price (₱)',String(p.price));if(priceText===null)return;const price=Number(priceText);if(!code.trim()||!name.trim()||priceText.trim()===''||!Number.isFinite(price)||price<=0||menu.some(x=>x!==p&&String(x.comboCode||'').toLowerCase()===code.trim().toLowerCase())){alert('Invalid or duplicate code / name / price.');return}p.comboCode=code.trim();p.name=name.trim();p.price=price;p.comboDrinks=qsDrinkOptions(p);if(!saveMenu())return;qsPendingDrinkOptions=p.comboDrinks.map(d=>({...d}));qsDrinkOptionsRender();$('qsComboCode').value=p.comboCode;$('qsComboMealName').value=p.name;$('qsComboSellPrice').value=p.price;renderAll();alert('Combo saved. Drinks loaded in Custom Drinks editor. To save drink changes to this combo, tap Save Drink Changes below.');qsShowDrinkSave(id);}
+addCombo=function(){if(!requireAdmin())return;const code=$('qsComboCode').value.trim(),meal=$('qsComboMealName').value.trim(),category=$('comboCategory').value,price=Number($('qsComboSellPrice').value),parts=readComboParts();if(!code||!meal||!CATS.includes(category)||!Number.isFinite(price)||price<=0||parts.some(x=>!Number.isInteger(x.qty)||x.qty<1)){alert('Ilagay ang valid Combo Code, Meal Name at Selling Price.');return}if(menu.some(p=>String(p.comboCode||'').toLowerCase()===code.toLowerCase())){alert('May combo code na '+code+'. I-edit ang existing combo.');return}const recipe=parts.map(x=>({...x,name:menu.find(p=>Number(p.id)===x.id)?.name||'Unknown'}));const id=Math.max(0,...menu.map(x=>Number(x.id)||0))+1;const item={id,comboCode:code,name:meal,category,price,stock:recipe.length?999999:50,available:true,recipe,comboDrinks:qsPendingDrinkOptions.map(x=>({...x})),...(qsComboImageDraft?{image:qsComboImageDraft}:{})};menu.push(item);if(!saveMenu()){menu.pop();return}qsPendingDrinkOptions=[];qsComboImageDraft='';$('qsComboPicture').value='';$('qsComboPreview').style.display='none';qsDrinkOptionsRender();renderAll();alert('Combo '+code+' created! Drinks optional. Standalone stock: 50 (editable in Inventory).');};
+renderComboBuilder=function(){if(!isAdmin())return;qsComboUI();const cat=$('comboCategory'),old=cat.value;cat.innerHTML=categoryOptions(CATS.includes(old)?old:(CATS.includes('Combo Meal')?'Combo Meal':CATS[0]));const previous={};document.querySelectorAll('.combo-qty').forEach(x=>previous[x.dataset.id]=x.value);$('comboComponents').innerHTML=menu.filter(p=>!qsCombo(p)).map(p=>'<div class="addon-choice"><span>'+esc(p.name)+' <span class="small">(stock '+Number(p.stock||0)+')</span></span><input class="combo-qty" data-id="'+Number(p.id)+'" type="number" min="0" step="1" value="'+esc(previous[p.id]||0)+'" style="width:85px;margin:0"></div>').join('')||'<p class="small">No regular products. Standalone combo is allowed.</p>';$('comboManager').innerHTML=menu.filter(qsCombo).map(p=>'<div class="admin-item">'+(p.image?'<img class="admin-photo" src="'+esc(p.image)+'" alt="Combo picture">':'')+'<b>'+esc(p.comboCode||'Combo')+' — '+esc(p.name)+'</b> • ₱'+money(p.price)+'<div class="small">'+(p.recipe?.length?p.recipe.map(r=>esc(r.name)+' ×'+r.qty).join(' + '):'Standalone combo • Stock: '+Number(p.stock||0))+'</div><div class="small">Drinks: '+(qsDrinkOptions(p).map(d=>esc(d.name)+' ('+esc(d.size)+') +₱'+money(d.price)).join('; ')||'Optional / none')+'</div><button class="blue" onclick="qsEditCombo('+Number(p.id)+')">✏️ Edit Combo & Drinks</button><button class="blue" onclick="qsChangeComboPicture('+Number(p.id)+')">🖼️ Picture</button><button class="orange" onclick="adjustStock('+Number(p.id)+')">📦 Stock</button><button class="danger" onclick="deleteMenu('+Number(p.id)+')">Delete</button></div>').join('')||'<p>No combo meals yet.</p>';qsDrinkLinkRefresh();};
+function qsEditCombo(id){if(!requireAdmin())return;const p=menu.find(x=>Number(x.id)===id);if(!p)return;const code=prompt('Layer 1 — Combo Code',p.comboCode||'');if(code===null)return;const name=prompt('Layer 2 — Meal Name',p.name);if(name===null)return;const priceText=prompt('Layer 3 — Selling Price (₱)',String(p.price));if(priceText===null)return;const price=Number(priceText);if(!code.trim()||!name.trim()||priceText.trim()===''||!Number.isFinite(price)||price<=0||menu.some(x=>x!==p&&String(x.comboCode||'').toLowerCase()===code.trim().toLowerCase())){alert('Invalid or duplicate code / name / price.');return}p.comboCode=code.trim();p.name=name.trim();p.price=price;p.comboDrinks=qsDrinkOptions(p);if(!saveMenu())return;qsPendingDrinkOptions=p.comboDrinks.map(d=>({...d}));qsDrinkOptionsRender();$('qsComboCode').value=p.comboCode;$('qsComboMealName').value=p.name;$('qsComboSellPrice').value=p.price;qsComboImageDraft=p.image||'';if(p.image){$('qsComboPreview').src=p.image;$('qsComboPreview').style.display='block';}renderAll();alert('Combo saved. Drinks loaded in Custom Drinks editor. To save drink changes to this combo, tap Save Drink Changes below.');qsShowDrinkSave(id);}
 function qsShowDrinkSave(id){let b=$('qsSaveComboDrinks');if(!b){b=document.createElement('button');b.id='qsSaveComboDrinks';b.className='green';$('qsDrinkOptions').after(b)}b.textContent='💾 Save Drink Changes to '+(menu.find(p=>Number(p.id)===id)?.comboCode||'Combo');b.onclick=()=>{const p=menu.find(x=>Number(x.id)===id);if(!p)return;p.comboDrinks=qsPendingDrinkOptions.map(d=>({...d}));if(saveMenu()){renderAll();alert('Drink options updated.')} };}
-const qsPriorComboPicker=openAddonPicker;
-openAddonPicker=function(id){const p=menu.find(x=>Number(x.id)===Number(id));qsPriorComboPicker(id);if(!qsCombo(p)||Number(pendingProductId)!==Number(id))return;const picker=$('addonPicker');const block=document.createElement('div');block.className='qs-combo-pick';block.innerHTML='<h3>🥤 Optional Custom Drinks & Size Upgrade</h3><label>Choose drink / upgrade</label><select id="qsComboDrinkSelect"><option value="">No Drink — ₱0</option>'+qsDrinkOptions(p).map((d,i)=>'<option value="'+i+'">'+esc(d.type)+' — '+esc(d.name)+' ('+esc(d.size)+') +₱'+money(d.price)+'</option>').join('')+'</select><p class="small">The combo base price stays the same. Drink upgrades add the configured price.</p>';picker.insertBefore(block,picker.querySelector('.addon-picker-actions'));};
-const qsPriorConfirmCombo=confirmAddonPicker;
-confirmAddonPicker=function(){const id=Number(pendingProductId),p=menu.find(x=>Number(x.id)===id),select=$('qsComboDrinkSelect'),idx=select?.value;const before=cart.map(x=>({...x,addons:(x.addons||[]).map(a=>({...a}))}));qsPriorConfirmCombo();if(!p||!qsCombo(p)||idx===undefined||idx===''||cart.length===before.length&&cart.every((x,i)=>x.qty===before[i]?.qty))return;const d=qsDrinkOptions(p)[Number(idx)];if(!d)return;const newLine=cart.find((x,i)=>Number(x.id)===id&&(!before[i]||x.qty!==before[i].qty))||cart[cart.length-1];if(!newLine||Number(newLine.id)!==id)return;const custom={id:-Date.now(),name:d.name+' ('+d.size+')',price:Number(d.price),comboDrink:true,drinkProductId:d.drinkProductId||null};if(newLine.qty>1){newLine.qty--;cart.push({...newLine,qty:1,addons:[...(newLine.addons||[]),custom],lineId:Date.now()+Math.random()});}else newLine.addons=[...(newLine.addons||[]),custom];renderCart();};
-const qsPriorCartAdd=changeCartLineQty;
-// drink inventory check is performed at sale, including quantities for linked menu drinks.
-const qsPriorComboAdmin=renderAdminMenu;
-renderAdminMenu=function(){qsPriorComboAdmin();};
+// Refreshment choices are sourced live from registered menu records.
+// Every registered refreshment series is eligible, including legacy Sundae records.
+function qsDrinkGroup(p){
+ const group=String(p.qsGroup||'').trim();
+ if(group)return group;
+ const category=String(p.category||'').trim();
+ if(category&&category!=='Refreshment'&&category!=='Sundae'&&category!=='Other'&&category!=='All'&&category!=='Combo Meal'&&category!=='Combo Basket'&&category!=='Meal'&&category!=='Snacks')return category;
+ return typeof qsGroupOf==='function'?qsGroupOf(p):(category||'Other');
+}
+function qsIsRefreshmentProduct(p){
+ if(!p||qsCombo(p))return false;
+ const category=String(p.category||'').trim();
+ if(category==='Refreshment'||category==='Sundae')return true;
+ if(Array.isArray(QS_GROUPS.Refreshment)&&QS_GROUPS.Refreshment.includes(category))return true;
+ if(p.qsGroup&&p.qsGroup!=='Other')return true;
+ return /sundae|milk.?tea|milk.?shake|coffee|latte|americano|float|soda|lemonade|milky|smoothie|frappe|juice|matcha|choco|taro|okinawa|wintermelon/i.test(String(p.name||''));
+}
+function qsRegisteredGroups(){return [...new Set(menu.filter(qsIsRefreshmentProduct).map(qsDrinkGroup))].filter(Boolean)}
+function qsRegisteredPrices(p){const result=[];if(Array.isArray(p.flavors)&&p.flavors.length){p.flavors.forEach((f,fi)=>{Object.entries(f.prices||{}).forEach(([size,price])=>{if(price!==''&&price!==null&&Number.isFinite(Number(price))&&Number(price)>=0)result.push({flavor:f.name||p.name,size,price:Number(price),image:f.image||p.image||''})})})}else{Object.entries(p.sizePrices||{}).forEach(([size,price])=>{if(price!==''&&price!==null&&Number.isFinite(Number(price))&&Number(price)>=0)result.push({flavor:p.name,size,price:Number(price),image:p.image||''})});if(!result.length&&Number.isFinite(Number(p.price))&&Number(p.price)>0)result.push({flavor:p.name,size:'Regular',price:Number(p.price),image:p.image||''})}return result}
+function qsRefreshOptionsFor(p){return menu.filter(x=>qsIsRefreshmentProduct(x)&&x.available&&Number(x.stock)>0&&(p.comboAllowedRefreshIds===undefined||p.comboAllowedRefreshIds.map(Number).includes(Number(x.id))))}
+function qsRefreshAdminSetup(){const root=$('qsComboLayers');if(!root||$('qsRefreshAdmin'))return;const panel=document.createElement('div');panel.id='qsRefreshAdmin';panel.className='summary';panel.innerHTML='<h3>🥤 Registered Refreshment — Combo Choices</h3><p class="small">Walang manual price entry. Ang Cashier ay pipili mula sa existing Refreshment products, flavors, sizes at registered prices. Default: lahat ng available refreshments.</p><label><input type="checkbox" id="qsAllRefresh" checked style="width:auto"> Allow all registered refreshments</label><div id="qsAllowedRefresh"></div>';root.appendChild(panel);$('qsAllRefresh').onchange=qsRenderAllowedRefresh;qsRenderAllowedRefresh();const oldEditor=root.querySelector('.qs-drink-grid');if(oldEditor){const heading=oldEditor.previousElementSibling;if(heading)heading.style.display='none';oldEditor.style.display='none';$('qsDrinkOptions').style.display='none';const add=oldEditor.nextElementSibling;if(add?.tagName==='BUTTON')add.style.display='none'} }
+function qsRenderAllowedRefresh(){const host=$('qsAllowedRefresh');if(!host)return;host.innerHTML=$('qsAllRefresh').checked?'':menu.filter(qsIsRefreshmentProduct).map(x=>'<label class="addon-choice"><input type="checkbox" class="qs-allowed-drink" value="'+Number(x.id)+'" checked style="width:auto"><span>'+esc(x.name)+'</span></label>').join('')||'<p>Wala pang registered Refreshment.</p>'}
+function qsSelectedRefreshIds(){return $('qsAllRefresh')?.checked?undefined:[...document.querySelectorAll('.qs-allowed-drink:checked')].map(x=>Number(x.value))}
+const qsPreviousCreateCombo=addCombo;
+addCombo=function(){const before=new Set(menu.map(x=>Number(x.id)));qsPreviousCreateCombo();const p=menu.find(x=>!before.has(Number(x.id))&&qsCombo(x));if(p){const ids=qsSelectedRefreshIds();if(ids!==undefined)p.comboAllowedRefreshIds=ids;saveMenu();renderAll()}};
+const qsPreviousEditCombo=qsEditCombo;
+qsEditCombo=function(id){qsPreviousEditCombo(id);const p=menu.find(x=>Number(x.id)===Number(id));if(!p)return;qsRefreshAdminSetup();$('qsAllRefresh').checked=p.comboAllowedRefreshIds===undefined;qsRenderAllowedRefresh();if(p.comboAllowedRefreshIds!==undefined)document.querySelectorAll('.qs-allowed-drink').forEach(x=>x.checked=p.comboAllowedRefreshIds.map(Number).includes(Number(x.value)));qsShowDrinkSave(id)};
+qsShowDrinkSave=function(id){let b=$('qsSaveComboDrinks');if(!b){b=document.createElement('button');b.id='qsSaveComboDrinks';b.className='green';$('qsRefreshAdmin').appendChild(b)}b.textContent='💾 Save Refreshment Choices for '+(menu.find(p=>Number(p.id)===id)?.comboCode||'Combo');b.onclick=()=>{const p=menu.find(x=>Number(x.id)===id);if(!p)return;const ids=qsSelectedRefreshIds();if(ids===undefined)delete p.comboAllowedRefreshIds;else p.comboAllowedRefreshIds=ids;if(saveMenu()){renderAll();alert('Available refreshments saved. Prices are always from the registered menu.')}}};
+const qsPreviousRenderCombo=renderComboBuilder;
+renderComboBuilder=function(){qsPreviousRenderCombo();qsRefreshAdminSetup();};
+const qsOriginalPicker=openAddonPicker;
+openAddonPicker=function(id){qsOriginalPicker(id);const p=menu.find(x=>Number(x.id)===Number(id));if(!qsCombo(p)||Number(pendingProductId)!==Number(id))return;const picker=$('addonPicker');const old=picker.querySelector('.qs-combo-pick');if(old)old.remove();const block=document.createElement('div');block.className='qs-combo-pick';block.innerHTML='<h3>🥤 Add Refreshment (Optional)</h3><label><input type="checkbox" id="qsWantDrink" style="width:auto"> Customer wants a drink</label><div id="qsDrinkSteps" class="hidden"><label>1. Refreshment Category</label><select id="qsCategorySelect"></select><label>2. Name of Drink</label><select id="qsProductSelect"></select><label>3. Flavor</label><select id="qsFlavorSelect"></select><label>4. Size / Oz and Registered Price</label><select id="qsSizeSelect"></select><div id="qsDrinkPictureView"></div></div><div class="summary" id="qsLiveComboTotal"></div><p class="small">Automatic price mula sa existing Refreshment Menu. Hindi nag-e-encode ng presyo ang cashier.</p>';picker.insertBefore(block,picker.querySelector('.addon-picker-actions'));
+ $('qsWantDrink').onchange=()=>{$('qsDrinkSteps').classList.toggle('hidden',!$('qsWantDrink').checked);qsUpdateComboTotal()};const products=qsRefreshOptionsFor(p),groups=[...new Set([...QS_GROUPS.Refreshment,...products.map(qsDrinkGroup)])];$('qsCategorySelect').innerHTML=groups.map(g=>'<option value="'+esc(g)+'">'+esc(g)+'</option>').join('');$('qsCategorySelect').onchange=qsUpdateDrinkProducts;$('qsProductSelect').onchange=qsUpdateDrinkFlavors;$('qsFlavorSelect').onchange=qsUpdateDrinkSizes;$('qsSizeSelect').onchange=qsUpdateComboTotal;qsUpdateDrinkProducts();};
+function qsUpdateDrinkProducts(){const p=menu.find(x=>Number(x.id)===Number(pendingProductId)),group=$('qsCategorySelect')?.value,products=qsRefreshOptionsFor(p).filter(x=>qsDrinkGroup(x)===group);$('qsProductSelect').innerHTML=products.length?products.map(x=>'<option value="'+Number(x.id)+'">'+esc(x.name)+'</option>').join(''):'<option value="">Walang available drink sa category</option>';qsUpdateDrinkFlavors()}
+function qsUpdateDrinkFlavors(){const p=menu.find(x=>Number(x.id)===Number($('qsProductSelect')?.value)),entries=p?qsRegisteredPrices(p):[];const names=[...new Set(entries.map(x=>x.flavor))];$('qsFlavorSelect').innerHTML=names.map(x=>'<option value="'+esc(x)+'">'+esc(x)+'</option>').join('');qsUpdateDrinkSizes()}
+function qsUpdateDrinkSizes(){const p=menu.find(x=>Number(x.id)===Number($('qsProductSelect')?.value)),flavor=$('qsFlavorSelect')?.value,entries=p?qsRegisteredPrices(p).filter(x=>x.flavor===flavor):[];$('qsSizeSelect').innerHTML=entries.map((x,i)=>'<option value="'+i+'">'+esc(x.size)+' — ₱'+money(x.price)+'</option>').join('');qsUpdateComboTotal()}
+function qsCurrentDrink(){if(!$('qsWantDrink')?.checked)return null;const p=menu.find(x=>Number(x.id)===Number($('qsProductSelect')?.value)),flavor=$('qsFlavorSelect')?.value,idx=Number($('qsSizeSelect')?.value);const options=p?qsRegisteredPrices(p).filter(x=>x.flavor===flavor):[];return p&&options[idx]?{product:p,...options[idx]}:null}
+function qsUpdateComboTotal(){const p=menu.find(x=>Number(x.id)===Number(pendingProductId)),d=qsCurrentDrink(),wanted=$('qsWantDrink')?.checked;const preview=$('qsLiveComboTotal');if(!preview||!p)return;preview.innerHTML='<b>'+esc(p.comboCode||p.name)+' / Combo: ₱'+money(p.price)+'</b><br>'+(wanted?(d?'Drink: '+esc(d.product.name)+' — '+esc(d.flavor)+' — '+esc(d.size)+' +₱'+money(d.price):'Pumili ng available drink, flavor at size.'):'No Drink: ₱0')+'<br><b>Total: ₱'+money(Number(p.price)+(d?.price||0))+'</b>';const pic=$('qsDrinkPictureView');if(pic)pic.innerHTML=d?.image?'<img src="'+esc(d.image)+'" class="admin-photo" alt="Drink photo">':''}
+// Preserve the existing add-ons and inventory engine while attaching the chosen registered refreshment.
+const qsBaseConfirm=qsPriorConfirmCombo;
+confirmAddonPicker=function(){const p=menu.find(x=>Number(x.id)===Number(pendingProductId));if(!qsCombo(p))return qsBaseConfirm();const wanted=$('qsWantDrink')?.checked,d=qsCurrentDrink();if(wanted&&!d){alert('Pumili muna ng drink, flavor at size.');return}if(d&&(!d.product.available||Number(d.product.stock)<=cart.reduce((n,l)=>n+(Number(l.id)===Number(d.product.id)?Number(l.qty):0)+(l.addons||[]).filter(a=>a.comboDrink&&Number(a.drinkProductId)===Number(d.product.id)).length*Number(l.qty),0))){alert('Out of stock ang napiling refreshment.');return}if(Number(p.stock)<=productUse(Number(p.id))||!checkComboCartStock(p.id,1)){alert('Hindi sapat ang combo stock.');return}const chosen=[];for(const el of document.querySelectorAll('.addon-check:checked')){const a=addons.find(x=>Number(x.id)===Number(el.value));if(!a||!a.available||Number(a.stock)<=addonUse(Number(a.id))){alert('Out of stock ang add-on.');return}chosen.push({id:Number(a.id),name:a.name,price:Number(a.price)})}if(d)chosen.push({id:-Date.now(),name:d.product.name+' — '+d.flavor+' — '+d.size,price:d.price,comboDrink:true,drinkProductId:Number(d.product.id),flavor:d.flavor,size:d.size});cart.push({id:Number(p.id),name:(p.comboCode?p.comboCode+' — ':'')+p.name,price:Number(p.price),qty:1,addons:chosen,lineId:Date.now()+Math.random()});cancelAddonPicker();renderCart()};
 document.addEventListener('DOMContentLoaded',qsComboUI);
+</script>
+
+<style>
+#qsIntegratedCombo{border:2px solid #edb36b;background:#fffaf4;border-radius:12px;padding:12px;margin:14px 0}
+#qsIntegratedCombo h2{margin-top:0}
+#qsComboContents{min-height:44px}
+</style>
+<script>
+'use strict';
+// Integrated Combo Meal Builder inside Menu Management; original data keys preserved.
+function qsIntegratedMenuSetup(){
+ const category=document.getElementById('newCategory'),name=document.getElementById('newName');
+ const anchor=document.getElementById('qsNewSizes');
+ if(!category||!name||!anchor)return;
+ let comboCard=document.getElementById('comboName')?.closest('.card');
+ if(!comboCard)return;
+ const menuCard=name.closest('.card');
+ if(!menuCard)return;
+ comboCard.id='qsIntegratedCombo';
+ menuCard.appendChild(comboCard);
+ const header=comboCard.querySelector('h2');if(header)header.textContent='🍱 Combo Meal — Inside Menu Management';
+ const help=comboCard.querySelector('p.small');if(help)help.textContent='Product Name / Code sa itaas, editable meal contents dito, at selling price. Optional ang ingredients at drinks. Sa Cashier, live registered Refreshment prices ang ginagamit.';
+ if(!document.getElementById('qsComboContents')){
+  const label=document.createElement('label');label.textContent='Editable Product Contents / Description (hal. Rice + Fried Chicken)';
+  const input=document.createElement('input');input.id='qsComboContents';input.placeholder='Rice + Fried Chicken';
+  const root=document.getElementById('qsComboLayers');
+  (root||comboCard).insertAdjacentElement('afterend',label);label.after(input);
+ }
+ // Only the registered-refreshment selector is needed: no duplicate drink/price entry.
+ const custom=document.getElementById('qsDrinkOptions');
+ if(custom){let x=custom;for(let n=0;n<3&&x.parentElement&&x.parentElement!==comboCard;n++)x=x.parentElement; if(x!==comboCard && x.id!=='qsRefreshAdmin')x.style.display='none';}
+ const sync=()=>{
+  const combo=category.value==='Combo Meal';comboCard.classList.toggle('hidden',!combo);
+  const newPrice=document.getElementById('newPrice');
+  const comboPrice=document.getElementById('qsComboSellPrice');
+  if(newPrice){newPrice.style.display=combo?'none':'';newPrice.disabled=combo;}
+  if(combo){
+   document.getElementById('qsComboCode').value=name.value.trim()||'FC1';
+  }
+ };
+ category.addEventListener('change',sync);
+ name.addEventListener('input',()=>{if(category.value==='Combo Meal')document.getElementById('qsComboCode').value=name.value});
+ sync();
+}
+const qsIntegratedOriginalAddMenu=addMenu;
+addMenu=async function(){
+ if(document.getElementById('newCategory')?.value!=='Combo Meal')return qsIntegratedOriginalAddMenu();
+ if(!requireAdmin())return;
+ qsIntegratedMenuSetup();
+ const code=document.getElementById('newName').value.trim();
+ const contents=document.getElementById('qsComboContents').value.trim()||document.getElementById('qsComboMealName').value.trim();
+ const price=document.getElementById('qsComboSellPrice').value;
+ if(!code||!contents||!price||!(Number(price)>0)){alert('Ilagay ang Product Name / Code, meal contents, at selling price.');return;}
+ document.getElementById('qsComboCode').value=code;
+ document.getElementById('qsComboMealName').value=contents;
+ document.getElementById('comboCategory').value='Combo Meal';
+ const existing=new Set(menu.map(p=>Number(p.id)));
+ addCombo();
+ const added=menu.find(p=>!existing.has(Number(p.id))&&qsCombo(p));
+ if(!added)return;
+ const stock=Number(document.getElementById('newStock').value);
+ if(Number.isInteger(stock)&&stock>=0&&document.getElementById('newStock').value!==''){
+  added.stock=stock;added.available=stock>0;
+ }
+ added.comboContents=contents;
+ const picture=document.getElementById('newPicture')?.files?.[0];
+ if(picture){try{added.image=await compressImage(picture)}catch(e){alert('Hindi nabasa ang picture; na-save ang combo nang walang bagong picture.');}}
+ saveMenu();renderAll();
+ document.getElementById('newName').value='';document.getElementById('newPrice').value='';document.getElementById('newStock').value='';document.getElementById('newPicture').value='';document.getElementById('qsComboContents').value='';
+};
+// Keep editable description together with existing combo edit action.
+const qsIntegratedOriginalEditCombo=qsEditCombo;
+qsEditCombo=function(id){
+ const p=menu.find(x=>Number(x.id)===Number(id));if(!p)return;
+ qsIntegratedOriginalEditCombo(id);
+ const value=prompt('Editable product contents / description:',p.comboContents||p.name);
+ if(value!==null){p.comboContents=value.trim();if(saveMenu())renderAll();}
+};
+document.addEventListener('DOMContentLoaded',()=>setTimeout(qsIntegratedMenuSetup,0));
+</script>
+
+<style>
+/* Combo Meal is configured in the same Menu Management form as Refreshment. */
+#qsIntegratedCombo.qs-combo-simple{border:1px solid #e6c08e;background:#fffaf4;padding:14px;margin-top:14px}
+#qsIntegratedCombo.qs-combo-simple #qsComboLayers table{width:100%}
+#qsIntegratedCombo.qs-combo-simple #qsComboLayers thead,
+#qsIntegratedCombo.qs-combo-simple #qsComboLayers tbody tr:nth-child(-n+2),
+#qsIntegratedCombo.qs-combo-simple #qsComboLayers > h3,
+#qsIntegratedCombo.qs-combo-simple #qsComboPicture,
+#qsIntegratedCombo.qs-combo-simple #qsComboPreview,
+#qsIntegratedCombo.qs-combo-simple #qsComboLayers > p.small,
+#qsIntegratedCombo.qs-combo-simple #comboComponents,
+#qsIntegratedCombo.qs-combo-simple #qsDrinkOptions{display:none!important}
+</style>
+<script>
+'use strict';
+// Final integrated Combo Meal form: use existing product code, picture and one selling price.
+// Existing registered Refreshment products remain the only source for drink/flavor/size/price.
+function qsFinalComboLayout(){
+ const cat=document.getElementById('newCategory'),card=document.getElementById('qsIntegratedCombo');
+ if(!cat||!card)return;
+ const active=cat.value==='Combo Meal';
+ card.classList.toggle('qs-combo-simple',active);
+ card.classList.toggle('hidden',!active);
+ const stock=document.getElementById('newStock');
+ if(stock){stock.style.display=active?'none':'';stock.disabled=active;}
+ const newPrice=document.getElementById('newPrice');
+ if(newPrice){newPrice.style.display=active?'none':'';newPrice.disabled=active;}
+ const name=document.getElementById('newName');if(name)name.placeholder=active?'Product Code (hal. FC1)':'Product name';
+ const comboName=document.getElementById('qsComboMealName');
+ const contents=document.getElementById('qsComboContents');
+ if(contents){const label=contents.previousElementSibling;if(label?.tagName==='LABEL')label.textContent='Combo Meal Name / Contents (hal. Rice + Fried Chicken)';}
+ if(comboName&&contents){comboName.value=contents.value||comboName.value;contents.addEventListener('input',()=>{comboName.value=contents.value;},{once:false});}
+ const innerPic=document.getElementById('qsComboPicture');
+ if(innerPic){const h=innerPic.previousElementSibling;if(h?.tagName==='H3')h.style.display=active?'none':'';}
+ const create=card.querySelector('button[onclick="addCombo()"]');if(create)create.style.display=active?'none':'';
+ const components=document.getElementById('comboComponents');
+ if(components){const lbl=components.previousElementSibling;if(lbl?.tagName==='LABEL')lbl.style.display=active?'none':'';}
+ const table=document.getElementById('qsComboLayers');
+ if(table){const row=table.querySelector('tbody tr:nth-child(3)');if(row){row.cells[0].textContent='';row.cells[1].textContent='Combo Selling Price (₱)';}}
+ const button=document.querySelector('button[onclick="addMenu()"]');if(button)button.textContent=active?'➕ Save Combo Meal':'➕ Add Menu';
+}
+// Run after all legacy UI initializers have completed, including during category changes.
+document.addEventListener('DOMContentLoaded',()=>{
+ const cat=document.getElementById('newCategory');
+ if(cat)cat.addEventListener('change',()=>queueMicrotask(qsFinalComboLayout));
+ setTimeout(qsFinalComboLayout,30);
+});
+// The integrated save function already reuses the original image upload and existing combo data.
 </script>
 </body></html>
