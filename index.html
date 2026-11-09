@@ -55,6 +55,9 @@ body:has(#loginPage:not(.hidden))>header{display:none}
 #qsShiftActions{margin-top:10px;border-top:1px solid #ddd;padding-top:7px}
 #qsProceed:disabled{opacity:.5}
 @media(max-width:420px){.qs-sticky-total{font-size:13px}.qs-sticky-total strong{font-size:18px}}
+
+/* Forluna Order Status — compact mobile cashier dashboard */
+.qs-order-nav{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:12px}.qs-order-nav button{margin:0;padding:16px 8px;border-radius:14px;background:#191919;color:#fff;border:2px solid #f28c16;font-size:15px}.qs-order-nav button.selected{background:linear-gradient(135deg,#ed310c,#ff9600);box-shadow:0 3px 10px #ff8c0033}.qs-order-nav .qs-count{background:#e11c28;border-radius:99px;padding:2px 7px;margin-left:4px}.qs-status-head{background:#151515;color:#fff;border-radius:13px;padding:17px;margin-bottom:12px}.qs-status-head h2{margin:0 0 5px}.qs-status-summary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:5px;margin:12px 0}.qs-status-summary button{margin:0;padding:10px 3px;border-radius:10px;background:#eee;font-size:12px;border:2px solid transparent}.qs-status-summary button strong{display:block;font-size:23px}.qs-status-summary button.on{border-color:#ed8200;background:#fff0d9}.qs-status-card{border:2px solid #ddd;border-left:6px solid #ffbb26;border-radius:13px;padding:13px;margin:10px 0;background:#fff}.qs-status-card.preparing{border-left-color:#1682dc}.qs-status-card.ready{border-left-color:#13a15a}.qs-status-card.served{border-left-color:#777}.qs-status-card h3{margin:0 0 5px}.qs-status-card .qs-meta{font-size:12px;color:#555}.qs-status-pill{font-weight:bold;border-radius:99px;padding:5px 10px;background:#ffe49a;color:#4d3500}.qs-status-card.preparing .qs-status-pill{background:#cde9ff;color:#075080}.qs-status-card.ready .qs-status-pill{background:#d2f6df;color:#086337}.qs-status-card.served .qs-status-pill{background:#eee;color:#555}.qs-status-card .qs-action{width:100%;margin:11px 0 0;background:#158b49;color:white;padding:13px}.qs-status-card.preparing .qs-action{background:#1769aa}.qs-status-card.ready .qs-action{background:#158b49}.qs-status-filter{display:flex;gap:5px;overflow:auto;padding-bottom:5px}.qs-status-filter button{white-space:nowrap;background:#eee;color:#222}.qs-status-filter button.on{background:#f28c00;color:#fff}
 </style>
 </head>
 <body>
@@ -81,6 +84,8 @@ body:has(#loginPage:not(.hidden))>header{display:none}
 <main id="app" class="container hidden">
   <nav class="tabs"><button class="primary" onclick="showPage('posPage')">🛒 POS</button><button onclick="showPage('historyPage')">📋 History</button><button id="adminBtn" onclick="showPage('adminPage')">⚙️ Admin</button><button class="danger" onclick="logout()">Logout</button></nav>
   <section id="shiftPanel" class="card"><h3>🕐 Cashier Shift</h3><div id="shiftStatus"></div><details id="qsShiftActions"><summary>⚙️ Shift Controls</summary><div id="shiftControls"><label>Shift Type</label><select id="shiftType"><option>Opening</option><option>Closing</option></select><button class="green" style="width:100%" onclick="startShift()">▶️ START SHIFT</button></div><div id="closeShiftControls" class="hidden"><button class="danger" style="width:100%" onclick="closeShift()">🔴 CLOSE SHIFT</button></div></details></section>
+  <div class="qs-order-nav"><button id="qsNewOrderTab" class="selected" onclick="qsOpenCashierOrders(false)">🛒 NEW ORDER</button><button id="qsOrderStatusTab" onclick="qsOpenCashierOrders(true)">📋 ORDER STATUS <span id="qsOrderBadge" class="qs-count" style="display:none">0</span></button></div>
+  <section id="qsOrderStatusPage" class="hidden"><div class="qs-status-head"><h2>🍳 Order Status</h2><div class="small" style="color:#ddd">Forluna Food Hub • Kitchen & Serving • Offline</div></div><div id="qsStatusSummary" class="qs-status-summary"></div><div id="qsStatusFilters" class="qs-status-filter"></div><div id="qsStatusOrders"></div></section>
   <section id="posPage"><div class="card"><h3>Order Type</h3><button id="dineBtn" class="primary" onclick="setOrderType('Dine In')">🍽️ Dine In</button><button id="takeBtn" onclick="setOrderType('Take Out')">🥡 Take Out</button><p>Order #: <b id="orderNumber">1001</b></p></div><div class="card"><h3>Menu</h3><p class="small">Pumili ng category para makita ang mga produkto.</p><div id="categoryTabs" class="category-tabs"></div><div id="menuList" class="menu"></div></div><div id="addonPicker" class="card hidden"></div>
   <div class="card" id="qsOrderPanel"><h3>🛒 Current Order</h3><div id="cart"></div><button id="qsProceed" class="primary" style="width:100%;margin-top:9px" onclick="qsShowPayment()">💳 PROCEED TO PAYMENT</button></div>
   <div class="card hidden" id="qsPaymentPanel"><h3>💵 Payment Method / Paraan ng Bayad</h3><div class="pay-grid"><button id="pay-Cash" class="pay-option selected" onclick="setPaymentMethod('Cash')">💵<strong>Cash</strong></button><button id="pay-GCash" class="pay-option" onclick="setPaymentMethod('GCash')">📱<strong>GCash</strong></button><button id="pay-Maya" class="pay-option" onclick="setPaymentMethod('Maya')">💚<strong>Maya</strong></button><button id="pay-Bank Transfer" class="pay-option" onclick="setPaymentMethod('Bank Transfer')">🏦<strong>Bank Transfer</strong></button></div><div id="cashFields"><label>Cash Received</label><input id="cash" type="number" min="0" step="0.01" inputmode="decimal" placeholder="Ilagay ang bayad" oninput="calculateChange()"><h3>Sukli: PHP <span id="change">0.00</span></h3></div><div id="cashlessNote" class="summary hidden">Cashless payment ang pinili. Kumpirmahin muna na natanggap ang bayad bago i-complete ang order.</div><button class="green" style="width:100%;margin-top:10px" onclick="completeOrder()">✅ COMPLETE ORDER</button><button class="gray" style="width:100%;margin-top:7px" onclick="qsHidePayment()">← Back to Order</button></div>
@@ -1562,5 +1567,47 @@ async function qsOptimizePictures(){
  try{localStorage.setItem('foodMenu',updated);menu=copy;renderAll();status.textContent='Success! '+count+' pictures optimized. Menu storage: '+(before/1024/1024).toFixed(2)+' MB → '+(after/1024/1024).toFixed(2)+' MB. '+(failed?'Skipped: '+failed+'.':'');alert('Tapos na! Maaari nang subukang mag-save ng bagong Float.');}
  catch(e){status.textContent='Hindi na-save ang optimized menu. Walang binago sa original data.';alert('Hindi na-save. Panatilihin ang JSON backup.');}
 }
+
+/* Order status is independent of payments, stock and receipt printing. */
+const QS_STATUS_KEY='quickserveOrderStatuses';
+let qsStatusMap=readValue(QS_STATUS_KEY,{}),qsStatusFilter='active';
+if(!qsStatusMap||typeof qsStatusMap!=='object'||Array.isArray(qsStatusMap))qsStatusMap={};
+const qsStages=['pending','preparing','ready','served'];
+const qsLabels={pending:'Pending',preparing:'Preparing',ready:'Ready',served:'Served'};
+function qsStatusId(s){return String(s.orderNo)+'|'+String(s.timestamp||s.date||'');}
+function qsStatusOf(s){return qsStages.includes(qsStatusMap[qsStatusId(s)]?.status)?qsStatusMap[qsStatusId(s)].status:'pending';}
+function qsOrderRows(){return sales.filter(s=>s&&s.orderNo!==undefined&&Array.isArray(s.items));}
+function qsOpenCashierOrders(show){if(!currentUser)return;
+ $('posPage').classList.toggle('hidden',show);$('qsOrderStatusPage').classList.toggle('hidden',!show);
+ $('qsNewOrderTab').classList.toggle('selected',!show);$('qsOrderStatusTab').classList.toggle('selected',show);
+ if(show)qsRenderOrderStatus();window.scrollTo({top:0,behavior:'smooth'});
+}
+function qsStatusChange(id){const sale=qsOrderRows().find(s=>qsStatusId(s)===id);if(!sale)return;
+ const old=qsStatusOf(sale),index=qsStages.indexOf(old);if(index===3)return;
+ const next=qsStages[index+1];const previous=qsStatusMap[id];
+ qsStatusMap[id]={status:next,updatedAt:Date.now(),by:currentUser?.id||''};
+ if(!write(QS_STATUS_KEY,qsStatusMap)){if(previous===undefined)delete qsStatusMap[id];else qsStatusMap[id]=previous;return;}
+ qsRenderOrderStatus();
+}
+function qsSetStatusFilter(f){qsStatusFilter=f;qsRenderOrderStatus();}
+function qsRenderOrderStatus(){const rows=qsOrderRows();const counts={pending:0,preparing:0,ready:0,served:0};rows.forEach(s=>counts[qsStatusOf(s)]++);
+ const active=counts.pending+counts.preparing+counts.ready;const badge=$('qsOrderBadge');if(badge){badge.textContent=active;badge.style.display=active?'inline':'none';}
+ const summary=$('qsStatusSummary');if(!summary)return;
+ summary.innerHTML=qsStages.map(st=>`<button class="${qsStatusFilter===st?'on':''}" onclick="qsSetStatusFilter('${st}')"><strong>${counts[st]}</strong>${qsLabels[st]}</button>`).join('');
+ $('qsStatusFilters').innerHTML=[['active','Active'],['all','All Orders'],...qsStages.map(x=>[x,qsLabels[x]])].map(([key,label])=>`<button class="${qsStatusFilter===key?'on':''}" onclick="qsSetStatusFilter('${key}')">${label}</button>`).join('');
+ const visible=rows.filter(s=>qsStatusFilter==='all'||(qsStatusFilter==='active'?qsStatusOf(s)!=='served':qsStatusOf(s)===qsStatusFilter)).slice(0,150);
+ $('qsStatusOrders').innerHTML=visible.length?visible.map(s=>{const st=qsStatusOf(s),id=qsStatusId(s),next={pending:'▶ Start Preparing',preparing:'✓ Mark as Ready',ready:'✓ Mark as Served'}[st];return `<article class="qs-status-card ${st}"><div style="display:flex;justify-content:space-between;gap:8px;align-items:center"><h3>Order #${esc(s.orderNo)}</h3><span class="qs-status-pill">${qsLabels[st]}</span></div><div class="qs-meta">${esc(s.type||'Dine In')} • ${esc(s.date||'')} • ${esc(s.cashierName||s.cashier||'')}</div><div style="margin-top:10px">${s.items.map(i=>`<div style="padding:3px 0">${Number(i.qty)||1} × ${esc(i.name||'Item')}${i.size?' — '+esc(i.size):''}${i.flavor?' • '+esc(i.flavor):''}</div>`).join('')}</div>${next?`<button class="qs-action" data-status-id="${esc(id)}">${next}</button>`:'<div class="small" style="margin-top:10px">✓ Na-serve na ang order</div>'}</article>`}).join(''):'<div class="card"><p>Walang order sa napiling status.</p></div>';
+ $('qsStatusOrders').querySelectorAll('[data-status-id]').forEach(b=>b.addEventListener('click',()=>qsStatusChange(b.dataset.statusId)));
+}
+const qsOriginalShowPage=showPage;
+showPage=function(page){qsOriginalShowPage(page);if(page==='posPage')qsOpenCashierOrders(false);else{$('qsOrderStatusPage').classList.add('hidden');}};
+const qsOriginalRenderAll=renderAll;
+renderAll=function(){qsOriginalRenderAll();qsRenderOrderStatus();};
+const qsOriginalCompleteOrder=completeOrder;
+completeOrder=function(){const before=sales.length;qsOriginalCompleteOrder();if(sales.length>before){const sale=sales[0];qsStatusMap[qsStatusId(sale)]={status:'pending',updatedAt:Date.now(),by:currentUser?.id||''};write(QS_STATUS_KEY,qsStatusMap);qsRenderOrderStatus();}};
+const qsOriginalClearHistory=clearHistory;
+clearHistory=function(){qsOriginalClearHistory();const valid=new Set(qsOrderRows().map(qsStatusId));for(const id of Object.keys(qsStatusMap))if(!valid.has(id))delete qsStatusMap[id];write(QS_STATUS_KEY,qsStatusMap);qsRenderOrderStatus();};
+QS_BACKUP_KEYS.push(QS_STATUS_KEY);
+
 </script>
 </body></html>
