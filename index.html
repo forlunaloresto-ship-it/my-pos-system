@@ -1262,4 +1262,44 @@ document.addEventListener('DOMContentLoaded',()=>{
 });
 // The integrated save function already reuses the original image upload and existing combo data.
 </script>
+<style>
+/* Combo code is the main headline; meal description is secondary. */
+.qs-combo-code{font-size:clamp(29px,6vw,38px)!important;line-height:1.08;font-weight:900;letter-spacing:.3px;margin:8px 0 3px;overflow-wrap:anywhere}
+.qs-combo-meal{font-size:14px;line-height:1.35;color:#505050;min-height:38px;margin:0 0 9px;overflow-wrap:anywhere}
+.qs-combo-card .price{font-size:20px}
+</style>
+<script>
+/* POS combo display: retain existing products, images, stock, prices and IDs. */
+(function(){
+ function combo(p){return !!p&&(String(p.category||'').toLowerCase()==='combo meal'||p.comboCode!==undefined||Array.isArray(p.recipe)&&p.recipe.length>0)}
+ function ensureCodes(){
+   const combos=menu.filter(combo).sort((a,b)=>Number(a.id)-Number(b.id));
+   const taken=new Set(combos.map(p=>String(p.comboCode||'').trim().toUpperCase()).filter(Boolean));
+   let changed=false;
+   combos.forEach(p=>{
+     if(String(p.comboCode||'').trim())return;
+     let n=1;while(taken.has('FC'+n))n++;
+     p.comboCode='FC'+n;taken.add(p.comboCode);changed=true;
+   });
+   // Save codes under the existing foodMenu key, never replace other menu data.
+   if(changed)saveMenu();
+ }
+ function drawMenu(){
+   const counts={All:menu.length};
+   CATS.forEach(c=>counts[c]=menu.filter(p=>p.category===c).length);
+   $('categoryTabs').innerHTML=['All',...CATS].map((c,n)=>'<button class="'+(currentCategory===c?'selected':'')+'" onclick="setMenuCategory('+n+')">'+esc(c)+' ('+(counts[c]||0)+')</button>').join('');
+   const shown=currentCategory==='All'?menu:menu.filter(p=>p.category===currentCategory);
+   $('menuList').innerHTML=shown.map(p=>{
+     const isCombo=combo(p),out=!p.available||Number(p.stock)<=0;
+     const picture=p.image?'<img class="product-photo" src="'+esc(p.image)+'" alt="'+esc(p.name)+'">':'<div class="product-photo" style="display:flex;align-items:center;justify-content:center;font-size:38px">🍽️</div>';
+     const title=isCombo?'<h3 class="qs-combo-code">'+esc(p.comboCode||p.name)+'</h3><div class="qs-combo-meal">'+esc(p.name)+'</div>':'<h3>'+esc(p.name)+'</h3>';
+     const action=!out?'<button class="primary" style="width:100%" onclick="addToCart('+Number(p.id)+')">ADD</button>':'<button disabled style="width:100%">OUT OF STOCK</button>';
+     return '<div class="product '+(isCombo?'qs-combo-card ':'')+(out?'out':'')+'">'+picture+'<div class="small">'+esc(p.category||'Snacks')+'</div>'+title+'<div class="price">PHP '+money(p.price)+'</div><div class="small">Stock: '+(Number(p.stock)||0)+'</div>'+action+'</div>';
+   }).join('')||'<p>Wala pang produkto sa category na ito.</p>';
+ }
+ // Reuse the existing renderer hooks; do not change cashier checkout behavior.
+ renderMenu=drawMenu;
+ document.addEventListener('DOMContentLoaded',()=>{ensureCodes();drawMenu();});
+})();
+</script>
 </body></html>
