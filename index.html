@@ -1379,4 +1379,70 @@ document.addEventListener('DOMContentLoaded',()=>{
  });
 })();
 </script>
+<style>
+/* Product codes visible in Admin and automatically suggested in Add Menu. */
+.qs-admin-code{display:inline-block;font-size:clamp(27px,6vw,38px);font-weight:900;line-height:1.15;color:#bd1019;background:#fff2e8;border:2px solid #f1b45a;border-radius:9px;padding:3px 12px;margin:0 0 8px}
+.qs-admin-name{font-size:17px;font-weight:700;line-height:1.35;margin:2px 0 6px;overflow-wrap:anywhere}
+#qsNextCodeHelp{font-size:13px;color:#7a4200;background:#fff5e6;padding:8px;border-radius:8px;margin:-4px 0 10px}
+</style>
+<script>
+/* Additive upgrade: existing foodMenu, pictures, sales, stocks and credentials are retained. */
+(function(){
+ const kind=c=>c==='Combo Meal'?'FC':c==='Combo Basket'?'CB':null;
+ const belongs=(p,prefix)=>p&&p.category===(prefix==='FC'?'Combo Meal':'Combo Basket');
+ function next(prefix){
+  const used=new Set(menu.filter(p=>belongs(p,prefix)).map(p=>String(p.comboCode||'').trim().toUpperCase()));
+  let n=1;while(used.has(prefix+n))n++;return prefix+n;
+ }
+ function normalizeExisting(){
+  let dirty=false;
+  for(const prefix of ['FC','CB']){
+   const group=menu.filter(p=>belongs(p,prefix)).sort((a,b)=>Number(a.id)-Number(b.id));
+   const used=new Set(group.map(p=>String(p.comboCode||'').trim().toUpperCase()).filter(c=>new RegExp('^'+prefix+'[0-9]+$').test(c)));
+   for(const p of group){
+    if(new RegExp('^'+prefix+'[0-9]+$').test(String(p.comboCode||'').trim().toUpperCase()))continue;
+    let n=1;while(used.has(prefix+n))n++;
+    p.comboCode=prefix+n;used.add(p.comboCode);dirty=true;
+   }
+  }
+  if(dirty)saveMenu();
+ }
+ const oldAdmin=renderAdminMenu;
+ renderAdminMenu=function(){
+  normalizeExisting();oldAdmin();if(!isAdmin())return;
+  document.querySelectorAll('#adminMenu .admin-item').forEach((card,i)=>{
+   const p=menu[i],prefix=kind(p?.category);if(!prefix)return;
+   const heading=card.querySelector('h3');if(!heading)return;
+   const code=document.createElement('div');code.className='qs-admin-code';code.textContent=p.comboCode||next(prefix);
+   const name=document.createElement('div');name.className='qs-admin-name';name.textContent=p.name||'';
+   heading.replaceWith(code,name);
+  });
+ };
+ function syncCode(force){
+  const cat=$('newCategory'),field=$('newName');if(!cat||!field)return;
+  const prefix=kind(cat.value);
+  let help=$('qsNextCodeHelp');if(!help){help=document.createElement('div');help.id='qsNextCodeHelp';field.after(help);}
+  help.classList.toggle('hidden',!prefix);
+  if(!prefix){field.placeholder='Product name';return;}
+  const suggested=next(prefix);
+  field.placeholder='Product Code (hal. '+suggested+')';
+  help.textContent='Automatic Product Code: '+suggested+' • Maaari mong palitan kung kailangan.';
+  const value=field.value.trim().toUpperCase();
+  if(force||!value||(/^(FC|CB)\d+$/.test(value)&&!value.startsWith(prefix))){field.value=suggested;}
+  if(prefix==='FC'){
+   const code=$('qsComboCode');if(code)code.value=field.value.trim();
+  }
+ }
+ document.addEventListener('DOMContentLoaded',()=>{
+  normalizeExisting();
+  const category=$('newCategory');if(!category)return;
+  category.addEventListener('change',()=>setTimeout(()=>syncCode(true),20));
+  $('newName').addEventListener('input',()=>{const code=$('qsComboCode');if(category.value==='Combo Meal'&&code)code.value=$('newName').value.trim();});
+  syncCode(false);
+  // Keep next suggested code in sync after new items are saved.
+  const originalSaveMenu=saveMenu;
+  saveMenu=function(){const result=originalSaveMenu();if(result)setTimeout(()=>{if($('newName')&&!$('newName').value.trim())syncCode(false);},0);return result;};
+ });
+})();
+</script>
 </body></html>
