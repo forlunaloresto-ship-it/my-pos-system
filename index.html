@@ -1138,13 +1138,14 @@ async function qsRestoreBackup(){
   const old=qsSnapshot();
   try{
     qsDownloadSnapshot(old,'BEFORE_RESTORE');
-    // Preflight storage capacity using temporary key; failure does not touch current records.
-    const payload=JSON.stringify(backup.data);localStorage.setItem('__qs_restore_test',payload);localStorage.removeItem('__qs_restore_test');
+    // Avoid duplicating the entire photo-heavy backup in localStorage.
+    // Existing data has already been exported as BEFORE_RESTORE for recovery.
+    localStorage.removeItem('__qs_restore_test');
     for(const key of QS_BACKUP_KEYS)localStorage.removeItem(key);
     for(const key of keys)localStorage.setItem(key,backup.data[key]);
   }catch(e){
     try{for(const key of QS_BACKUP_KEYS)localStorage.removeItem(key);for(const [k,v] of Object.entries(old.data))localStorage.setItem(k,v);}catch(err){}
-    alert('Restore failed: '+e.message+'. Hindi dapat naapektuhan ang dating data; gamitin ang BEFORE_RESTORE backup kung kailangan.');return;
+    alert('Restore failed: '+e.message+'. Maaaring puno pa rin ang storage dahil sa pictures. Huwag burahin ang JSON backup. Kung hindi bumalik ang lumang data, gamitin ang BEFORE_RESTORE backup.');return;
   }
   alert('Restore completed. Magre-reload ang POS. Gamitin ang login credentials mula sa backup.');location.reload();
 }
